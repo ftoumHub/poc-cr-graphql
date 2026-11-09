@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Données de test — POC compte rendu médical</title>
+    <style>
+        html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; color: #222; }
+        body { padding: 0 24px 40px; box-sizing: border-box; }
+        header { padding: 16px 0; border-bottom: 1px solid #ddd; margin-bottom: 16px;
+                 display: flex; align-items: baseline; gap: 12px; }
+        header h1 { font-size: 16px; margin: 0; }
+        .avertissement { color: #8a5300; background: #fff4d6; border: 1px solid #f0c36d;
+                          border-radius: 4px; padding: 6px 10px; font-size: 13px; }
+
+        #recherche-bloc { max-width: 420px; margin-bottom: 20px; }
+        #recherche { width: 100%; box-sizing: border-box; padding: 6px 8px; }
+        .liste { list-style: none; margin: 4px 0; padding: 0; border: 1px solid #eee; max-height: 160px; overflow: auto; }
+        .liste li { padding: 6px 8px; cursor: pointer; border-bottom: 1px solid #f3f3f3; }
+        .liste li:hover { background: #f0f4ff; }
+
+        section.bloc { margin-bottom: 28px; }
+        section.bloc h2 { font-size: 14px; text-transform: uppercase; color: #666; margin: 0 0 8px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid #eee; }
+        th { color: #777; font-weight: 600; }
+        input, select { width: 100%; box-sizing: border-box; padding: 3px 4px; font-size: 13px; }
+        td.actions { white-space: nowrap; width: 1%; }
+        button { padding: 3px 8px; cursor: pointer; }
+        button.lien { background: none; border: none; color: #1557b0; cursor: pointer; padding: 2px 4px; }
+        button.lien:hover { text-decoration: underline; }
+        tr.nouvelle-ligne td { background: #fafcff; }
+
+        #patient-form { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 8px; align-items: end; max-width: 760px; }
+        #patient-form label { display: block; font-size: 11px; color: #777; margin-bottom: 2px; }
+
+        .etat { font-size: 13px; color: #555; margin-top: 4px; min-height: 18px; }
+        .erreur { color: #b00020; }
+        .vide { color: #888; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Données de test</h1>
+    <span class="avertissement">POC — modifie directement la base, aucune validation métier. Pour voir l'effet : ouvrez le document dans un autre onglet et cliquez « Rafraîchir les données ».</span>
+</header>
+
+<div id="recherche-bloc">
+    <input id="recherche" placeholder="IPP ou nom (2 car. min.)" autocomplete="off">
+    <ul id="resultats" class="liste"></ul>
+</div>
+
+<div id="fiche" hidden>
+
+    <section class="bloc">
+        <h2>Patient</h2>
+        <form id="patient-form">
+            <div>
+                <label>Nom</label>
+                <input id="p-nom" required>
+            </div>
+            <div>
+                <label>Prénom</label>
+                <input id="p-prenom">
+            </div>
+            <div>
+                <label>Date de naissance</label>
+                <input id="p-naissance" type="date" required>
+            </div>
+            <div>
+                <label>Sexe</label>
+                <select id="p-sexe">
+                    <option value="FEMININ">Féminin</option>
+                    <option value="MASCULIN">Masculin</option>
+                    <option value="INDETERMINE">Indéterminé</option>
+                    <option value="INCONNU">Inconnu</option>
+                </select>
+            </div>
+            <button type="submit">Enregistrer</button>
+        </form>
+        <div class="etat" id="p-etat"></div>
+    </section>
+
+    <section class="bloc">
+        <h2>Observations</h2>
+        <table>
+            <thead><tr><th>Catégorie</th><th>Code</th><th>Libellé</th><th>Valeur</th><th>Unité</th><th>Date</th><th></th></tr></thead>
+            <tbody id="observations-corps"></tbody>
+        </table>
+        <button id="observation-ajouter" type="button">+ Ajouter une observation</button>
+    </section>
+
+    <section class="bloc">
+        <h2>Traitements</h2>
+        <table>
+            <thead><tr><th>Molécule</th><th>Posologie</th><th>Début</th><th>Fin (vide = en cours)</th><th></th></tr></thead>
+            <tbody id="traitements-corps"></tbody>
+        </table>
+        <button id="traitement-ajouter" type="button">+ Ajouter un traitement</button>
+    </section>
+
+    <section class="bloc">
+        <h2>Séjours</h2>
+        <table>
+            <thead><tr>
+                <th>Numéro</th><th>Type</th><th>Entrée</th><th>Sortie (vide = en cours)</th><th>Service</th><th>Motif</th><th>Médecin</th>
+                <th>Type de CR</th><th>CIM-10 (code)</th><th>CIM-10 (libellé)</th><th>CCAM (code)</th><th>CCAM (libellé)</th>
+                <th></th>
+            </tr></thead>
+            <tbody id="sejours-corps"></tbody>
+        </table>
+        <button id="sejour-ajouter" type="button">+ Ajouter un séjour</button>
+    </section>
+
+</div>
+
+<script>
+    const TYPES_CATEGORIE = [['BIOLOGIE', 'Biologie'], ['CONSTANTE', 'Constante']];
+    const TYPES_SEJOUR = [
+        ['HOSPITALISATION_COMPLETE', 'Hospitalisation complète'],
+        ['HOSPITALISATION_JOUR', 'Hospitalisation de jour'],
+        ['CONSULTATION', 'Consultation externe'],
+        ['URGENCES', 'Urgences']
+    ];
+    // Vocabulaire fermé repris du corpus PARHAF (projet PARTAGES, Health Data Hub).
+    const TYPES_DOCUMENT = [
+        ['', '—'],
+        ['CRH', 'CR hospitalisation'],
+        ['CRC', 'CR consultation'],
+        ['CRO', 'CR opératoire'],
+        ['ANAPATH', 'CR anatomopathologie'],
+        ['URGENCES', 'CR urgences'],
+        ['ACCOUCHEMENT', 'CR accouchement'],
+        ['MATERNITE', 'CR maternité']
+    ];
+
+    let patientCourant = null;
+
+    async function graphql(requete, variables) {
+        const r = await fetch('/graphql', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: requete, variables: variables || {} })
+        });
+        const corps = await r.json();
+        if (corps.errors && corps.errors.length) throw new Error(corps.errors.map(e => e.message).join('\n'));
+        return corps.data;
+    }
+
+    const recherche = document.getElementById('recherche');
+    recherche.addEventListener('input', async () => {
+        const texte = recherche.value.trim();
+        const ul = document.getElementById('resultats');
+        if (texte.length < 2) { ul.innerHTML = ''; return; }
+        const { rechercherPatients } = await graphql(
+            'query($t: String!) { rechercherPatients(texte: $t) { id ipp nom prenom } }', { t: texte });
+        ul.innerHTML = '';
+        rechercherPatients.forEach(p => {
+            const li = document.createElement('li');
+            li.textContent = p.nom + (p.prenom ? ' ' + p.prenom : '') + ' (' + p.ipp + ')';
+            li.onclick = () => chargerPatient(p.id);
+            ul.appendChild(li);
+        });
+    });
+
+    async function chargerPatient(id) {
+        // Champs simples : via le GraphQL métier (déjà exposé, inchangé).
+        const { patient } = await graphql(
+            'query($id: ID!) { patient(id: $id) { nom prenom dateNaissance sexe } }', { id });
+
+        // Observations/traitements/séjours : le schéma GraphQL (métier) n'expose pas leurs
+        // identifiants techniques, nécessaires ici pour éditer/supprimer ligne à ligne.
+        const brut = await (await fetch('/api/admin/patients/' + id + '/brut')).json();
+
+        patientCourant = id;
+        document.getElementById('fiche').hidden = false;
+        document.getElementById('p-nom').value = patient.nom;
+        document.getElementById('p-prenom').value = patient.prenom || '';
+        document.getElementById('p-naissance').value = patient.dateNaissance;
+        document.getElementById('p-sexe').value = patient.sexe;
+
+        afficherObservations(brut.observations);
+        afficherTraitements(brut.traitements);
+        afficherSejours(brut.sejours);
+    }
+
+    function champ(valeur) {
+        const i = document.createElement('input');
+        i.value = valeur == null ? '' : valeur;
+        return i;
+    }
+    function selecteur(options, valeur) {
+        const s = document.createElement('select');
+        options.forEach(([v, libelle]) => {
+            const o = document.createElement('option');
+            o.value = v; o.textContent = libelle;
+            if (v === valeur) o.selected = true;
+            s.appendChild(o);
+        });
+        return s;
+    }
+    function champDate(valeur) {
+        const i = champ(valeur);
+        i.type = 'date';
+        return i;
+    }
+    function boutons(onEnregistrer, onSupprimer) {
+        const td = document.createElement('td');
+        td.className = 'actions';
+        const b1 = document.createElement('button');
+        b1.className = 'lien'; b1.textContent = 'Enregistrer'; b1.onclick = onEnregistrer;
+        const b2 = document.createElement('button');
+        b2.className = 'lien'; b2.textContent = 'Supprimer'; b2.onclick = onSupprimer;
+        td.appendChild(b1); td.appendChild(b2);
+        return td;
+    }
+
+    function afficherObservations(lignes) {
+        const corps = document.getElementById('observations-corps');
+        corps.innerHTML = '';
+        (lignes || []).forEach(o => {
+            const tr = document.createElement('tr');
+            const categorie = selecteur(TYPES_CATEGORIE, o.categorie);
+            const code = champ(o.code), libelle = champ(o.libelle), valeur = champ(o.valeur),
+                  unite = champ(o.unite), date = champDate(o.dateObservation);
+            [categorie, code, libelle, valeur, unite, date].forEach(c => {
+                const td = document.createElement('td'); td.appendChild(c); tr.appendChild(td);
+            });
+            tr.appendChild(boutons(
+                () => enregistrerObservation(o.id, categorie.value, code.value, libelle.value, valeur.value, unite.value, date.value),
+                () => supprimer('/api/admin/observations/' + o.id, () => chargerPatient(patientCourant))));
+            corps.appendChild(tr);
+        });
+    }
+
+    async function enregistrerObservation(id, categorie, code, libelle, valeur, unite, date) {
+        const corps = JSON.stringify({ categorie, code, libelle, valeur, unite, dateObservation: date });
+        const url = id ? '/api/admin/observations/' + id : '/api/admin/patients/' + patientCourant + '/observations';
+        const r = await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: corps });
+        afficherEtat(r, () => chargerPatient(patientCourant));
+    }
+
+    document.getElementById('observation-ajouter').onclick = () => {
+        const corps = document.getElementById('observations-corps');
+        const tr = document.createElement('tr'); tr.className = 'nouvelle-ligne';
+        const categorie = selecteur(TYPES_CATEGORIE, 'BIOLOGIE');
+        const code = champ(''), libelle = champ(''), valeur = champ(''), unite = champ(''),
+              date = champDate(new Date().toISOString().slice(0, 10));
+        [categorie, code, libelle, valeur, unite, date].forEach(c => { const td = document.createElement('td'); td.appendChild(c); tr.appendChild(td); });
+        tr.appendChild(boutons(
+            () => enregistrerObservation(null, categorie.value, code.value, libelle.value, valeur.value, unite.value, date.value),
+            () => tr.remove()));
+        corps.appendChild(tr);
+    };
+
+    function afficherTraitements(lignes) {
+        const corps = document.getElementById('traitements-corps');
+        corps.innerHTML = '';
+        (lignes || []).forEach(t => {
+            const tr = document.createElement('tr');
+            const molecule = champ(t.molecule), posologie = champ(t.posologie),
+                  debut = champDate(t.dateDebut), fin = champDate(t.dateFin);
+            [molecule, posologie, debut, fin].forEach(c => { const td = document.createElement('td'); td.appendChild(c); tr.appendChild(td); });
+            tr.appendChild(boutons(
+                () => enregistrerTraitement(t.id, molecule.value, posologie.value, debut.value, fin.value),
+                () => supprimer('/api/admin/traitements/' + t.id, () => chargerPatient(patientCourant))));
+            corps.appendChild(tr);
+        });
+    }
+
+    async function enregistrerTraitement(id, molecule, posologie, debut, fin) {
+        const corps = JSON.stringify({ molecule, posologie, dateDebut: debut, dateFin: fin || null });
+        const url = id ? '/api/admin/traitements/' + id : '/api/admin/patients/' + patientCourant + '/traitements';
+        const r = await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: corps });
+        afficherEtat(r, () => chargerPatient(patientCourant));
+    }
+
+    document.getElementById('traitement-ajouter').onclick = () => {
+        const corps = document.getElementById('traitements-corps');
+        const tr = document.createElement('tr'); tr.className = 'nouvelle-ligne';
+        const molecule = champ(''), posologie = champ(''),
+              debut = champDate(new Date().toISOString().slice(0, 10)), fin = champDate('');
+        [molecule, posologie, debut, fin].forEach(c => { const td = document.createElement('td'); td.appendChild(c); tr.appendChild(td); });
+        tr.appendChild(boutons(
+            () => enregistrerTraitement(null, molecule.value, posologie.value, debut.value, fin.value),
+            () => tr.remove()));
+        corps.appendChild(tr);
+    };
+
+    function afficherSejours(lignes) {
+        const corps = document.getElementById('sejours-corps');
+        corps.innerHTML = '';
+        (lignes || []).forEach(s => {
+            const tr = document.createElement('tr');
+            const numero = champ(s.numero), type = selecteur(TYPES_SEJOUR, s.type),
+                  entree = champDate(s.dateEntree), sortie = champDate(s.dateSortie),
+                  service = champ(s.service), motif = champ(s.motif), medecin = champ(s.medecinResponsable),
+                  typeDoc = selecteur(TYPES_DOCUMENT, s.typeDocument || ''),
+                  cim10Code = champ(s.diagnosticCim10Code), cim10Libelle = champ(s.diagnosticCim10Libelle),
+                  ccamCode = champ(s.acteCcamCode), ccamLibelle = champ(s.acteCcamLibelle);
+            [numero, type, entree, sortie, service, motif, medecin, typeDoc, cim10Code, cim10Libelle, ccamCode, ccamLibelle]
+                .forEach(c => { const td = document.createElement('td'); td.appendChild(c); tr.appendChild(td); });
+            tr.appendChild(boutons(
+                () => enregistrerSejour(s.id, numero.value, type.value, entree.value, sortie.value, service.value, motif.value,
+                    medecin.value, typeDoc.value, cim10Code.value, cim10Libelle.value, ccamCode.value, ccamLibelle.value),
+                () => supprimer('/api/admin/sejours/' + s.id, () => chargerPatient(patientCourant))));
+            corps.appendChild(tr);
+        });
+    }
+
+    async function enregistrerSejour(id, numero, type, entree, sortie, service, motif, medecin,
+                                      typeDocument, diagnosticCim10Code, diagnosticCim10Libelle, acteCcamCode, acteCcamLibelle) {
+        const corps = JSON.stringify({ numero, type, dateEntree: entree, dateSortie: sortie || null,
+            service, motif, medecinResponsable: medecin,
+            typeDocument: typeDocument || null, diagnosticCim10Code: diagnosticCim10Code || null,
+            diagnosticCim10Libelle: diagnosticCim10Libelle || null, acteCcamCode: acteCcamCode || null,
+            acteCcamLibelle: acteCcamLibelle || null });
+        const url = id ? '/api/admin/sejours/' + id : '/api/admin/patients/' + patientCourant + '/sejours';
+        const r = await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: corps });
+        afficherEtat(r, () => chargerPatient(patientCourant));
+    }
+
+    document.getElementById('sejour-ajouter').onclick = () => {
+        const corps = document.getElementById('sejours-corps');
+        const tr = document.createElement('tr'); tr.className = 'nouvelle-ligne';
+        const numero = champ(''), type = selecteur(TYPES_SEJOUR, 'CONSULTATION'),
+              entree = champDate(new Date().toISOString().slice(0, 10)), sortie = champDate(''),
+              service = champ(''), motif = champ(''), medecin = champ(''),
+              typeDoc = selecteur(TYPES_DOCUMENT, ''), cim10Code = champ(''), cim10Libelle = champ(''),
+              ccamCode = champ(''), ccamLibelle = champ('');
+        [numero, type, entree, sortie, service, motif, medecin, typeDoc, cim10Code, cim10Libelle, ccamCode, ccamLibelle]
+            .forEach(c => { const td = document.createElement('td'); td.appendChild(c); tr.appendChild(td); });
+        tr.appendChild(boutons(
+            () => enregistrerSejour(null, numero.value, type.value, entree.value, sortie.value, service.value, motif.value,
+                medecin.value, typeDoc.value, cim10Code.value, cim10Libelle.value, ccamCode.value, ccamLibelle.value),
+            () => tr.remove()));
+        corps.appendChild(tr);
+    };
+
+    document.getElementById('patient-form').onsubmit = async e => {
+        e.preventDefault();
+        const r = await fetch('/api/admin/patients/' + patientCourant, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nom: document.getElementById('p-nom').value,
+                prenom: document.getElementById('p-prenom').value,
+                dateNaissance: document.getElementById('p-naissance').value,
+                sexe: document.getElementById('p-sexe').value
+            })
+        });
+        afficherEtat(r, null, 'p-etat');
+    };
+
+    async function supprimer(url, apresCoup) {
+        const r = await fetch(url, { method: 'DELETE' });
+        if (r.ok && apresCoup) apresCoup();
+    }
+
+    async function afficherEtat(r, apresCoup, cibleId) {
+        const zone = document.getElementById(cibleId || 'p-etat');
+        if (r.ok) {
+            zone.textContent = 'Enregistré ' + new Date().toLocaleTimeString('fr-FR');
+            zone.classList.remove('erreur');
+            if (apresCoup) apresCoup();
+        } else {
+            const corps = await r.json().catch(() => ({}));
+            zone.textContent = corps.message || ('Erreur HTTP ' + r.status);
+            zone.classList.add('erreur');
+        }
+    }
+</script>
+</body>
+</html>

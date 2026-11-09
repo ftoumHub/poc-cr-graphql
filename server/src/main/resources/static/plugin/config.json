@@ -1,0 +1,24 @@
+{
+  "name": "Données patient",
+  "nameLocale": { "fr": "Données patient" },
+  "guid": "asc.{6B0E1C2A-6E2D-4C5B-9A1F-2C7D3E4F5A60}",
+  "version": "0.1.0",
+  "variations": [
+    {
+      "description": "Insérer des données patient liées à GraphQL",
+      "url": "index.html",
+      "icons": ["resources/icone.png", "resources/icone@2x.png"],
+      "isViewer": true,
+      "EditorsSupport": ["word"],
+      "isVisual": true,
+      "isModal": false,
+      "isInsideMode": true,
+      "type": "panelRight",
+      "initDataType": "none",
+      "initData": "",
+      "isUpdateOleOnResize": false,
+      "buttons": [],
+      "size": [380, 600]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: poc-cr-graphql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/poccr
+    username: poccr
+    password: poccr
+  graphql:
+    graphiql:
+      enabled: true   # http://localhost:8081/graphiql
+    schema:
+      introspection:
+        enabled: true # indispensable : le plugin construit son arbre de champs par introspection
+
+poc:
+  editeur:
+    url-document-server: http://localhost:8080
+    url-serveur-pour-doc-server: http://host.docker.internal:8081
+    url-serveur-pour-navigateur: http://localhost:8081
+    dossier-documents: ./data/documents
+    guid-plugin: "asc.{6B0E1C2A-6E2D-4C5B-9A1F-2C7D3E4F5A60}"

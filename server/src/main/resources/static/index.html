@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>POC compte rendu médical</title>
+    <style>
+        html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; color: #222; }
+        body { display: flex; flex-direction: column; }
+
+        header { display: flex; align-items: center; justify-content: space-between;
+                 padding: 12px 20px; border-bottom: 1px solid #ddd; }
+        header h1 { font-size: 16px; margin: 0; }
+
+        main { flex: 1; display: flex; min-width: 0; overflow: hidden; }
+
+        #vue-liste { flex: 1; overflow-y: auto; padding: 16px 20px; box-sizing: border-box; }
+        #vue-editeur { flex: 1; display: none; flex-direction: column; }
+        #vue-editeur.actif { display: flex; }
+        #vue-liste.cache { display: none; }
+
+        #cible { flex: 1; }
+
+        section.bloc { margin-bottom: 28px; }
+        section.bloc h2 { font-size: 13px; text-transform: uppercase; color: #666; margin: 0 0 8px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #eee; }
+        th { color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600; }
+        tbody tr:hover { background: #fafbff; }
+
+        #patients-corps tr { cursor: pointer; }
+        #patients-corps tr.selectionne { background: #e8f0ff; }
+        tr.filtres th { padding: 4px 10px 8px; background: #fff; }
+        tr.filtres input { width: 100%; box-sizing: border-box; padding: 3px 5px; font-size: 12px;
+                            font-weight: normal; text-transform: none; }
+
+        .pagination { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 13px; color: #555; }
+        .pagination button:disabled { opacity: 0.4; cursor: default; }
+
+        .statut { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+        .statut-brouillon { background: #eee; color: #555; }
+        .statut-valide { background: #dff0ff; color: #1557b0; }
+        .statut-scelle { background: #e3f6e6; color: #1e7a34; }
+
+        button { padding: 4px 10px; cursor: pointer; }
+        button.lien { background: none; border: none; color: #1557b0; cursor: pointer; padding: 2px 4px; }
+        button.lien:hover { text-decoration: underline; }
+
+        #creation { display: flex; gap: 8px; margin-bottom: 20px; }
+        #creation input { padding: 6px; flex: 0 0 260px; }
+
+        .renommage input { padding: 2px 4px; width: 160px; }
+        .vide { padding: 10px 0; color: #888; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>POC compte rendu médical — GraphQL dans OnlyOffice</h1>
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="/admin.html" target="_blank" id="lien-admin">Données de test</a>
+        <button id="retour" hidden>← Retour à la liste</button>
+    </div>
+</header>
+
+<main>
+    <div id="vue-liste">
+        <form id="creation">
+            <input id="nom" placeholder="nom du nouveau document (a-z, 0-9, -, _)" pattern="[A-Za-z0-9_\-]{1,64}" required>
+            <button>Créer</button>
+        </form>
+
+        <section class="bloc">
+            <h2>Patients</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>IPP</th><th>Nom</th><th>Prénom</th><th>Date de naissance</th><th>Sexe</th>
+                    </tr>
+                    <tr class="filtres">
+                        <th><input data-col="ipp" placeholder="filtrer…"></th>
+                        <th><input data-col="nom" placeholder="filtrer…"></th>
+                        <th><input data-col="prenom" placeholder="filtrer…"></th>
+                        <th><input data-col="dateNaissance" placeholder="aaaa-mm-jj…"></th>
+                        <th><input data-col="sexe" placeholder="FEMININ…"></th>
+                    </tr>
+                </thead>
+                <tbody id="patients-corps"></tbody>
+            </table>
+            <div class="pagination" id="pagination-patients"></div>
+        </section>
+
+        <section class="bloc" id="section-documents-patient" hidden>
+            <h2>Documents de <span id="nom-patient-selectionne"></span></h2>
+            <table>
+                <thead><tr><th>Document</th><th>Statut</th><th>Validé le</th><th></th></tr></thead>
+                <tbody id="documents-patient-corps"></tbody>
+            </table>
+        </section>
+
+        <section class="bloc">
+            <h2>Documents sans patient (gabarits, brouillons non commencés)</h2>
+            <table>
+                <thead><tr><th>Document</th><th>Statut</th><th>Validé le</th><th></th></tr></thead>
+                <tbody id="documents-sans-patient-corps"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <div id="vue-editeur">
+        <div id="cible"></div>
+    </div>
+</main>
+
+<script>
+    let editeur = null;
+    // Lu par le plugin (même origine) pour savoir quel document valider.
+    window.PocCr = { documentCourant: null };
+
+    // --- Patients : tableau paginé, filtrable colonne par colonne --------------------------
+
+    const TAILLE_PAGE_PATIENTS = 10;
+    let pagePatients = 0;
+    let totalPatients = 0;
+    let filtresPatients = { ipp: '', nom: '', prenom: '', sexe: '', dateNaissance: '' };
+    let patientSelectionne = null;
+    let minuterieFiltre = null;
+
+    const LIBELLES_SEXE = { FEMININ: 'Féminin', MASCULIN: 'Masculin', INDETERMINE: 'Indéterminé', INCONNU: 'Inconnu' };
+
+    document.querySelectorAll('tr.filtres input').forEach(input => {
+        input.addEventListener('input', () => {
+            filtresPatients[input.dataset.col] = input.value.trim();
+            clearTimeout(minuterieFiltre);
+            minuterieFiltre = setTimeout(() => { pagePatients = 0; chargerPatients(); }, 300);
+        });
+    });
+
+    async function chargerPatients() {
+        const params = new URLSearchParams({ page: pagePatients, taille: TAILLE_PAGE_PATIENTS });
+        Object.entries(filtresPatients).forEach(([cle, valeur]) => { if (valeur) params.set(cle, valeur); });
+        const { elements, total } = await (await fetch('/api/patients?' + params)).json();
+        totalPatients = total;
+
+        const corps = document.getElementById('patients-corps');
+        corps.innerHTML = '';
+        if (!elements.length) {
+            corps.innerHTML = '<tr><td colspan="5" class="vide">Aucun patient ne correspond à ces filtres.</td></tr>';
+        } else {
+            elements.forEach(p => {
+                const tr = document.createElement('tr');
+                if (patientSelectionne && patientSelectionne.id === p.id) tr.className = 'selectionne';
+                [p.ipp, p.nom, p.prenom || '—', p.dateNaissance, LIBELLES_SEXE[p.sexe] || p.sexe].forEach(valeur => {
+                    const td = document.createElement('td');
+                    td.textContent = valeur;
+                    tr.appendChild(td);
+                });
+                tr.onclick = () => selectionnerPatient(p);
+                corps.appendChild(tr);
+            });
+        }
+        afficherPaginationPatients();
+    }
+
+    function afficherPaginationPatients() {
+        const zone = document.getElementById('pagination-patients');
+        const totalPages = Math.max(1, Math.ceil(totalPatients / TAILLE_PAGE_PATIENTS));
+        zone.innerHTML = '';
+        const btnPrecedent = document.createElement('button');
+        btnPrecedent.textContent = '← Précédent';
+        btnPrecedent.disabled = pagePatients <= 0;
+        btnPrecedent.onclick = () => { pagePatients--; chargerPatients(); };
+        const btnSuivant = document.createElement('button');
+        btnSuivant.textContent = 'Suivant →';
+        btnSuivant.disabled = pagePatients >= totalPages - 1;
+        btnSuivant.onclick = () => { pagePatients++; chargerPatients(); };
+        const info = document.createElement('span');
+        info.textContent = 'Page ' + (pagePatients + 1) + ' / ' + totalPages + ' (' + totalPatients + ' patient' + (totalPatients > 1 ? 's' : '') + ')';
+        zone.appendChild(btnPrecedent);
+        zone.appendChild(info);
+        zone.appendChild(btnSuivant);
+    }
+
+    function selectionnerPatient(p) {
+        patientSelectionne = p;
+        document.querySelectorAll('#patients-corps tr').forEach(tr => tr.classList.remove('selectionne'));
+        chargerPatients(); // réaffiche avec la ligne sélectionnée en surbrillance
+        document.getElementById('section-documents-patient').hidden = false;
+        document.getElementById('nom-patient-selectionne').textContent =
+            p.nom + (p.prenom ? ' ' + p.prenom : '') + ' (' + p.ipp + ')';
+        rafraichirDocuments();
+    }
+
+    // --- Documents : réutilisés pour « du patient sélectionné » et « sans patient » --------
+
+    let documentsTous = [];
+
+    function libelleStatut(statut) {
+        return { brouillon: 'Brouillon', valide: 'Validé', scelle: 'Scellé' }[statut] || statut;
+    }
+
+    function construireLigneDocument(d) {
+        const tr = document.createElement('tr');
+
+        const tdNom = document.createElement('td');
+        const spanNom = document.createElement('span');
+        spanNom.textContent = d.nom;
+        tdNom.appendChild(spanNom);
+        tdNom.appendChild(document.createTextNode(' '));
+        const btnRenommer = document.createElement('button');
+        btnRenommer.className = 'lien';
+        btnRenommer.textContent = 'Renommer';
+        btnRenommer.onclick = () => activerRenommage(tdNom, d);
+        tdNom.appendChild(btnRenommer);
+        tr.appendChild(tdNom);
+
+        const tdStatut = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.className = 'statut statut-' + d.statut;
+        badge.textContent = libelleStatut(d.statut);
+        tdStatut.appendChild(badge);
+        tr.appendChild(tdStatut);
+
+        const tdValide = document.createElement('td');
+        tdValide.textContent = d.valideLe ? new Date(d.valideLe).toLocaleString('fr-FR') : '—';
+        tr.appendChild(tdValide);
+
+        const tdActions = document.createElement('td');
+        const btnOuvrir = document.createElement('button');
+        btnOuvrir.textContent = 'Ouvrir';
+        btnOuvrir.onclick = () => ouvrir(d.nom);
+        tdActions.appendChild(btnOuvrir);
+        const btnDupliquer = document.createElement('button');
+        btnDupliquer.className = 'lien';
+        btnDupliquer.textContent = 'Dupliquer comme brouillon';
+        btnDupliquer.onclick = () => activerDuplication(tdActions, d);
+        tdActions.appendChild(btnDupliquer);
+        tr.appendChild(tdActions);
+
+        return tr;
+    }
+
+    function remplirTableDocuments(corpsId, documents, messageVide) {
+        const corps = document.getElementById(corpsId);
+        corps.innerHTML = '';
+        if (!documents.length) {
+            corps.innerHTML = '<tr><td colspan="4" class="vide">' + messageVide + '</td></tr>';
+            return;
+        }
+        documents.forEach(d => corps.appendChild(construireLigneDocument(d)));
+    }
+
+    async function rafraichirDocuments() {
+        documentsTous = await (await fetch('/api/documents')).json();
+        if (patientSelectionne) {
+            const duPatient = documentsTous.filter(d => d.patientId === patientSelectionne.id);
+            remplirTableDocuments('documents-patient-corps', duPatient, 'Aucun document pour ce patient.');
+        }
+        const sansPatient = documentsTous.filter(d => !d.patientId);
+        remplirTableDocuments('documents-sans-patient-corps', sansPatient, 'Aucun document sans patient.');
+    }
+
+    function activerRenommage(tdNom, d) {
+        const nomActuel = d.nom;
+        tdNom.innerHTML = '';
+        const span = document.createElement('span');
+        span.className = 'renommage';
+        const input = document.createElement('input');
+        input.value = nomActuel;
+        input.pattern = '[A-Za-z0-9_\\-]{1,64}';
+        span.appendChild(input);
+        tdNom.appendChild(span);
+
+        const btnValider = document.createElement('button');
+        btnValider.className = 'lien';
+        btnValider.textContent = '✓';
+        const btnAnnuler = document.createElement('button');
+        btnAnnuler.className = 'lien';
+        btnAnnuler.textContent = '✕';
+
+        const confirmer = async () => {
+            const nouveauNom = input.value.trim();
+            if (!nouveauNom || nouveauNom === nomActuel) { rafraichirDocuments(); return; }
+            const r = await fetch('/api/documents/' + encodeURIComponent(nomActuel) +
+                '?nouveauNom=' + encodeURIComponent(nouveauNom), { method: 'PUT' });
+            if (!r.ok) {
+                const corps = await r.json().catch(() => ({}));
+                alert(corps.message || 'Renommage impossible');
+                return;
+            }
+            rafraichirDocuments();
+        };
+        input.onkeydown = e => {
+            if (e.key === 'Enter') confirmer();
+            if (e.key === 'Escape') rafraichirDocuments();
+        };
+        btnValider.onclick = confirmer;
+        btnAnnuler.onclick = () => rafraichirDocuments();
+
+        tdNom.appendChild(btnValider);
+        tdNom.appendChild(btnAnnuler);
+        input.focus();
+        input.select();
+    }
+
+    function activerDuplication(tdActions, d) {
+        tdActions.innerHTML = '';
+        const input = document.createElement('input');
+        input.style.width = '160px';
+        input.value = d.nom + '-copie';
+        input.pattern = '[A-Za-z0-9_\\-]{1,64}';
+        tdActions.appendChild(input);
+
+        const btnValider = document.createElement('button');
+        btnValider.className = 'lien';
+        btnValider.textContent = '✓ Créer la copie';
+        const btnAnnuler = document.createElement('button');
+        btnAnnuler.className = 'lien';
+        btnAnnuler.textContent = '✕';
+
+        const confirmer = async () => {
+            const nouveauNom = input.value.trim();
+            if (!nouveauNom) return;
+            const r = await fetch('/api/documents/' + encodeURIComponent(d.nom) +
+                '/dupliquer?nouveauNom=' + encodeURIComponent(nouveauNom), { method: 'POST' });
+            if (!r.ok) {
+                const corps = await r.json().catch(() => ({}));
+                alert(corps.message || 'Duplication impossible');
+                return;
+            }
+            await rafraichirDocuments();
+            ouvrir(nouveauNom);
+        };
+        input.onkeydown = e => {
+            if (e.key === 'Enter') confirmer();
+            if (e.key === 'Escape') rafraichirDocuments();
+        };
+        btnValider.onclick = confirmer;
+        btnAnnuler.onclick = () => rafraichirDocuments();
+
+        tdActions.appendChild(btnValider);
+        tdActions.appendChild(btnAnnuler);
+        input.focus();
+        input.select();
+    }
+
+    // --- Éditeur OnlyOffice ------------------------------------------------------------------
+
+    async function chargerApi() {
+        if (window.DocsAPI) return;
+        const { urlDocumentServer } = await (await fetch('/api/editeur/parametres')).json();
+        await new Promise((ok, ko) => {
+            const s = document.createElement('script');
+            s.src = urlDocumentServer + '/web-apps/apps/api/documents/api.js';
+            s.onload = ok;
+            s.onerror = () => ko(new Error('Document Server injoignable : ' + urlDocumentServer));
+            document.head.appendChild(s);
+        });
+    }
+
+    async function ouvrir(nom) {
+        await chargerApi();
+        const configuration = await (await fetch('/api/documents/' + encodeURIComponent(nom) + '/configuration')).json();
+        if (editeur) editeur.destroyEditor();
+        window.PocCr.documentCourant = nom;
+        document.getElementById('cible').innerHTML = '';
+        document.getElementById('vue-liste').classList.add('cache');
+        document.getElementById('vue-editeur').classList.add('actif');
+        document.getElementById('retour').hidden = false;
+        editeur = new DocsAPI.DocEditor('cible', configuration);
+    }
+
+    function fermerEditeur() {
+        if (editeur) { editeur.destroyEditor(); editeur = null; }
+        window.PocCr.documentCourant = null;
+        document.getElementById('vue-editeur').classList.remove('actif');
+        document.getElementById('vue-liste').classList.remove('cache');
+        document.getElementById('retour').hidden = true;
+        chargerPatients();
+        rafraichirDocuments();
+    }
+    document.getElementById('retour').onclick = fermerEditeur;
+
+    document.getElementById('creation').onsubmit = async e => {
+        e.preventDefault();
+        const nom = document.getElementById('nom').value;
+        const r = await fetch('/api/documents?nom=' + encodeURIComponent(nom), { method: 'POST' });
+        if (!r.ok) {
+            const corps = await r.json().catch(() => ({}));
+            alert(corps.message || 'Création impossible');
+            return;
+        }
+        document.getElementById('nom').value = '';
+        await rafraichirDocuments();
+        ouvrir(nom);
+    };
+
+    chargerPatients();
+    rafraichirDocuments();
+</script>
+</body>
+</html>

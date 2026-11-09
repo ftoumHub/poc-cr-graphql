@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: poccr
+      POSTGRES_USER: poccr
+      POSTGRES_PASSWORD: poccr
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  documentserver:
+    # Épingler la version utilisée en mission plutôt que latest.
+    image: onlyoffice/documentserver:latest
+    environment:
+      # POC uniquement : JWT désactivé et accès aux IP privées autorisé
+      # (le Document Server doit joindre le serveur Spring via host.docker.internal).
+      JWT_ENABLED: "false"
+      ALLOW_PRIVATE_IP_ADDRESS: "true"
+    ports:
+      - "8080:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  pg-data:

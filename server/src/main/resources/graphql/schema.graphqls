@@ -1,0 +1,131 @@
+# Les descriptions sont lues par le plugin OnlyOffice (introspection)
+# et affichées comme libellés dans l'onglet de sélection des données.
+
+type Query {
+    "Recherche par IPP exact ou début de nom / prénom (2 caractères minimum)"
+    rechercherPatients(texte: String!): [Patient!]!
+    patient(id: ID!): Patient
+}
+
+type Patient {
+    id: ID!
+    "IPP"
+    ipp: String!
+    "Nom de naissance"
+    nom: String!
+    "Prénom"
+    prenom: String
+    "Date de naissance"
+    dateNaissance: String!
+    "Âge (années révolues)"
+    age: Int!
+    "Sexe"
+    sexe: Sexe!
+    "Observations (biologie, constantes)"
+    observations(
+        "Catégorie d'observation"
+        categorie: CategorieObservation,
+        "Code (ex. HBA1C)"
+        code: String,
+        "Depuis : durée ISO (P3M, P1Y) ou date (2026-01-31)"
+        depuis: String
+    ): [Observation!]!
+    "Traitements"
+    traitements(
+        "En cours uniquement"
+        actifsSeulement: Boolean = false
+    ): [Traitement!]!
+    "Séjour de référence (en cours, sinon le dernier terminé)"
+    sejourCourant: Sejour
+    "Séjours"
+    sejours(
+        "En cours uniquement"
+        enCoursSeulement: Boolean = false
+    ): [Sejour!]!
+}
+
+# Les descriptions des valeurs d'enum servent de libellés dans le document.
+enum Sexe {
+    "Féminin" FEMININ
+    "Masculin" MASCULIN
+    "Indéterminé" INDETERMINE
+    "Inconnu" INCONNU
+}
+
+enum CategorieObservation {
+    "Biologie" BIOLOGIE
+    "Constante" CONSTANTE
+}
+
+enum TypeSejour {
+    "Hospitalisation complète" HOSPITALISATION_COMPLETE
+    "Hospitalisation de jour" HOSPITALISATION_JOUR
+    "Consultation externe" CONSULTATION
+    "Urgences" URGENCES
+}
+
+# Vocabulaire fermé repris du corpus PARHAF (projet PARTAGES, Health Data Hub).
+enum TypeDocument {
+    "Compte rendu d'hospitalisation" CRH
+    "Compte rendu de consultation" CRC
+    "Compte rendu opératoire" CRO
+    "Compte rendu d'anatomopathologie" ANAPATH
+    "Compte rendu des urgences" URGENCES
+    "Compte rendu d'accouchement" ACCOUCHEMENT
+    "Compte rendu de maternité" MATERNITE
+}
+
+type Sejour {
+    "N° de séjour"
+    numero: String!
+    "Type de séjour"
+    type: TypeSejour!
+    "Date d'entrée"
+    dateEntree: String!
+    "Date de sortie"
+    dateSortie: String
+    "Durée (jours)"
+    dureeJours: Int!
+    "Service"
+    service: String!
+    "Motif"
+    motif: String
+    "Médecin responsable"
+    medecinResponsable: String
+    "Type du compte rendu rédigé pour ce séjour"
+    typeDocument: TypeDocument
+    "Diagnostic principal (code CIM-10)"
+    diagnosticCim10Code: String
+    "Diagnostic principal (libellé)"
+    diagnosticCim10Libelle: String
+    "Acte principal (code CCAM)"
+    acteCcamCode: String
+    "Acte principal (libellé)"
+    acteCcamLibelle: String
+}
+
+type Observation {
+    "Catégorie"
+    categorie: CategorieObservation!
+    "Code"
+    code: String!
+    "Examen"
+    libelle: String
+    "Valeur"
+    valeur: String
+    "Unité"
+    unite: String
+    "Date"
+    dateObservation: String!
+}
+
+type Traitement {
+    "Molécule"
+    molecule: String!
+    "Posologie"
+    posologie: String
+    "Début"
+    dateDebut: String!
+    "Fin"
+    dateFin: String
+}

@@ -1,0 +1,23 @@
+/* OnlyOffice crée l'iframe du panneau avec scrolling="no" (PluginPanel.js) : la racine
+   html/body ne peut jamais défiler, quel que soit son overflow. On fait donc défiler
+   #contenu, un conteneur imbriqué distinct de la racine, que cet attribut ne contraint pas. */
+html, body { height: 100%; margin: 0; }
+body { font: 12px system-ui, sans-serif; color: #222; }
+#contenu { height: 100%; box-sizing: border-box; padding: 8px; overflow-y: auto; }
+section { margin-bottom: 14px; }
+h4 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; color: #666; }
+input[type=text], input:not([type]), select { width: 100%; box-sizing: border-box; padding: 4px; }
+button { padding: 4px 8px; cursor: pointer; }
+.liste { list-style: none; margin: 4px 0; padding: 0; max-height: 140px; overflow: auto; }
+.liste li { padding: 4px; cursor: pointer; border-bottom: 1px solid #eee; }
+.liste li:hover { background: #f0f4ff; }
+.patient { padding: 6px; background: #f6f6f6; border-radius: 4px; margin-top: 4px; }
+.bandeau { padding: 6px; background: #fff4d6; border: 1px solid #f0c36d; border-radius: 4px; margin-bottom: 6px; }
+.option { display: block; margin-top: 6px; }
+.champ { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+.collection { border: 1px solid #e3e3e3; border-radius: 4px; padding: 6px; margin: 6px 0; }
+.collection summary { cursor: pointer; font-weight: 600; }
+.collection .colonnes label { display: inline-block; margin-right: 8px; }
+.collection .argument { margin: 4px 0; }
+.etat { margin-top: 6px; color: #555; white-space: pre-line; }
+.erreur { color: #b00020; }

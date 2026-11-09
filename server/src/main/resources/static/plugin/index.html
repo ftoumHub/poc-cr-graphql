@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Données patient</title>
+    <!-- SDK des plugins servi par le Document Server (URL du POC, à paramétrer). -->
+    <script src="http://localhost:8080/sdkjs-plugins/v1/plugins.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="contenu">
+
+<section>
+    <h4>Patient</h4>
+    <div id="patient-verrou" class="bandeau" hidden></div>
+    <div id="patient-recherche">
+        <input id="recherche" placeholder="IPP ou nom (2 car. min.)" autocomplete="off">
+        <ul id="resultats" class="liste"></ul>
+    </div>
+    <div id="patient-courant" class="patient">Aucun patient sélectionné</div>
+    <label class="option"><input type="checkbox" id="mode-gabarit"> Mode gabarit (liaisons sans patient)</label>
+</section>
+
+<section>
+    <h4>Champs</h4>
+    <div id="champs">Chargement du schéma…</div>
+</section>
+
+<section>
+    <h4>Accords</h4>
+    <div id="accords"></div>
+</section>
+
+<section>
+    <h4>Document</h4>
+    <button id="rafraichir">Rafraîchir les données</button>
+    <label class="option"><input type="checkbox" id="auto"> Auto (30 s)</label>
+    <div id="etat" class="etat"></div>
+</section>
+
+<section>
+    <h4>Validation</h4>
+    <button id="valider">Valider le compte rendu</button>
+    <button id="valider-confirmation" hidden>Confirmer la validation</button>
+    <button id="valider-annulation" hidden>Annuler</button>
+    <div id="validation-info" class="etat"></div>
+</section>
+
+</div>
+<script src="scripts/liaisons.js"></script>
+<script src="scripts/graphql.js"></script>
+<script src="scripts/accords.js"></script>
+<script src="scripts/rendu.js"></script>
+<script src="scripts/code.js"></script>
+</body>
+</html>
