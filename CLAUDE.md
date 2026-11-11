@@ -48,6 +48,8 @@ API à confirmer explicitement sur la version réelle du Document Server :
 docker compose up -d                       # PostgreSQL :5432 + OnlyOffice Document Server :8080
 cd server && mvn spring-boot:run           # serveur :8081 (Flyway crée schéma + données fictives)
 cd server && mvn verify                    # tests Java
+# adaptateurs JDBC sur un vrai PostgreSQL : base JETABLE uniquement (les tests vident les documents)
+cd server && mvn test -Dtest=PersistanceDocumentsBaseReelleTest -Dpoc.base.test=jdbc:postgresql://localhost:5432/poccr_it
 for f in server/src/test/js/*.test.js; do node --test "$f"; done   # tests du plugin (Node ≥ 20)
 ```
 URLs : http://localhost:8081 (page hôte), http://localhost:8081/graphiql, http://localhost:8080 (Document Server).

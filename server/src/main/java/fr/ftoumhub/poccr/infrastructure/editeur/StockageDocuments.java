@@ -136,6 +136,14 @@ public class StockageDocuments {
         }
     }
 
+    public java.time.Instant derniereModification(String nom) {
+        try {
+            return Files.getLastModifiedTime(chemin(nom)).toInstant();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     /** Clé de version exigée par OnlyOffice : change à chaque sauvegarde. */
     public String cleVersion(String nom) {
         try {

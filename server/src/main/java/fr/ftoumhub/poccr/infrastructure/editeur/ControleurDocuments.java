@@ -1,9 +1,11 @@
 package fr.ftoumhub.poccr.infrastructure.editeur;
 
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
+import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu.CompteRenduDejaValide;
 import fr.ftoumhub.poccr.domaine.ResultatPage;
+import fr.ftoumhub.poccr.domaine.document.DocumentIntrouvable;
 import fr.ftoumhub.poccr.domaine.patient.FiltrePatients;
 import fr.ftoumhub.poccr.domaine.patient.Patient;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier.RequeteRejetee;
@@ -55,14 +57,16 @@ public class ControleurDocuments {
     private static final String VALIDEUR_POC = "Dr POC";
 
     private final StockageDocuments stockage;
+    private final GestionDocuments gestion;
     private final ValidationCompteRendu validation;
     private final ConsultationDossierPatient consultation;
     private final ProprietesEditeur proprietes;
     private final HttpClient http = HttpClient.newHttpClient();
 
-    public ControleurDocuments(StockageDocuments stockage, ValidationCompteRendu validation,
+    public ControleurDocuments(StockageDocuments stockage, GestionDocuments gestion, ValidationCompteRendu validation,
                                ConsultationDossierPatient consultation, ProprietesEditeur proprietes) {
         this.stockage = stockage;
+        this.gestion = gestion;
         this.validation = validation;
         this.consultation = consultation;
         this.proprietes = proprietes;
@@ -128,7 +132,7 @@ public class ControleurDocuments {
 
     @PostMapping("/documents")
     public ResponseEntity<Void> creer(@RequestParam String nom) {
-        stockage.creerVierge(nom);
+        gestion.creer(new NomDocument(nom), null);
         return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
     }
 
@@ -138,18 +142,14 @@ public class ControleurDocuments {
      */
     @PostMapping("/documents/{nom}/dupliquer")
     public ResponseEntity<Void> dupliquer(@PathVariable String nom, @RequestParam String nouveauNom) {
-        stockage.dupliquer(nom, nouveauNom);
+        gestion.dupliquer(new NomDocument(nom), new NomDocument(nouveauNom));
         return ResponseEntity.created(URI.create("/api/documents/" + nouveauNom)).build();
     }
 
-    /** Un compte rendu validé ne peut pas être renommé : son nom fait partie des données figées. */
+    /** Un compte rendu validé ne peut pas être renommé : son nom fait partie des données figées (409). */
     @PutMapping("/documents/{nom}")
     public ResponseEntity<?> renommer(@PathVariable String nom, @RequestParam String nouveauNom) {
-        if (validation.etat(new NomDocument(nom)).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "Un compte rendu validé ne peut pas être renommé"));
-        }
-        stockage.renommer(nom, nouveauNom);
+        gestion.renommer(new NomDocument(nom), new NomDocument(nouveauNom));
         return ResponseEntity.noContent().build();
     }
 
@@ -243,8 +243,8 @@ public class ControleurDocuments {
         return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
 
-    @ExceptionHandler(StockageDocuments.DocumentIntrouvable.class)
-    ResponseEntity<Map<String, String>> introuvable(StockageDocuments.DocumentIntrouvable e) {
+    @ExceptionHandler({StockageDocuments.DocumentIntrouvable.class, DocumentIntrouvable.class})
+    ResponseEntity<Map<String, String>> introuvable(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
     }
 

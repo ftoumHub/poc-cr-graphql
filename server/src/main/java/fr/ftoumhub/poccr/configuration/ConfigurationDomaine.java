@@ -1,9 +1,13 @@
 package fr.ftoumhub.poccr.configuration;
 
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
+import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.domaine.port.ArchiveValidations;
+import fr.ftoumhub.poccr.domaine.port.Documents;
+import fr.ftoumhub.poccr.domaine.port.Etablissements;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier;
+import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
 import fr.ftoumhub.poccr.domaine.port.Observations;
 import fr.ftoumhub.poccr.domaine.port.Patients;
 import fr.ftoumhub.poccr.domaine.port.Sejours;
@@ -14,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.UUID;
 
 @Configuration(proxyBeanMethods = false)
 public class ConfigurationDomaine {
@@ -34,5 +39,11 @@ public class ConfigurationDomaine {
     ValidationCompteRendu validationCompteRendu(ExecuteurRequetesDossier executeur, ArchiveValidations archive,
                                                 Clock horloge) {
         return new ValidationCompteRendu(executeur, archive, horloge);
+    }
+
+    @Bean
+    GestionDocuments gestionDocuments(Documents documents, FichiersDocuments fichiers, ArchiveValidations archive,
+                                      Etablissements etablissements, Clock horloge) {
+        return new GestionDocuments(documents, fichiers, archive, etablissements, horloge, UUID::randomUUID);
     }
 }
