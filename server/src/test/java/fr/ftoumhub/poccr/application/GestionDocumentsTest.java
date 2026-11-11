@@ -63,7 +63,7 @@ class GestionDocumentsTest {
 
     @Test
     void la_creation_d_un_document_cree_sa_fiche_et_son_fichier() {
-        Document cree = gestion.creer(CR, "Compte rendu d'hospitalisation");
+        Document cree = gestion.creer(CR, "Compte rendu d'hospitalisation", null);
 
         assertThat(gestion.document(CR)).contains(cree);
         assertThat(cree.etablissementId()).isEqualTo(CH_POC.id());
@@ -76,22 +76,22 @@ class GestionDocumentsTest {
     void un_echec_du_fichier_annule_la_fiche() {
         fichiers.enPanne = true;
 
-        assertThatThrownBy(() -> gestion.creer(CR, null)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> gestion.creer(CR, null, null)).isInstanceOf(IllegalStateException.class);
         assertThat(gestion.document(CR)).isEmpty();
     }
 
     @Test
     void un_nom_deja_pris_est_refuse() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
 
-        assertThatThrownBy(() -> gestion.creer(CR, null)).hasMessageContaining("existe déjà");
+        assertThatThrownBy(() -> gestion.creer(CR, null, null)).hasMessageContaining("existe déjà");
     }
 
     // --- renommage ------------------------------------------------------------------------------
 
     @Test
     void renommer_un_document_conserve_son_identifiant_et_ses_acteurs() {
-        Document cree = gestion.creer(CR, null);
+        Document cree = gestion.creer(CR, null, null);
         gestion.definirActeurs(CR, ACTEURS);
 
         Document renomme = gestion.renommer(CR, COPIE);
@@ -104,7 +104,7 @@ class GestionDocumentsTest {
 
     @Test
     void un_echec_du_deplacement_retablit_l_ancien_nom() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         fichiers.enPanne = true;
 
         assertThatThrownBy(() -> gestion.renommer(CR, COPIE)).isInstanceOf(IllegalStateException.class);
@@ -114,7 +114,7 @@ class GestionDocumentsTest {
 
     @Test
     void un_compte_rendu_valide_ne_se_renomme_pas() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         validations.valider(CR);
 
         assertThatThrownBy(() -> gestion.renommer(CR, COPIE)).isInstanceOf(DocumentFige.class);
@@ -124,12 +124,12 @@ class GestionDocumentsTest {
 
     @Test
     void la_copie_reprend_le_patient_et_les_acteurs_mais_pas_la_validation() {
-        Document original = gestion.creer(CR, "CRH");
+        Document original = gestion.creer(CR, "CRH", null);
         gestion.rattacherPatient(CR, MARTIN);
         gestion.definirActeurs(CR, ACTEURS);
         validations.valider(CR);
 
-        Document copie = gestion.dupliquer(CR, COPIE);
+        Document copie = gestion.dupliquer(CR, COPIE, null);
 
         assertThat(copie.id()).isNotEqualTo(original.id());
         assertThat(copie.patientId()).isEqualTo(MARTIN);
@@ -144,20 +144,47 @@ class GestionDocumentsTest {
 
     @Test
     void un_echec_de_la_copie_du_fichier_ne_laisse_pas_de_fiche() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         gestion.definirActeurs(CR, ACTEURS);
         fichiers.enPanne = true;
 
-        assertThatThrownBy(() -> gestion.dupliquer(CR, COPIE)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> gestion.dupliquer(CR, COPIE, null)).isInstanceOf(IllegalStateException.class);
         assertThat(gestion.document(COPIE)).isEmpty();
         assertThat(documents.acteurs).hasSize(1);
+    }
+
+    @Test
+    void un_document_cree_pour_un_patient_le_porte_des_sa_creation() {
+        assertThat(gestion.creer(CR, null, MARTIN).patientId()).isEqualTo(MARTIN);
+    }
+
+    @Test
+    void un_gabarit_s_instancie_en_le_copiant_pour_un_patient() {
+        gestion.creer(CR, "Gabarit CRH", null);
+        gestion.definirActeurs(CR, ACTEURS);
+
+        Document copie = gestion.dupliquer(CR, COPIE, MARTIN);
+
+        assertThat(copie.patientId()).isEqualTo(MARTIN);
+        assertThat(gestion.document(CR)).get().extracting(Document::patientId).isNull();
+        assertThat(gestion.acteurs(COPIE)).isEqualTo(ACTEURS);
+    }
+
+    @Test
+    void un_document_d_un_patient_ne_se_copie_pas_pour_un_autre() {
+        gestion.creer(CR, null, MARTIN);
+
+        assertThatThrownBy(() -> gestion.dupliquer(CR, COPIE, MARTINEZ))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("que pour ce patient");
+        assertThat(gestion.dupliquer(CR, COPIE, MARTIN).patientId()).isEqualTo(MARTIN);
     }
 
     // --- patient --------------------------------------------------------------------------------
 
     @Test
     void un_brouillon_peut_changer_de_patient() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         gestion.rattacherPatient(CR, MARTIN);
 
         assertThat(gestion.rattacherPatient(CR, MARTINEZ).patientId()).isEqualTo(MARTINEZ);
@@ -165,7 +192,7 @@ class GestionDocumentsTest {
 
     @Test
     void le_patient_d_un_compte_rendu_valide_ne_change_plus() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         gestion.rattacherPatient(CR, MARTIN);
         validations.valider(CR);
 
@@ -179,7 +206,7 @@ class GestionDocumentsTest {
 
     @Test
     void les_acteurs_d_un_compte_rendu_valide_sont_figes() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         gestion.definirActeurs(CR, ACTEURS);
         validations.valider(CR);
 
@@ -189,7 +216,7 @@ class GestionDocumentsTest {
 
     @Test
     void un_professionnel_inconnu_est_refuse() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         UUID inconnu = UUID.randomUUID();
 
         assertThatThrownBy(() -> gestion.definirActeurs(CR,
@@ -209,7 +236,7 @@ class GestionDocumentsTest {
 
     @Test
     void le_recensement_cree_une_fiche_pour_chaque_fichier_qui_n_en_a_pas() {
-        gestion.creer(CR, null);
+        gestion.creer(CR, null, null);
         NomDocument ancien = new NomDocument("ancien");
         fichiers.noms.add(ancien);
         fichiers.patients.put(ancien, MARTIN);

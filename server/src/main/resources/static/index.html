@@ -99,8 +99,10 @@
 <main>
     <div id="vue-liste">
         <form id="creation">
-            <input id="nom" placeholder="nom du nouveau document (a-z, 0-9, -, _)" pattern="[A-Za-z0-9_\-]{1,64}" required>
-            <button>Créer</button>
+            <input id="nom" placeholder="nom du nouveau document (a-z, 0-9, -, _)" pattern="[A-Za-z0-9_\-]{1,64}"
+                   aria-label="Nom du nouveau document" required>
+            <button id="creer-patient" disabled>Créer pour le patient sélectionné</button>
+            <button type="button" id="creer-gabarit">Créer un gabarit</button>
         </form>
 
         <section class="bloc">
@@ -132,7 +134,7 @@
         </section>
 
         <section class="bloc">
-            <h2>Documents sans patient (gabarits, brouillons non commencés)</h2>
+            <h2>Gabarits (documents sans patient)</h2>
             <table>
                 <thead><tr><th>Document</th><th>Statut</th><th>Signataire</th><th>Validé le</th><th></th></tr></thead>
                 <tbody id="documents-sans-patient-corps"></tbody>
@@ -266,6 +268,9 @@
         document.getElementById('section-documents-patient').hidden = false;
         document.getElementById('nom-patient-selectionne').textContent =
             p.nom + (p.prenom ? ' ' + p.prenom : '') + ' (' + p.ipp + ')';
+        const bouton = document.getElementById('creer-patient');
+        bouton.disabled = false;
+        bouton.textContent = 'Créer pour ' + p.nom + (p.prenom ? ' ' + p.prenom : '');
         rafraichirDocuments();
     }
 
@@ -320,8 +325,16 @@
         const btnDupliquer = document.createElement('button');
         btnDupliquer.className = 'lien';
         btnDupliquer.textContent = 'Dupliquer comme brouillon';
-        btnDupliquer.onclick = () => activerDuplication(tdActions, d);
+        btnDupliquer.onclick = () => activerDuplication(tdActions, d, null);
         tdActions.appendChild(btnDupliquer);
+        if (!d.patientId && patientSelectionne) {
+            const btnInstancier = document.createElement('button');
+            btnInstancier.className = 'lien';
+            btnInstancier.textContent = 'Instancier pour ' + patientSelectionne.nom;
+            btnInstancier.title = 'Copie du gabarit pour le patient sélectionné : ses champs seront alimentés';
+            btnInstancier.onclick = () => activerDuplication(tdActions, d, patientSelectionne);
+            tdActions.appendChild(btnInstancier);
+        }
         tr.appendChild(tdActions);
 
         return tr;
@@ -344,7 +357,7 @@
             remplirTableDocuments('documents-patient-corps', duPatient, 'Aucun document pour ce patient.');
         }
         const sansPatient = documentsTous.filter(d => !d.patientId);
-        remplirTableDocuments('documents-sans-patient-corps', sansPatient, 'Aucun document sans patient.');
+        remplirTableDocuments('documents-sans-patient-corps', sansPatient, 'Aucun gabarit.');
     }
 
     function activerRenommage(tdNom, d) {
@@ -390,11 +403,13 @@
         input.select();
     }
 
-    function activerDuplication(tdActions, d) {
+    /** Copie un document ; avec un patient, instancie un gabarit pour ce patient. */
+    function activerDuplication(tdActions, d, patient) {
         tdActions.innerHTML = '';
         const input = document.createElement('input');
         input.style.width = '160px';
-        input.value = d.nom + '-copie';
+        input.setAttribute('aria-label', 'Nom de la copie');
+        input.value = d.nom + (patient ? '-' + patient.ipp : '-copie');
         input.pattern = '[A-Za-z0-9_\\-]{1,64}';
         tdActions.appendChild(input);
 
@@ -409,7 +424,8 @@
             const nouveauNom = input.value.trim();
             if (!nouveauNom) return;
             const r = await fetch('/api/documents/' + encodeURIComponent(d.nom) +
-                '/dupliquer?nouveauNom=' + encodeURIComponent(nouveauNom), { method: 'POST' });
+                '/dupliquer?nouveauNom=' + encodeURIComponent(nouveauNom) +
+                (patient ? '&patientId=' + encodeURIComponent(patient.id) : ''), { method: 'POST' });
             if (!r.ok) {
                 const corps = await r.json().catch(() => ({}));
                 alert(corps.message || 'Duplication impossible');
@@ -695,10 +711,14 @@
     }
     document.getElementById('retour').onclick = fermerEditeur;
 
-    document.getElementById('creation').onsubmit = async e => {
-        e.preventDefault();
-        const nom = document.getElementById('nom').value;
-        const r = await fetch('/api/documents?nom=' + encodeURIComponent(nom), { method: 'POST' });
+    /** Un compte rendu est créé pour le patient sélectionné ; sans patient, c'est un gabarit. */
+    async function creerDocument(avecPatient) {
+        const champNom = document.getElementById('nom');
+        if (!champNom.reportValidity()) return;
+        const nom = champNom.value;
+        const r = await fetch('/api/documents?nom=' + encodeURIComponent(nom) +
+            (avecPatient && patientSelectionne ? '&patientId=' + encodeURIComponent(patientSelectionne.id) : ''),
+            { method: 'POST' });
         if (!r.ok) {
             const corps = await r.json().catch(() => ({}));
             alert(corps.message || 'Création impossible');
@@ -707,7 +727,9 @@
         document.getElementById('nom').value = '';
         await rafraichirDocuments();
         ouvrir(nom);
-    };
+    }
+    document.getElementById('creation').onsubmit = e => { e.preventDefault(); creerDocument(true); };
+    document.getElementById('creer-gabarit').onclick = () => creerDocument(false);
 
     chargerPatients();
     rafraichirDocuments();

@@ -158,9 +158,10 @@ public class ControleurDocuments {
                 patientId.orElse(null), signataire);
     }
 
+    /** Sans patient : gabarit. Avec : compte rendu de ce patient, fixé dès la création. */
     @PostMapping("/documents")
-    public ResponseEntity<Void> creer(@RequestParam String nom) {
-        gestion.creer(new NomDocument(nom), null);
+    public ResponseEntity<Void> creer(@RequestParam String nom, @RequestParam(required = false) UUID patientId) {
+        gestion.creer(new NomDocument(nom), null, patientConnu(patientId));
         return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
     }
 
@@ -169,9 +170,29 @@ public class ControleurDocuments {
      * brouillon éditable qui réutilise les content controls de la source, sans sa validation.
      */
     @PostMapping("/documents/{nom}/dupliquer")
-    public ResponseEntity<Void> dupliquer(@PathVariable String nom, @RequestParam String nouveauNom) {
-        gestion.dupliquer(new NomDocument(nom), new NomDocument(nouveauNom));
+    public ResponseEntity<Void> dupliquer(@PathVariable String nom, @RequestParam String nouveauNom,
+                                          @RequestParam(required = false) UUID patientId) {
+        gestion.dupliquer(new NomDocument(nom), new NomDocument(nouveauNom), patientConnu(patientId));
         return ResponseEntity.created(URI.create("/api/documents/" + nouveauNom)).build();
+    }
+
+    private UUID patientConnu(UUID patientId) {
+        if (patientId != null && consultation.patient(patientId).isEmpty()) {
+            throw new IllegalArgumentException("Patient inconnu : " + patientId);
+        }
+        return patientId;
+    }
+
+    /** Fiche du document courant, lue par le plugin : identifiant, patient (null = gabarit), statut. */
+    public record FicheDocument(UUID id, String nom, String titre, UUID patientId, boolean valide) {
+    }
+
+    @GetMapping("/documents/{nom}/fiche")
+    public FicheDocument fiche(@PathVariable String nom) {
+        NomDocument document = new NomDocument(nom);
+        Document fiche = gestion.document(document).orElseThrow(() -> new DocumentIntrouvable(document));
+        return new FicheDocument(fiche.id(), nom, fiche.titre(), fiche.patientId(),
+                validation.etat(document).isPresent());
     }
 
     /** Un compte rendu validé ne peut pas être renommé : son nom fait partie des données figées (409). */

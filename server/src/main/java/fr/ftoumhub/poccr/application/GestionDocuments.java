@@ -60,12 +60,18 @@ public class GestionDocuments {
         return documents.tous();
     }
 
-    public Document creer(NomDocument nom, String titre) {
+    /**
+     * Crée un document vierge. Avec un patient : compte rendu de ce patient (le plugin ne propose plus
+     * de choisir le patient). Sans patient : gabarit, dont les liaisons ne portent pas de patient ;
+     * il s'instancie par {@link #dupliquer} pour un patient.
+     */
+    public Document creer(NomDocument nom, String titre, UUID patientId) {
         verifierLibre(nom);
         Document document = Document.builder()
                 .id(identifiants.get())
                 .nom(nom)
                 .titre(titre)
+                .patientId(patientId)
                 .etablissementId(etablissements.parDefaut().id())
                 .creeLe(Instant.now(horloge))
                 .construire();
@@ -94,11 +100,24 @@ public class GestionDocuments {
         return renomme;
     }
 
-    /** La copie reprend le patient et les acteurs, pas la validation : elle démarre comme un brouillon. */
-    public Document dupliquer(NomDocument source, NomDocument nouveau) {
+    /**
+     * La copie reprend le patient et les acteurs, pas la validation : elle démarre comme un brouillon.
+     * Un gabarit (sans patient) peut être copié pour un patient : c'est ainsi qu'il s'instancie. Un document
+     * qui a déjà un patient ne se copie que pour ce patient (ses liaisons le désignent : identitovigilance).
+     *
+     * @param patientId patient de la copie ; null = celui de la source
+     */
+    public Document dupliquer(NomDocument source, NomDocument nouveau, UUID patientId) {
         Document original = existant(source);
+        if (patientId != null && original.patientId() != null && !patientId.equals(original.patientId())) {
+            throw new IllegalArgumentException("Le document " + source
+                    + " concerne déjà un patient : il ne peut être copié que pour ce patient");
+        }
         verifierLibre(nouveau);
         Document copie = original.copie(identifiants.get(), nouveau, Instant.now(horloge));
+        if (patientId != null) {
+            copie = copie.avecPatient(patientId);
+        }
         documents.enregistrer(copie);
         try {
             documents.remplacerActeurs(copie.id(), acteursDe(original));
