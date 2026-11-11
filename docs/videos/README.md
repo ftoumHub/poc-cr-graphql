@@ -16,13 +16,47 @@ après), le dépôt ne contient que des pointeurs texte.
 Prérequis : Node ≥ 20 et Google Chrome installés ; application démarrée avec une base **neuve**
 (les scénarios créent `gabarit-crh` puis `crh-martin-claire` et attendent les données fictives des migrations).
 
+### Sur une instance de test (recommandé)
+
+Pour ne pas toucher à l'application du port 8081 ni à ses documents, lancez une seconde instance sur
+le port **8082** (l'URL par défaut des scénarios), avec sa propre base et son propre dossier de documents.
+Les deux URLs `poc.editeur.*` sont **indispensables** : sans elles, le Document Server va chercher le
+document et le plugin sur le port 8081, et le scénario échoue sur « plugin non chargé ».
+
 ```bash
+# Base neuve (les migrations Flyway la remplissent au démarrage)
+docker compose exec postgres psql -U poccr -d poccr -c "CREATE DATABASE poccr_it OWNER poccr"
+
+# Instance de test sur 8082
+cd server && mvn -q package -DskipTests
+java -jar target/poc-cr-graphql-*.jar --server.port=8082 \
+  --spring.datasource.url=jdbc:postgresql://localhost:5432/poccr_it \
+  --poc.editeur.dossier-documents=/tmp/poc-videos-documents \
+  --poc.editeur.url-serveur-pour-doc-server=http://host.docker.internal:8082 \
+  --poc.editeur.url-serveur-pour-navigateur=http://localhost:8082 &
+
+# Enregistrement (dans un autre terminal, à la racine du projet)
 cd outils/videos
 npm install                          # Playwright, sans téléchargement de navigateur (Chrome du poste)
 npx playwright install ffmpeg        # encodeur vidéo de Playwright
+npm run gabarit                      # puis, une fois terminé :
+npm run patient
+cp videos/*.webm ../../docs/videos/
+```
+
+Nettoyage : arrêter l'instance du port 8082, puis
+`docker compose exec postgres psql -U poccr -d poccr -c "DROP DATABASE poccr_it"` et
+`rm -rf /tmp/poc-videos-documents`. Pour refaire un enregistrement, repartir d'une base neuve
+(supprimer puis recréer `poccr_it` avant de relancer l'instance).
+
+### Sur l'application principale
+
+Possible uniquement si sa base et ses documents sont neufs (voir « Réinitialiser » dans le guide utilisateur) :
+
+```bash
+cd outils/videos
 POC_URL=http://localhost:8081/ npm run gabarit
 POC_URL=http://localhost:8081/ npm run patient
-cp videos/*.webm ../../docs/videos/
 ```
 
 Sans `--video` (`node scenario-gabarit.js`), un scénario s'exécute plus vite et produit des captures
