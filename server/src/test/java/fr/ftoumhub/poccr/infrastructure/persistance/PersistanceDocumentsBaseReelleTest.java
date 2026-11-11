@@ -13,11 +13,13 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -30,15 +32,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Adaptateurs JDBC des documents et du référentiel, sur un vrai PostgreSQL migré par Flyway.
- * Désactivé par défaut (mvn verify ne dépend d'aucune base) ; à lancer sur une base JETABLE :
- *
- * <pre>mvn test -Dtest=PersistanceDocumentsBaseReelleTest -Dpoc.base.test=jdbc:postgresql://localhost:5432/poccr_it</pre>
- *
- * Les tests vident les tables de documents : ne jamais pointer sur la base de travail.
+ * Adaptateurs JDBC des documents et du référentiel, sur un PostgreSQL 16 jetable (Testcontainers,
+ * même image que docker-compose.yml) migré par Flyway avec les migrations de l'application.
+ * Ignoré, et non en échec, sur un poste sans Docker.
  */
-@EnabledIfSystemProperty(named = "poc.base.test", matches = "jdbc:postgresql:.+")
+@Testcontainers(disabledWithoutDocker = true)
 class PersistanceDocumentsBaseReelleTest {
+
+    @Container
+    private static final PostgreSQLContainer<?> BASE = new PostgreSQLContainer<>("postgres:16");
 
     // données fictives de la migration V7
     private static final UUID CH_POC = UUID.fromString("e0000000-0000-0000-0000-000000000001");
@@ -55,8 +57,8 @@ class PersistanceDocumentsBaseReelleTest {
 
     @BeforeAll
     static void migrer() {
-        DriverManagerDataSource source = new DriverManagerDataSource(System.getProperty("poc.base.test"),
-                System.getProperty("poc.base.utilisateur", "poccr"), System.getProperty("poc.base.mot-de-passe", "poccr"));
+        DriverManagerDataSource source =
+                new DriverManagerDataSource(BASE.getJdbcUrl(), BASE.getUsername(), BASE.getPassword());
         Flyway.configure().dataSource(source).load().migrate();
         jdbc = JdbcClient.create(source);
         documents = new DocumentsJdbc(jdbc, new TransactionTemplate(new DataSourceTransactionManager(source)));
