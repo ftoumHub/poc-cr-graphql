@@ -81,6 +81,16 @@ des données d'un autre patient est bloqué (bandeau rouge).
 
 Si l'onglet n'apparaît pas, ouvrez le menu **Modules complémentaires** (Plugins) de l'éditeur.
 
+Dans les listes de documents, les actions sont des **icônes** ; leur libellé s'affiche au survol :
+
+| Icône | Action |
+|---|---|
+| crayon (à côté du nom) | **Renommer** |
+| dossier ouvert | **Ouvrir** le document dans l'éditeur |
+| deux silhouettes | **Acteurs** : signataires et destinataires (§ 4.8) |
+| deux feuilles | **Dupliquer comme brouillon** |
+| feuille et silhouette (gabarits, patient sélectionné) | **Instancier pour <patient>** (§ 5) |
+
 ### 4.2 Choisir un champ dans l'arborescence
 
 L'onglet présente deux racines :
@@ -165,7 +175,7 @@ Le message en bas de l'onglet indique le nombre de champs mis à jour et l'heure
 
 ### 4.8 Désigner les signataires et destinataires
 
-Depuis la liste des documents (page d'accueil), cliquez sur **Acteurs** :
+Depuis la liste des documents (page d'accueil), cliquez sur l'icône **Acteurs** (deux silhouettes) :
 
 - **Signataires** : recherchez un professionnel (2 lettres du nom, du prénom ou du code). Le
   **premier** de la liste est le **signataire principal** : c'est lui qui valide le compte rendu.
@@ -209,7 +219,8 @@ patient**.
 3. Désignez si besoin ses **Acteurs** (signataires, destinataires) : ils seront repris par chaque
    compte rendu créé à partir du gabarit.
 4. Pour l'utiliser : **sélectionnez le patient**, puis, sur la ligne du gabarit (section
-   « Gabarits »), cliquez sur **Instancier pour <patient>**, nommez la copie et validez. La copie
+   « Gabarits »), cliquez sur l'icône **Instancier pour <patient>** (feuille et silhouette), nommez
+   la copie et validez. La copie
    s'ouvre ; **Rafraîchir les données** remplace tous les repères par les données du patient.
 
 Un document qui a déjà un patient ne peut être dupliqué que pour ce même patient.

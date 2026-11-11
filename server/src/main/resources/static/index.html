@@ -45,6 +45,12 @@
         button { padding: 4px 10px; cursor: pointer; }
         button.lien { background: none; border: none; color: #1557b0; cursor: pointer; padding: 2px 4px; }
         button.lien:hover { text-decoration: underline; }
+        button.icone { background: none; border: 1px solid transparent; border-radius: 4px; color: #1557b0;
+                       cursor: pointer; padding: 3px; line-height: 0; vertical-align: middle; }
+        button.icone:hover { background: #e8f0fe; border-color: #c6dafc; }
+        button.icone:focus-visible { outline: 2px solid #1557b0; outline-offset: 1px; }
+        button.icone svg { width: 18px; height: 18px; }
+        td.actions { white-space: nowrap; }
 
         #creation { display: flex; gap: 8px; margin-bottom: 20px; }
         #creation input { padding: 6px; flex: 0 0 260px; }
@@ -282,6 +288,32 @@
         return { brouillon: 'Brouillon', valide: 'Validé', scelle: 'Scellé' }[statut] || statut;
     }
 
+    /*
+     * Icônes Lucide 0.460.0 (https://lucide.dev), licence ISC :
+     * Copyright (c) Cole Bemis 2013-2022 (Feather, MIT) ; Copyright (c) Lucide Contributors 2022.
+     * Seuls les tracés utilisés sont recopiés, sans dépendance réseau.
+     */
+    const ICONES = {
+        ouvrir: '<path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/>',
+        renommer: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+        acteurs: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+        dupliquer: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+        instancier: '<path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 18a3 3 0 1 0-6 0"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><circle cx="12" cy="13" r="2"/>'
+    };
+
+    /** Bouton icône : le libellé de l'action s'affiche au survol (title) et sert de nom accessible. */
+    function boutonIcone(icone, libelle, action) {
+        const bouton = document.createElement('button');
+        bouton.type = 'button';
+        bouton.className = 'icone';
+        bouton.title = libelle;
+        bouton.setAttribute('aria-label', libelle);
+        bouton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+            + ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONES[icone] + '</svg>';
+        bouton.onclick = action;
+        return bouton;
+    }
+
     function construireLigneDocument(d) {
         const tr = document.createElement('tr');
 
@@ -290,11 +322,7 @@
         spanNom.textContent = d.nom;
         tdNom.appendChild(spanNom);
         tdNom.appendChild(document.createTextNode(' '));
-        const btnRenommer = document.createElement('button');
-        btnRenommer.className = 'lien';
-        btnRenommer.textContent = 'Renommer';
-        btnRenommer.onclick = () => activerRenommage(tdNom, d);
-        tdNom.appendChild(btnRenommer);
+        tdNom.appendChild(boutonIcone('renommer', 'Renommer', () => activerRenommage(tdNom, d)));
         tr.appendChild(tdNom);
 
         const tdStatut = document.createElement('td');
@@ -313,27 +341,16 @@
         tr.appendChild(tdValide);
 
         const tdActions = document.createElement('td');
-        const btnOuvrir = document.createElement('button');
-        btnOuvrir.textContent = 'Ouvrir';
-        btnOuvrir.onclick = () => ouvrir(d.nom);
-        tdActions.appendChild(btnOuvrir);
-        const btnActeurs = document.createElement('button');
-        btnActeurs.className = 'lien';
-        btnActeurs.textContent = 'Acteurs';
-        btnActeurs.onclick = () => ouvrirActeurs(d.nom);
-        tdActions.appendChild(btnActeurs);
-        const btnDupliquer = document.createElement('button');
-        btnDupliquer.className = 'lien';
-        btnDupliquer.textContent = 'Dupliquer comme brouillon';
-        btnDupliquer.onclick = () => activerDuplication(tdActions, d, null);
-        tdActions.appendChild(btnDupliquer);
+        tdActions.className = 'actions';
+        tdActions.appendChild(boutonIcone('ouvrir', 'Ouvrir', () => ouvrir(d.nom)));
+        tdActions.appendChild(boutonIcone('acteurs', 'Acteurs', () => ouvrirActeurs(d.nom)));
+        tdActions.appendChild(boutonIcone('dupliquer', 'Dupliquer comme brouillon',
+            () => activerDuplication(tdActions, d, null)));
         if (!d.patientId && patientSelectionne) {
-            const btnInstancier = document.createElement('button');
-            btnInstancier.className = 'lien';
-            btnInstancier.textContent = 'Instancier pour ' + patientSelectionne.nom;
-            btnInstancier.title = 'Copie du gabarit pour le patient sélectionné : ses champs seront alimentés';
-            btnInstancier.onclick = () => activerDuplication(tdActions, d, patientSelectionne);
-            tdActions.appendChild(btnInstancier);
+            const patient = patientSelectionne;
+            tdActions.appendChild(boutonIcone('instancier',
+                'Instancier pour ' + patient.nom + (patient.prenom ? ' ' + patient.prenom : ''),
+                () => activerDuplication(tdActions, d, patient)));
         }
         tr.appendChild(tdActions);
 
