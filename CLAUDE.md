@@ -23,21 +23,15 @@ Fonctionnalités en place :
 
 ## ⚠️ État de vérification — à traiter en premier
 
-Le code a été écrit dans un environnement **sans accès à Maven Central ni à OnlyOffice** :
-- `mvn verify` n'a **jamais** été exécuté. Seuls `domaine/` et `application/` ont été compilés
-  (javac) et leurs règles vérifiées hors JUnit. Les adaptateurs Spring (`infrastructure/`,
-  `configuration/`) et les tests JUnit n'ont **jamais compilé** : attendre quelques corrections.
-- Les migrations V1 à V4 et les requêtes SQL des adaptateurs JDBC ont été exécutées sur un
-  PostgreSQL 16 réel : elles passent.
-- Les tests JS du plugin passent (21/21) mais **simulent** l'éditeur : ils vérifient ce que le
-  plugin envoie, pas qu'OnlyOffice l'accepte.
+État au 2026-11-11 :
+- `mvn verify` est **vert** (21 tests JUnit, JDK 21) ; tests JS du plugin verts (21/21, Node 20).
+- Le parcours a tourné sur un vrai Document Server : un compte rendu (`demo`) a été validé puis
+  scellé le 2026-11-08 ; GraphQL, API documents, plugin servi et accès Document Server → Spring
+  vérifiés le 2026-11-11.
+- Les tests JS **simulent** l'éditeur : ils vérifient ce que le plugin envoie, pas qu'OnlyOffice
+  l'accepte. Les points ci-dessous n'ont pas été confirmés un par un.
 
-Première tâche à la reprise :
-1. `cd server && mvn verify` puis corriger jusqu'au vert (sans affaiblir les tests).
-2. `docker compose up -d`, `mvn spring-boot:run`, ouvrir http://localhost:8081 et dérouler le
-   parcours du guide utilisateur. Corriger les écarts d'API OnlyOffice listés plus bas.
-
-API à confirmer sur la version réelle du Document Server :
+API à confirmer explicitement sur la version réelle du Document Server :
 - plugin : `"type": "panelRight"` / `isInsideMode`, `isViewer: true`, chargement de
   `http://localhost:8080/sdkjs-plugins/v1/plugins.js` ;
 - méthodes : `GetAllContentControls`, `InsertAndReplaceContentControls` (insertion sans
@@ -161,7 +155,9 @@ Changer ce format = incrémenter `v` et garder la lecture des anciens tags.
 
 ## Prochains chantiers (par priorité suggérée)
 
-1. Faire passer `mvn verify` et le parcours manuel complet (voir plus haut).
+1. **Contrat CDF** (branche `feature/contrat-champs-fusion`) : `docs/hm/CDF.xlsx` complété par
+   `outils/cdf/generer.py`, feuille de route dans `docs/hm/migration-contrat-cdf.html` ; lot en cours :
+   document, signataires, destinataires (`docs/conception/2026-11-11-document-signataires-destinataires.md`).
 2. **Rattacher le document à un séjour** (question ouverte) : verrouiller le numéro de venue dans
    les liaisons comme le patient (`"sv":"V2026000101"`), exposer `Patient.sejour(numero:)`, sinon
    `sejourCourant` peut basculer sur une nouvelle venue avant validation.
