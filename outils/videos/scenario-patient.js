@@ -40,7 +40,8 @@ const SORTIE = path.join(__dirname, VIDEO ? 'videos' : 'explo');
   const nomCopie = ligneGabarit.locator('input');
   await nomCopie.fill('');
   await o.taper('crh-martin-claire');
-  await o.legende('« Instancier » copie le gabarit pour ce patient, avec ses signataires et destinataires', null, 3000);
+  await o.legende('L\'icône « Instancier » copie le gabarit pour ce patient, avec ses signataires et destinataires',
+    'Feuille et silhouette, en bout de ligne du gabarit ; le libellé de chaque icône s\'affiche au survol.', 3500);
   await o.cliquer(ligneGabarit.getByRole('button', { name: /Créer la copie/ }));
   const plugin = await o.attendrePlugin();
   await o.pause(2500);

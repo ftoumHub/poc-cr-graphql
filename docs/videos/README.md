@@ -9,7 +9,7 @@ après), le dépôt ne contient que des pointeurs texte.
 | Vidéo | Durée | Contenu |
 |---|---|---|
 | [`1-creation-gabarit.webm`](1-creation-gabarit.webm) | ≈ 2 min | Créer un **gabarit** de compte rendu d'hospitalisation, sans patient : saisie du texte, choix des champs dans l'arborescence (clic = réglages et aperçu, double-clic = insertion), accord « né/née », sous-champs du séjour, tableau de biologie filtré (catégorie, « depuis P3M », colonnes), signataires du document (valeurs séparées par des virgules), puis désignation des acteurs du gabarit. |
-| [`2-compte-rendu-patient.webm`](2-compte-rendu-patient.webm) | ≈ 1 min 45 | **Instancier** le gabarit pour MARTIN Claire : les repères «…» sont remplacés par ses données (une seule requête GraphQL), aperçu d'un champ, **validation** (le serveur fige les données, le signataire principal valide), **scellement** à la fermeture, réouverture en lecture seule. |
+| [`2-compte-rendu-patient.webm`](2-compte-rendu-patient.webm) | ≈ 1 min 40 | **Instancier** le gabarit pour MARTIN Claire : les repères «…» sont remplacés par ses données (une seule requête GraphQL), aperçu d'un champ, **validation** (le serveur fige les données, le signataire principal valide), **scellement** à la fermeture, réouverture en lecture seule. |
 
 ## Régénérer
 

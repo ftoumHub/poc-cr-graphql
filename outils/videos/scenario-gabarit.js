@@ -139,7 +139,7 @@ const SORTIE = path.join(__dirname, VIDEO ? 'videos' : 'explo');
   await o.pause(1500);
   const ligneGabarit = page.locator('#documents-sans-patient-corps tr', { hasText: 'gabarit-crh' });
   await o.legende('On désigne les acteurs du gabarit : ils seront repris par chaque compte rendu',
-    'Bouton « Acteurs » : signataires (le premier valide le compte rendu) et destinataires.', 3500);
+    'Icône « Acteurs » (deux silhouettes) : signataires (le premier valide le compte rendu) et destinataires.', 3500);
   await o.cliquer(ligneGabarit.getByRole('button', { name: 'Acteurs' }));
   const dialogue = page.locator('#acteurs');
   const rechercher = async (cible, texte) => {
