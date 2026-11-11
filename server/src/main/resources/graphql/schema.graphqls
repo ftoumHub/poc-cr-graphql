@@ -129,3 +129,198 @@ type Traitement {
     "Fin"
     dateFin: String
 }
+
+# ---------------------------------------------------------------------------------------------
+# Document courant : signataires, destinataires, établissement émetteur, validation.
+# Noms repris du contrat CDF (docs/hm/CDF.xlsx, feuille Types). Les liaisons de cette racine ne
+# portent pas l'identifiant du document : c'est toujours le document en cours d'édition.
+# ---------------------------------------------------------------------------------------------
+
+extend type Query {
+    "Document : signataires, destinataires, établissement émetteur, validation"
+    document(id: ID!): Document
+}
+
+type Document {
+    id: ID!
+    "Titre du document"
+    titre: String
+    "Date de création"
+    dateCreation: String!
+    "Heure de création"
+    heureCreation: String!
+    "Date de valeur"
+    dateValeur: String
+    "Heure de valeur"
+    heureValeur: String
+    "Auteur du document"
+    psCreateur: Medecin
+    "Établissement émetteur"
+    etablissement: Etablissement
+    "Signataire principal"
+    signatairePrincipal: Signataire
+    "Signataires secondaires"
+    signatairesSecondaires: [Signataire!]!
+    "Signataires (principal en premier)"
+    signataires: [Signataire!]!
+    "Destinataire principal"
+    destinataire: Destinataire
+    "Destinataires en copie"
+    destinatairesEnCopie: [Destinataire!]!
+    "Destinataires extérieurs"
+    destinatairesExterieurs: [DestinataireExterieur!]!
+    "Copie adressée au patient"
+    destinatairePatient: Boolean!
+    "Validation du document"
+    validation: ValidationDocument
+}
+
+type Signataire {
+    "Professionnel signataire"
+    medecin: Medecin!
+    "Identifiant national transcodé"
+    rppsTranscode: String
+}
+
+type Destinataire {
+    "Professionnel destinataire"
+    medecin: Medecin!
+    "Civilité"
+    civilite: String
+    "Nom"
+    nom: String!
+    "Prénom"
+    prenom: String
+    "Libellé (titre, prénom, nom)"
+    libelle: String!
+    "Code"
+    code: String!
+    "Identifiant national"
+    identifiantNational: String
+    "Spécialités"
+    specialites: String
+    "Courriel"
+    email: String
+    "Téléphone"
+    telephone: String
+    "Autre téléphone"
+    telephoneAutre: String
+    "Télécopie"
+    fax: String
+    "Adresse"
+    adresse: Adresse
+    "N° ID exemplaire"
+    idExemplaire: String
+}
+
+type DestinataireExterieur {
+    "Nom"
+    nom: String!
+    "Prénom"
+    prenom: String
+    "Courriel"
+    email: String
+}
+
+type Medecin {
+    "Code"
+    code: String!
+    "Titre médecin"
+    titre: String
+    "Nom"
+    nom: String!
+    "Prénom"
+    prenom: String
+    "Courriel"
+    email: String
+    "Qualité du P.S."
+    qualite: String
+    "Type de médecin"
+    typeMedecin: String!
+    "Spécialités"
+    specialitesConcatenees: String
+    "Identifiant national transcodé"
+    rppsTranscode: String
+    "Identifiant national"
+    identifiantNationalActif: IdentifiantNational
+    "Immatriculations"
+    immatriculations: [Immatriculation!]!
+    "Adresse"
+    adresse("Type d'adresse" type: TypeAdresse = PROFESSIONNELLE): Adresse
+}
+
+type IdentifiantNational {
+    "Identifiant national"
+    identifiantNational: String!
+    "Identifiant national transcodé"
+    rppsTranscode: String
+}
+
+type Immatriculation {
+    "N° ADELI"
+    adeli: String!
+}
+
+type Etablissement {
+    "Libellé"
+    libelle: String!
+    "FINESS"
+    finess: String!
+    "SIRET"
+    siret: String
+    "Courriel"
+    email: String
+    "Adresse"
+    adresse: Adresse
+    "Téléphone principal"
+    telephonePrincipal: Telephone
+    "Téléphone secondaire"
+    telephoneSecondaire: Telephone
+}
+
+type Adresse {
+    "Adresse ligne 1"
+    ligne1: String
+    "Adresse ligne 2"
+    ligne2: String
+    "Adresse ligne 3"
+    ligne3: String
+    "Code postal"
+    codePostal: String
+    "Ville"
+    ville: String
+    "Pays"
+    pays: String
+    "Téléphone"
+    telephone("Type de téléphone" type: TypeTelephone = FIXE): Telephone
+}
+
+type Telephone {
+    "Numéro"
+    numero: String!
+}
+
+type ValidationDocument {
+    "Date de validation"
+    dateValidation: String!
+    "Heure de validation"
+    heureValidation: String!
+    "Professionnel validant"
+    psValidant: Medecin
+}
+
+enum TypeAdresse {
+    "Professionnelle" PROFESSIONNELLE
+    "Personnelle" PERSONNELLE
+    "Principale" PRINCIPALE
+    "Naissance" NAISSANCE
+}
+
+enum TypeTelephone {
+    "Fixe" FIXE
+    "Portable" PORTABLE
+    "Personnel" PERSONNEL
+    "Principal" PRINCIPAL
+    "Télécopie" FAX
+    "Autre" AUTRE
+}

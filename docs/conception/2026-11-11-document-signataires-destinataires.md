@@ -404,12 +404,25 @@ champs `Destinataire.*` délégués au professionnel ; `heure*` / `date*` format
 
 ### 6.3 Champs du contrat non alimentés dans ce lot
 
-Déclarés dans le schéma (pour que les liaisons restent valides) mais résolus à `null` :
-`Document.loginCreateur`, les champs PS « à plat » de `Document` et `ValidationDocument`
-(`codePs`, `civilitePs`, `nomPrenomPs`… : doublons de `psCreateur` / `psValidant` hérités du CDF, à
-déprécier), `annuleEtRemplace`, `validationParOrdre`, `actesDrimbox`, `Medecin.image`,
-`Immatriculation.*` sauf `adeli`, `Signataire.rppsTranscode` (sémantique « transcodé » à préciser).
-Le rapport de couverture du lot 6 les listera.
+Déclarés dans le schéma mais résolus à `null` (resolver explicite) : `Medecin.rppsTranscode`,
+`Signataire.rppsTranscode`, `IdentifiantNational.rppsTranscode` (sémantique « transcodé » à préciser),
+`ValidationDocument.psValidant` (alimenté à l'étape 5, valideur = signataire principal).
+`Immatriculation` n'expose que `adeli`.
+
+**Non déclarés** (écart à la proposition initiale, réalisé ainsi) : les champs PS « à plat » de
+`Document` et `ValidationDocument` (`codePs`, `civilitePs`, `nomPrenomPs`, `categoriePs`,
+`identifiantNationalPs`, `loginCreateur`), doublons de `psCreateur` / `psValidant` hérités de
+l'extraction CDF ; `annuleEtRemplace`, `validationParOrdre`, `actesDrimbox`, `Medecin.image`. Les
+déclarer sans les alimenter n'apporterait rien tant que le plugin n'insère pas de champ `document`
+(lot 5) ; ils seront ajoutés, ou dépréciés dans le contrat, à ce moment-là.
+
+### 6.4 Chargement groupé — réalisé
+
+Quatre chargeurs : acteurs (par document), professionnels, coordonnées (adresses et téléphones d'un
+propriétaire, lus ensemble) et établissements. Aucun champ n'enchaîne deux chargeurs : un chargement
+lancé après la répartition d'un niveau ne serait pas groupé. Le test
+`le_nombre_de_lectures_ne_depend_pas_du_nombre_d_acteurs` compare un document à 2 acteurs et un
+document à 12 : mêmes lectures, une par niveau de requête.
 
 ## 7. REST et page hôte
 

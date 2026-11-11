@@ -1,5 +1,6 @@
 package fr.ftoumhub.poccr.configuration;
 
+import fr.ftoumhub.poccr.application.ConsultationDocuments;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
 import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
@@ -10,6 +11,7 @@ import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier;
 import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
 import fr.ftoumhub.poccr.domaine.port.Observations;
 import fr.ftoumhub.poccr.domaine.port.Patients;
+import fr.ftoumhub.poccr.domaine.port.ProfessionnelsSante;
 import fr.ftoumhub.poccr.domaine.port.Sejours;
 import fr.ftoumhub.poccr.domaine.port.Traitements;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,5 +47,11 @@ public class ConfigurationDomaine {
     GestionDocuments gestionDocuments(Documents documents, FichiersDocuments fichiers, ArchiveValidations archive,
                                       Etablissements etablissements, Clock horloge) {
         return new GestionDocuments(documents, fichiers, archive, etablissements, horloge, UUID::randomUUID);
+    }
+
+    @Bean
+    ConsultationDocuments consultationDocuments(Documents documents, ProfessionnelsSante professionnels,
+                                                Etablissements etablissements, ArchiveValidations archive) {
+        return new ConsultationDocuments(documents, professionnels, etablissements, archive);
     }
 }
