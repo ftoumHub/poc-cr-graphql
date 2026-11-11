@@ -8,16 +8,42 @@ section { margin-bottom: 14px; }
 h4 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; color: #666; }
 input[type=text], input:not([type]), select { width: 100%; box-sizing: border-box; padding: 4px; }
 button { padding: 4px 8px; cursor: pointer; }
-.liste { list-style: none; margin: 4px 0; padding: 0; max-height: 140px; overflow: auto; }
-.liste li { padding: 4px; cursor: pointer; border-bottom: 1px solid #eee; }
-.liste li:hover { background: #f0f4ff; }
 .patient { padding: 6px; background: #f6f6f6; border-radius: 4px; margin-top: 4px; }
 .bandeau { padding: 6px; background: #fff4d6; border: 1px solid #f0c36d; border-radius: 4px; margin-bottom: 6px; }
 .option { display: block; margin-top: 6px; }
-.champ { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
 .collection { border: 1px solid #e3e3e3; border-radius: 4px; padding: 6px; margin: 6px 0; }
 .collection summary { cursor: pointer; font-weight: 600; }
 .collection .colonnes label { display: inline-block; margin-right: 8px; }
 .collection .argument { margin: 4px 0; }
 .etat { margin-top: 6px; color: #555; white-space: pre-line; }
 .erreur { color: #b00020; }
+.bandeau.erreur { background: #fde8e8; border-color: #e0a0a0; color: #8a1c1c; }
+.aide { color: #777; margin: 0 0 4px; }
+
+/* Arborescence des champs */
+#arbre, #arbre ul { list-style: none; margin: 0; padding: 0; }
+#arbre ul { padding-left: 14px; }
+#arbre { max-height: 46vh; overflow-y: auto; border: 1px solid #e3e3e3; border-radius: 4px; padding: 2px 0; }
+#arbre [role=treeitem] { outline: none; }
+#arbre .ligne { display: flex; align-items: center; gap: 4px; padding: 2px 4px; cursor: default;
+                user-select: none; border-radius: 3px; }
+#arbre .ligne:hover { background: #f0f4ff; }
+#arbre [aria-selected=true] > .ligne { background: #dde8ff; }
+#arbre [role=treeitem]:focus-visible > .ligne { box-shadow: inset 0 0 0 2px #4a7bd8; }
+#arbre .basculeur { width: 12px; flex: none; color: #777; cursor: pointer; text-align: center; }
+#arbre .libelle { flex: 1; }
+#arbre .noeud-racine > .ligne .libelle { font-weight: 600; }
+#arbre .noeud-valeur > .ligne .libelle { color: #1d3d7a; }
+#arbre .badge { font-size: 10px; color: #666; background: #eee; border-radius: 6px; padding: 0 5px; }
+#arbre li.vide { color: #999; font-style: italic; padding: 2px 4px 2px 20px; }
+
+/* Réglages de la sélection */
+.reglages:empty { display: none; }
+.reglages { margin-top: 6px; padding: 6px; border: 1px solid #e3e3e3; border-radius: 4px; background: #fafafa; }
+.reglages .titre { font-weight: 600; margin-bottom: 3px; }
+.reglages .argument { margin: 4px 0; }
+.reglages .argument label { display: block; color: #555; }
+.reglages fieldset.colonnes { border: none; margin: 4px 0; padding: 0; }
+.reglages fieldset.colonnes legend { color: #555; padding: 0; }
+.reglages fieldset.colonnes label { display: block; }
+.reglages .apercu { margin-top: 4px; color: #333; font-style: italic; white-space: pre-line; }

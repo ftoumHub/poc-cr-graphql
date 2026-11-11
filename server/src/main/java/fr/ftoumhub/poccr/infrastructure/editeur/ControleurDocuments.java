@@ -1,9 +1,17 @@
 package fr.ftoumhub.poccr.infrastructure.editeur;
 
+import fr.ftoumhub.poccr.application.ConsultationDocuments;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
+import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu.CompteRenduDejaValide;
+import fr.ftoumhub.poccr.application.ValidationCompteRendu.ValidationImpossible;
 import fr.ftoumhub.poccr.domaine.ResultatPage;
+import fr.ftoumhub.poccr.domaine.document.ActeursDocument;
+import fr.ftoumhub.poccr.domaine.document.Document;
+import fr.ftoumhub.poccr.domaine.document.DocumentIntrouvable;
+import fr.ftoumhub.poccr.domaine.document.Signataire;
+import fr.ftoumhub.poccr.domaine.professionnel.ProfessionnelSante;
 import fr.ftoumhub.poccr.domaine.patient.FiltrePatients;
 import fr.ftoumhub.poccr.domaine.patient.Patient;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier.RequeteRejetee;
@@ -33,7 +41,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Hébergement minimal pour OnlyOffice Document Server + validation des comptes rendus.
@@ -51,20 +61,25 @@ public class ControleurDocuments {
     private static final int PRET_A_ENREGISTRER = 2;
     private static final int ENREGISTREMENT_FORCE = 6;
 
-    /** En attendant l'authentification : identité fixe du rédacteur. */
-    private static final String VALIDEUR_POC = "Dr POC";
+    /** En attendant l'authentification : nom de l'utilisateur affiché par l'éditeur (le valideur est le signataire principal). */
+    private static final String UTILISATEUR_EDITEUR = "Dr POC";
 
     private final StockageDocuments stockage;
+    private final GestionDocuments gestion;
     private final ValidationCompteRendu validation;
     private final ConsultationDossierPatient consultation;
+    private final ConsultationDocuments consultationDocuments;
     private final ProprietesEditeur proprietes;
     private final HttpClient http = HttpClient.newHttpClient();
 
-    public ControleurDocuments(StockageDocuments stockage, ValidationCompteRendu validation,
-                               ConsultationDossierPatient consultation, ProprietesEditeur proprietes) {
+    public ControleurDocuments(StockageDocuments stockage, GestionDocuments gestion, ValidationCompteRendu validation,
+                               ConsultationDossierPatient consultation, ConsultationDocuments consultationDocuments,
+                               ProprietesEditeur proprietes) {
         this.stockage = stockage;
+        this.gestion = gestion;
         this.validation = validation;
         this.consultation = consultation;
+        this.consultationDocuments = consultationDocuments;
         this.proprietes = proprietes;
     }
 
@@ -94,41 +109,59 @@ public class ControleurDocuments {
         return new ResultatPage<>(resultat.elements().stream().map(PatientResume::de).toList(), resultat.total());
     }
 
-    /** Un repère par document : patient (si connu) et statut de validation. */
-    public record ResumeDocument(String nom, String statut, String valideLe,
-                                 String patientNom, String patientPrenom, String patientIpp, UUID patientId) {
+    /** Un repère par document : identifiant, patient (si connu), signataire principal et statut de validation. */
+    public record ResumeDocument(UUID id, String nom, String statut, String valideLe,
+                                 String patientNom, String patientPrenom, String patientIpp, UUID patientId,
+                                 String signatairePrincipal) {
     }
 
     @GetMapping("/documents")
     public List<ResumeDocument> lister() {
-        return stockage.lister().stream().map(this::resume).toList();
+        Map<String, Document> fiches = gestion.tous().stream()
+                .collect(Collectors.toMap(d -> d.nom().valeur(), d -> d));
+        Map<UUID, ActeursDocument> acteurs = consultationDocuments.acteursDe(
+                fiches.values().stream().map(Document::id).collect(Collectors.toSet()));
+        Set<UUID> principaux = acteurs.values().stream()
+                .flatMap(a -> a.signatairePrincipal().stream()).map(Signataire::professionnelId)
+                .collect(Collectors.toSet());
+        Map<UUID, ProfessionnelSante> ps = consultationDocuments.professionnelsDe(principaux);
+        return stockage.lister().stream().map(nom -> {
+            Document fiche = fiches.get(nom);
+            String signataire = fiche == null ? null : acteurs.getOrDefault(fiche.id(), ActeursDocument.AUCUN)
+                    .signatairePrincipal().map(s -> ps.get(s.professionnelId()))
+                    .map(ProfessionnelSante::libelle).orElse(null);
+            return resume(nom, fiche, signataire);
+        }).toList();
     }
 
-    private ResumeDocument resume(String nom) {
+    private ResumeDocument resume(String nom, Document fiche, String signataire) {
+        UUID id = fiche == null ? null : fiche.id();
         Optional<Validation> v = validation.etat(new NomDocument(nom));
         if (v.isPresent()) {
             Validation val = v.get();
             Optional<Patient> patient = consultation.patient(val.patientId());
-            return new ResumeDocument(nom, val.estScelle() ? "scelle" : "valide", val.valideLe().toString(),
+            return new ResumeDocument(id, nom, val.estScelle() ? "scelle" : "valide", val.valideLe().toString(),
                     patient.map(Patient::nom).orElse(null),
                     patient.map(Patient::prenom).orElse(null),
                     patient.map(p -> p.ipp().valeur()).orElse(null),
-                    val.patientId());
+                    val.patientId(), signataire);
         }
-        // Brouillon : pas de validation, donc pas de trace serveur du patient — on la retrouve
-        // en lisant directement les tags des content controls (lecture au mieux, voir StockageDocuments).
-        Optional<UUID> patientId = stockage.patientLie(nom);
+        // Brouillon : patient de la fiche ; à défaut (plugin antérieur au rattachement), celui des
+        // tags des content controls (lecture au mieux, voir StockageDocuments).
+        Optional<UUID> patientId = fiche != null && fiche.patientId() != null
+                ? Optional.of(fiche.patientId()) : stockage.patientLie(nom);
         Optional<Patient> patient = patientId.flatMap(consultation::patient);
-        return new ResumeDocument(nom, "brouillon", null,
+        return new ResumeDocument(id, nom, "brouillon", null,
                 patient.map(Patient::nom).orElse(null),
                 patient.map(Patient::prenom).orElse(null),
                 patient.map(p -> p.ipp().valeur()).orElse(null),
-                patientId.orElse(null));
+                patientId.orElse(null), signataire);
     }
 
+    /** Sans patient : gabarit. Avec : compte rendu de ce patient, fixé dès la création. */
     @PostMapping("/documents")
-    public ResponseEntity<Void> creer(@RequestParam String nom) {
-        stockage.creerVierge(nom);
+    public ResponseEntity<Void> creer(@RequestParam String nom, @RequestParam(required = false) UUID patientId) {
+        gestion.creer(new NomDocument(nom), null, patientConnu(patientId));
         return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
     }
 
@@ -137,19 +170,35 @@ public class ControleurDocuments {
      * brouillon éditable qui réutilise les content controls de la source, sans sa validation.
      */
     @PostMapping("/documents/{nom}/dupliquer")
-    public ResponseEntity<Void> dupliquer(@PathVariable String nom, @RequestParam String nouveauNom) {
-        stockage.dupliquer(nom, nouveauNom);
+    public ResponseEntity<Void> dupliquer(@PathVariable String nom, @RequestParam String nouveauNom,
+                                          @RequestParam(required = false) UUID patientId) {
+        gestion.dupliquer(new NomDocument(nom), new NomDocument(nouveauNom), patientConnu(patientId));
         return ResponseEntity.created(URI.create("/api/documents/" + nouveauNom)).build();
     }
 
-    /** Un compte rendu validé ne peut pas être renommé : son nom fait partie des données figées. */
+    private UUID patientConnu(UUID patientId) {
+        if (patientId != null && consultation.patient(patientId).isEmpty()) {
+            throw new IllegalArgumentException("Patient inconnu : " + patientId);
+        }
+        return patientId;
+    }
+
+    /** Fiche du document courant, lue par le plugin : identifiant, patient (null = gabarit), statut. */
+    public record FicheDocument(UUID id, String nom, String titre, UUID patientId, boolean valide) {
+    }
+
+    @GetMapping("/documents/{nom}/fiche")
+    public FicheDocument fiche(@PathVariable String nom) {
+        NomDocument document = new NomDocument(nom);
+        Document fiche = gestion.document(document).orElseThrow(() -> new DocumentIntrouvable(document));
+        return new FicheDocument(fiche.id(), nom, fiche.titre(), fiche.patientId(),
+                validation.etat(document).isPresent());
+    }
+
+    /** Un compte rendu validé ne peut pas être renommé : son nom fait partie des données figées (409). */
     @PutMapping("/documents/{nom}")
     public ResponseEntity<?> renommer(@PathVariable String nom, @RequestParam String nouveauNom) {
-        if (validation.etat(new NomDocument(nom)).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "Un compte rendu validé ne peut pas être renommé"));
-        }
-        stockage.renommer(nom, nouveauNom);
+        gestion.renommer(new NomDocument(nom), new NomDocument(nouveauNom));
         return ResponseEntity.noContent().build();
     }
 
@@ -167,7 +216,7 @@ public class ControleurDocuments {
         editorConfig.put("callbackUrl", base + "/callback");
         editorConfig.put("lang", "fr");
         editorConfig.put("mode", valide ? "view" : "edit");
-        editorConfig.put("user", Map.of("id", "poc-medecin", "name", VALIDEUR_POC));
+        editorConfig.put("user", Map.of("id", "poc-medecin", "name", UTILISATEUR_EDITEUR));
         editorConfig.put("plugins", Map.of(
                 "autostart", List.of(proprietes.guidPlugin()),
                 "pluginsData", List.of(proprietes.urlServeurPourNavigateur() + "/plugin/config.json")));
@@ -218,7 +267,7 @@ public class ControleurDocuments {
 
     @PostMapping("/documents/{nom}/validation")
     public Validation valider(@PathVariable String nom, @RequestBody DemandeValidation demande) {
-        Validation v = validation.valider(new NomDocument(nom), demande.patientId(), demande.requete(), VALIDEUR_POC);
+        Validation v = validation.valider(new NomDocument(nom), demande.patientId(), demande.requete());
         LOG.info("Compte rendu {} validé, empreinte des données {}", nom, v.empreinteDonnees());
         return v;
     }
@@ -233,6 +282,11 @@ public class ControleurDocuments {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(ValidationImpossible.class)
+    ResponseEntity<Map<String, String>> impossible(ValidationImpossible e) {
+        return ResponseEntity.unprocessableEntity().body(Map.of("message", e.getMessage()));
+    }
+
     @ExceptionHandler(RequeteRejetee.class)
     ResponseEntity<Map<String, String>> rejetee(RequeteRejetee e) {
         return ResponseEntity.unprocessableEntity().body(Map.of("message", e.getMessage()));
@@ -243,8 +297,8 @@ public class ControleurDocuments {
         return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
 
-    @ExceptionHandler(StockageDocuments.DocumentIntrouvable.class)
-    ResponseEntity<Map<String, String>> introuvable(StockageDocuments.DocumentIntrouvable e) {
+    @ExceptionHandler({StockageDocuments.DocumentIntrouvable.class, DocumentIntrouvable.class})
+    ResponseEntity<Map<String, String>> introuvable(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
     }
 
