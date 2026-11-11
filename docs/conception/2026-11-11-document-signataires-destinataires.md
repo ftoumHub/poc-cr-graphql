@@ -67,6 +67,9 @@ erDiagram
 
 ### Migration `V7__document_acteurs.sql`
 
+> Le fichier `server/src/main/resources/db/migration/V7__document_acteurs.sql` fait foi : il intègre
+> le rôle `PATIENT` (§10) et nomme ses contraintes. Le bloc ci-dessous est la version initiale.
+
 Conventions du projet reprises : UUID, `varchar` + enum Java (pas de contrainte d'énumération SQL),
 données fictives relatives à `current_date`.
 
@@ -170,12 +173,13 @@ principal et patient requis à la validation (D9).
 ### Données fictives (même migration)
 
 - 1 établissement : « Centre hospitalier POC », FINESS fictif `990000001`, adresse principale + standard.
-- 7 professionnels, avec adresse professionnelle et téléphones :
-  - établissement : Dr DURAND (endocrinologie), Dr LEROY (maladies infectieuses), Dr PETIT (cardiologie)
-    — déjà cités en texte libre dans `sejour.medecin_responsable` ; Dr POC (valideur du POC) ;
+- 6 professionnels, avec adresse professionnelle et téléphones :
+  - établissement : Dr DURAND (endocrinologie), Dr LEROY (maladies infectieuses), Pr PETIT (cardiologie)
+    — déjà cités en texte libre dans `sejour.medecin_responsable` (pas de « Dr POC » : le valideur est le
+    signataire principal, §10) ;
   - correspondants de ville : Dr GIRARD (médecine générale), Dr ROUX (cardiologie libérale),
     Dr FAURE (endocrinologie libérale).
-- RPPS et ADELI **fictifs**, préfixés `99` pour ne jamais coïncider avec un identifiant réel.
+- FINESS, RPPS et ADELI **fictifs**, préfixés `99` pour ne jamais coïncider avec un identifiant réel.
 - Aucun document : les documents sont créés par la page hôte (§7.2).
 
 ## 4. Domaine et cas d'utilisation
