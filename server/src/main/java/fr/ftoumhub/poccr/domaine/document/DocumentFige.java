@@ -6,6 +6,6 @@ import fr.ftoumhub.poccr.domaine.validation.NomDocument;
 public class DocumentFige extends IllegalStateException {
 
     public DocumentFige(NomDocument document, String quoi) {
-        super("Le compte rendu " + document + " est validé : " + quoi + " ne peut plus changer");
+        super("Le compte rendu " + document + " est validé : impossible de modifier " + quoi);
     }
 }

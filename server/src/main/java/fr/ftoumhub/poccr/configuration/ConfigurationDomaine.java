@@ -46,8 +46,10 @@ public class ConfigurationDomaine {
 
     @Bean
     GestionDocuments gestionDocuments(Documents documents, FichiersDocuments fichiers, ArchiveValidations archive,
-                                      Etablissements etablissements, Clock horloge) {
-        return new GestionDocuments(documents, fichiers, archive, etablissements, horloge, UUID::randomUUID);
+                                      Etablissements etablissements, ProfessionnelsSante professionnels,
+                                      Clock horloge) {
+        return new GestionDocuments(documents, fichiers, archive, etablissements, professionnels, horloge,
+                UUID::randomUUID);
     }
 
     @Bean

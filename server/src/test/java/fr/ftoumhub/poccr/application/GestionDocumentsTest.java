@@ -51,7 +51,13 @@ class GestionDocumentsTest {
         @Override public Etablissement parDefaut() { return CH_POC; }
     };
     private final GestionDocuments gestion = new GestionDocuments(documents, fichiers, validations, etablissements,
+            new ValidationCompteRenduTest.ProfessionnelsEnMemoire(ps(DURAND), ps(GIRARD)),
             Clock.fixed(MAINTENANT, ZoneOffset.UTC), UUID::randomUUID);
+
+    private static fr.ftoumhub.poccr.domaine.professionnel.ProfessionnelSante ps(UUID id) {
+        return fr.ftoumhub.poccr.domaine.professionnel.ProfessionnelSante.builder().id(id).code(id.toString())
+                .nom("PS").type(fr.ftoumhub.poccr.domaine.professionnel.TypeMedecin.ETABLISSEMENT).construire();
+    }
 
     // --- création -------------------------------------------------------------------------------
 
@@ -179,6 +185,18 @@ class GestionDocumentsTest {
 
         assertThatThrownBy(() -> gestion.definirActeurs(CR, ActeursDocument.AUCUN)).isInstanceOf(DocumentFige.class);
         assertThat(gestion.acteurs(CR)).isEqualTo(ACTEURS);
+    }
+
+    @Test
+    void un_professionnel_inconnu_est_refuse() {
+        gestion.creer(CR, null);
+        UUID inconnu = UUID.randomUUID();
+
+        assertThatThrownBy(() -> gestion.definirActeurs(CR,
+                ActeursDocument.saisis(List.of(DURAND), inconnu, List.of(), List.of(), false)))
+                .isInstanceOf(fr.ftoumhub.poccr.domaine.document.ActeursInvalides.class)
+                .hasMessageContaining(inconnu.toString());
+        assertThat(gestion.acteurs(CR)).isEqualTo(ActeursDocument.AUCUN);
     }
 
     @Test

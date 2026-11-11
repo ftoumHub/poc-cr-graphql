@@ -1,12 +1,14 @@
 package fr.ftoumhub.poccr.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.ftoumhub.poccr.application.ConsultationDocuments;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
 import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.domaine.port.ArchiveValidations;
 import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
 import fr.ftoumhub.poccr.infrastructure.editeur.ArchiveValidationsFichiers;
+import fr.ftoumhub.poccr.infrastructure.editeur.ControleurActeurs;
 import fr.ftoumhub.poccr.infrastructure.editeur.ControleurDocuments;
 import fr.ftoumhub.poccr.infrastructure.editeur.FichiersDocumentsDisque;
 import fr.ftoumhub.poccr.infrastructure.editeur.ProprietesEditeur;
@@ -68,7 +70,13 @@ public class ConfigurationEditeur {
     @Bean
     ControleurDocuments controleurDocuments(StockageDocuments stockage, GestionDocuments gestion,
                                             ValidationCompteRendu validation, ConsultationDossierPatient consultation,
-                                            ProprietesEditeur proprietes) {
-        return new ControleurDocuments(stockage, gestion, validation, consultation, proprietes);
+                                            ConsultationDocuments consultationDocuments, ProprietesEditeur proprietes) {
+        return new ControleurDocuments(stockage, gestion, validation, consultation, consultationDocuments, proprietes);
+    }
+
+    @Bean
+    ControleurActeurs controleurActeurs(GestionDocuments gestion, ConsultationDocuments consultationDocuments,
+                                        ConsultationDossierPatient consultation, ValidationCompteRendu validation) {
+        return new ControleurActeurs(gestion, consultationDocuments, consultation, validation);
     }
 }

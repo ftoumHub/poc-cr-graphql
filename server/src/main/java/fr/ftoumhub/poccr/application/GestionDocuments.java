@@ -1,6 +1,7 @@
 package fr.ftoumhub.poccr.application;
 
 import fr.ftoumhub.poccr.domaine.document.ActeursDocument;
+import fr.ftoumhub.poccr.domaine.document.ActeursInvalides;
 import fr.ftoumhub.poccr.domaine.document.Document;
 import fr.ftoumhub.poccr.domaine.document.DocumentFige;
 import fr.ftoumhub.poccr.domaine.document.DocumentIntrouvable;
@@ -8,10 +9,13 @@ import fr.ftoumhub.poccr.domaine.port.ArchiveValidations;
 import fr.ftoumhub.poccr.domaine.port.Documents;
 import fr.ftoumhub.poccr.domaine.port.Etablissements;
 import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
+import fr.ftoumhub.poccr.domaine.port.ProfessionnelsSante;
 import fr.ftoumhub.poccr.domaine.validation.NomDocument;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -32,21 +36,28 @@ public class GestionDocuments {
     private final FichiersDocuments fichiers;
     private final ArchiveValidations validations;
     private final Etablissements etablissements;
+    private final ProfessionnelsSante professionnels;
     private final Clock horloge;
     private final Supplier<UUID> identifiants;
 
     public GestionDocuments(Documents documents, FichiersDocuments fichiers, ArchiveValidations validations,
-                            Etablissements etablissements, Clock horloge, Supplier<UUID> identifiants) {
+                            Etablissements etablissements, ProfessionnelsSante professionnels, Clock horloge,
+                            Supplier<UUID> identifiants) {
         this.documents = documents;
         this.fichiers = fichiers;
         this.validations = validations;
         this.etablissements = etablissements;
+        this.professionnels = professionnels;
         this.horloge = horloge;
         this.identifiants = identifiants;
     }
 
     public Optional<Document> document(NomDocument nom) {
         return documents.parNom(nom);
+    }
+
+    public List<Document> tous() {
+        return documents.tous();
     }
 
     public Document creer(NomDocument nom, String titre) {
@@ -122,6 +133,11 @@ public class GestionDocuments {
     public void definirActeurs(NomDocument nom, ActeursDocument acteurs) {
         Document document = existant(nom);
         verifierModifiable(nom, "les signataires et destinataires");
+        Set<UUID> inconnus = new HashSet<>(acteurs.professionnels());
+        inconnus.removeAll(professionnels.parIds(acteurs.professionnels()).keySet());
+        if (!inconnus.isEmpty()) {
+            throw new ActeursInvalides("Professionnel de santé inconnu : " + inconnus);
+        }
         documents.remplacerActeurs(document.id(), acteurs);
     }
 

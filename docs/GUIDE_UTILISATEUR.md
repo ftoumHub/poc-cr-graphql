@@ -151,7 +151,24 @@ Exemple de phrase construite avec des champs et des accords :
 
 Le message en bas de l'onglet indique le nombre de champs mis à jour et l'heure.
 
-### 4.8 Valider le compte rendu
+### 4.8 Désigner les signataires et destinataires
+
+Depuis la liste des documents (page d'accueil), cliquez sur **Acteurs** :
+
+- **Signataires** : recherchez un professionnel (2 lettres du nom, du prénom ou du code). Le
+  **premier** de la liste est le **signataire principal** : c'est lui qui valide le compte rendu.
+  Les flèches ↑ ↓ changent l'ordre.
+- **Destinataire principal** et **destinataires en copie** : même recherche. Un professionnel n'est
+  destinataire qu'une fois (pas à la fois principal et en copie).
+- **Destinataires extérieurs** : saisie libre (organisme, personne sans fiche) ; le nom est obligatoire.
+- **Copie au patient** : à cocher si le patient reçoit le compte rendu.
+
+Cliquez sur **Enregistrer**. Le signataire principal apparaît dans la colonne **Signataire** de la
+liste. Ces informations sont aussi interrogeables en GraphQL (racine `document`, voir section 7).
+
+### 4.9 Valider le compte rendu
+
+Prérequis : un **signataire principal** (section 4.8). Sans lui, la validation est refusée.
 
 1. **Valider le compte rendu**, puis **Confirmer la validation**. Le second clic évite les
    validations accidentelles.
@@ -162,7 +179,9 @@ Le message en bas de l'onglet indique le nombre de champs mis à jour et l'heure
 4. À la réouverture, le document s'affiche en lecture seule et l'onglet indique la date de
    validation et les empreintes.
 
-Une validation est **définitive** : un document validé ne peut pas être validé à nouveau ni modifié.
+Une validation est **définitive** : un document validé ne peut pas être validé à nouveau ni modifié,
+et ses signataires, destinataires et patient sont figés. Le valideur enregistré est le signataire
+principal.
 
 ---
 
@@ -298,7 +317,7 @@ docker compose up -d && (cd server && mvn spring-boot:run)
 
 ## 12. Limites connues du POC
 
-- Pas d'authentification ; valideur fixe « Dr POC » ; JWT OnlyOffice désactivé.
+- Pas d'authentification ; le valideur est le signataire principal du document ; JWT OnlyOffice désactivé.
 - Le séjour de référence est recalculé à chaque rafraîchissement : si le patient revient pour une
   nouvelle venue avant la validation, le compte rendu bascule sur ce nouveau séjour.
 - Un seul niveau d'objets est proposé dans l'onglet (pas de sous-objet de sous-objet).

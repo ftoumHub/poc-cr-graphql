@@ -50,6 +50,39 @@
         #creation input { padding: 6px; flex: 0 0 260px; }
 
         .renommage input { padding: 2px 4px; width: 160px; }
+
+        dialog#acteurs { width: 640px; max-width: calc(100vw - 32px); border: 1px solid #ccc; border-radius: 8px;
+                         padding: 0; box-shadow: 0 8px 32px rgba(0,0,0,.18); }
+        dialog#acteurs::backdrop { background: rgba(0,0,0,.25); }
+        #acteurs .entete { display: flex; justify-content: space-between; align-items: center;
+                           padding: 12px 16px; border-bottom: 1px solid #eee; }
+        #acteurs .entete h2 { font-size: 15px; margin: 0; }
+        #acteurs .corps { padding: 8px 16px 4px; max-height: 70vh; overflow-y: auto; }
+        #acteurs fieldset { border: none; margin: 0 0 14px; padding: 0; }
+        #acteurs legend { font-size: 12px; text-transform: uppercase; color: #666; font-weight: 600;
+                          margin-bottom: 6px; padding: 0; }
+        #acteurs ol, #acteurs ul.liste { list-style: none; margin: 0 0 6px; padding: 0; }
+        #acteurs li.acteur { display: flex; align-items: center; gap: 6px; padding: 4px 6px;
+                             border: 1px solid #eee; border-radius: 4px; margin-bottom: 4px; font-size: 14px; }
+        #acteurs li.acteur .libelle { flex: 1; }
+        #acteurs li.acteur .detail { color: #888; font-size: 12px; }
+        #acteurs .principal { font-size: 11px; background: #dff0ff; color: #1557b0; padding: 1px 6px; border-radius: 8px; }
+        #acteurs .recherche { position: relative; }
+        #acteurs .recherche input { width: 100%; box-sizing: border-box; padding: 5px; }
+        #acteurs .propositions { position: absolute; z-index: 2; left: 0; right: 0; background: #fff;
+                                 border: 1px solid #ddd; border-top: none; margin: 0; padding: 0; list-style: none; }
+        #acteurs .propositions button { display: block; width: 100%; text-align: left; border: none;
+                                        background: none; padding: 6px 8px; cursor: pointer; }
+        #acteurs .propositions button:hover, #acteurs .propositions button:focus { background: #eef4ff; }
+        #acteurs .exterieur input { padding: 3px 5px; width: 30%; }
+        #acteurs .aide { color: #888; font-size: 12px; margin: 0 0 6px; }
+        #acteurs li.vide { padding: 2px 0 6px; font-size: 13px; }
+        #acteurs .pied { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                         padding: 10px 16px; border-top: 1px solid #eee; }
+        #acteurs .message { font-size: 13px; color: #b3261e; flex: 1; }
+        #acteurs .message.ok { color: #1e7a34; }
+        #acteurs .fige { background: #fff7e0; color: #7a5a00; padding: 6px 8px; border-radius: 4px;
+                         font-size: 13px; margin: 6px 0 12px; }
         .vide { padding: 10px 0; color: #888; font-style: italic; }
     </style>
 </head>
@@ -93,7 +126,7 @@
         <section class="bloc" id="section-documents-patient" hidden>
             <h2>Documents de <span id="nom-patient-selectionne"></span></h2>
             <table>
-                <thead><tr><th>Document</th><th>Statut</th><th>Validé le</th><th></th></tr></thead>
+                <thead><tr><th>Document</th><th>Statut</th><th>Signataire</th><th>Validé le</th><th></th></tr></thead>
                 <tbody id="documents-patient-corps"></tbody>
             </table>
         </section>
@@ -101,7 +134,7 @@
         <section class="bloc">
             <h2>Documents sans patient (gabarits, brouillons non commencés)</h2>
             <table>
-                <thead><tr><th>Document</th><th>Statut</th><th>Validé le</th><th></th></tr></thead>
+                <thead><tr><th>Document</th><th>Statut</th><th>Signataire</th><th>Validé le</th><th></th></tr></thead>
                 <tbody id="documents-sans-patient-corps"></tbody>
             </table>
         </section>
@@ -112,10 +145,55 @@
     </div>
 </main>
 
+<dialog id="acteurs" aria-labelledby="acteurs-titre">
+    <form method="dialog" id="acteurs-formulaire">
+        <div class="entete">
+            <h2 id="acteurs-titre">Acteurs du document</h2>
+            <button type="button" class="lien" id="acteurs-fermer" aria-label="Fermer">✕</button>
+        </div>
+        <div class="corps">
+            <div class="fige" id="acteurs-fige" hidden>Compte rendu validé : signataires et destinataires sont figés.</div>
+
+            <fieldset>
+                <legend>Signataires</legend>
+                <p class="aide">Le premier est le signataire principal : il valide le compte rendu.</p>
+                <ol id="acteurs-signataires"></ol>
+                <div class="recherche" data-cible="signataires"></div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Destinataire principal</legend>
+                <ul class="liste" id="acteurs-principal"></ul>
+                <div class="recherche" data-cible="principal"></div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Destinataires en copie</legend>
+                <ul class="liste" id="acteurs-copies"></ul>
+                <div class="recherche" data-cible="copies"></div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Destinataires extérieurs</legend>
+                <ul class="liste" id="acteurs-exterieurs"></ul>
+                <button type="button" class="lien" id="acteurs-ajouter-exterieur">+ Ajouter un destinataire extérieur</button>
+            </fieldset>
+
+            <fieldset>
+                <label><input type="checkbox" id="acteurs-patient"> Copie au patient</label>
+            </fieldset>
+        </div>
+        <div class="pied">
+            <span class="message" id="acteurs-message" role="status"></span>
+            <button type="button" id="acteurs-enregistrer">Enregistrer</button>
+        </div>
+    </form>
+</dialog>
+
 <script>
     let editeur = null;
     // Lu par le plugin (même origine) pour savoir quel document valider.
-    window.PocCr = { documentCourant: null };
+    window.PocCr = { documentCourant: null, documentId: null };
 
     // --- Patients : tableau paginé, filtrable colonne par colonne --------------------------
 
@@ -221,6 +299,10 @@
         tdStatut.appendChild(badge);
         tr.appendChild(tdStatut);
 
+        const tdSignataire = document.createElement('td');
+        tdSignataire.textContent = d.signatairePrincipal || '—';
+        tr.appendChild(tdSignataire);
+
         const tdValide = document.createElement('td');
         tdValide.textContent = d.valideLe ? new Date(d.valideLe).toLocaleString('fr-FR') : '—';
         tr.appendChild(tdValide);
@@ -230,6 +312,11 @@
         btnOuvrir.textContent = 'Ouvrir';
         btnOuvrir.onclick = () => ouvrir(d.nom);
         tdActions.appendChild(btnOuvrir);
+        const btnActeurs = document.createElement('button');
+        btnActeurs.className = 'lien';
+        btnActeurs.textContent = 'Acteurs';
+        btnActeurs.onclick = () => ouvrirActeurs(d.nom);
+        tdActions.appendChild(btnActeurs);
         const btnDupliquer = document.createElement('button');
         btnDupliquer.className = 'lien';
         btnDupliquer.textContent = 'Dupliquer comme brouillon';
@@ -244,7 +331,7 @@
         const corps = document.getElementById(corpsId);
         corps.innerHTML = '';
         if (!documents.length) {
-            corps.innerHTML = '<tr><td colspan="4" class="vide">' + messageVide + '</td></tr>';
+            corps.innerHTML = '<tr><td colspan="5" class="vide">' + messageVide + '</td></tr>';
             return;
         }
         documents.forEach(d => corps.appendChild(construireLigneDocument(d)));
@@ -344,6 +431,230 @@
         input.select();
     }
 
+    // --- Acteurs : signataires et destinataires d'un document -------------------------------
+
+    const dialogueActeurs = document.getElementById('acteurs');
+    let saisieActeurs = null; // { nom, modifiable, signataires: [ps], principal: ps|null, copies: [ps], exterieurs: [], copieAuPatient }
+
+    async function ouvrirActeurs(nom) {
+        const r = await fetch('/api/documents/' + encodeURIComponent(nom) + '/acteurs');
+        const corps = await r.json().catch(() => ({}));
+        if (!r.ok) { alert(corps.message || 'Acteurs illisibles'); return; }
+        saisieActeurs = {
+            nom,
+            modifiable: corps.modifiable,
+            signataires: corps.signataires,
+            principal: corps.destinatairePrincipal,
+            copies: corps.copies,
+            exterieurs: corps.exterieurs.map(e => ({ nom: e.nom || '', prenom: e.prenom || '', email: e.email || '' })),
+            copieAuPatient: corps.copieAuPatient
+        };
+        document.getElementById('acteurs-titre').textContent = 'Acteurs de « ' + nom + ' »';
+        afficherMessageActeurs('');
+        afficherActeurs();
+        dialogueActeurs.showModal();
+    }
+
+    function afficherMessageActeurs(texte, ok) {
+        const zone = document.getElementById('acteurs-message');
+        zone.textContent = texte;
+        zone.className = 'message' + (ok ? ' ok' : '');
+    }
+
+    function ligneActeur(ps, actions, etiquette) {
+        const li = document.createElement('li');
+        li.className = 'acteur';
+        const libelle = document.createElement('span');
+        libelle.className = 'libelle';
+        libelle.textContent = ps.libelle;
+        if (ps.specialites) {
+            const detail = document.createElement('span');
+            detail.className = 'detail';
+            detail.textContent = ' — ' + ps.specialites;
+            libelle.appendChild(detail);
+        }
+        li.appendChild(libelle);
+        if (etiquette) {
+            const badge = document.createElement('span');
+            badge.className = 'principal';
+            badge.textContent = etiquette;
+            li.appendChild(badge);
+        }
+        if (saisieActeurs.modifiable) {
+            actions.forEach(([texte, titre, action, actif]) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'lien';
+                b.textContent = texte;
+                b.title = titre;
+                b.setAttribute('aria-label', titre + ' : ' + ps.libelle);
+                b.disabled = actif === false;
+                b.onclick = () => { action(); afficherActeurs(); };
+                li.appendChild(b);
+            });
+        }
+        return li;
+    }
+
+    function afficherActeurs() {
+        const s = saisieActeurs;
+        document.getElementById('acteurs-fige').hidden = s.modifiable;
+
+        const signataires = document.getElementById('acteurs-signataires');
+        signataires.innerHTML = '';
+        s.signataires.forEach((ps, i) => signataires.appendChild(ligneActeur(ps, [
+            ['↑', 'Monter', () => s.signataires.splice(i - 1, 0, s.signataires.splice(i, 1)[0]), i > 0],
+            ['↓', 'Descendre', () => s.signataires.splice(i + 1, 0, s.signataires.splice(i, 1)[0]), i < s.signataires.length - 1],
+            ['✕', 'Retirer', () => s.signataires.splice(i, 1)]
+        ], i === 0 ? 'principal' : null)));
+
+        const principal = document.getElementById('acteurs-principal');
+        principal.innerHTML = '';
+        if (s.principal) principal.appendChild(ligneActeur(s.principal, [['✕', 'Retirer', () => { s.principal = null; }]]));
+
+        const copies = document.getElementById('acteurs-copies');
+        copies.innerHTML = '';
+        s.copies.forEach((ps, i) => copies.appendChild(ligneActeur(ps, [['✕', 'Retirer', () => s.copies.splice(i, 1)]])));
+
+        const exterieurs = document.getElementById('acteurs-exterieurs');
+        exterieurs.innerHTML = '';
+        s.exterieurs.forEach((e, i) => {
+            const li = document.createElement('li');
+            li.className = 'acteur exterieur';
+            [['nom', 'Nom ou organisme (obligatoire)'], ['prenom', 'Prénom'], ['email', 'Courriel']].forEach(([cle, aide]) => {
+                const input = document.createElement('input');
+                input.value = e[cle];
+                input.placeholder = aide;
+                input.setAttribute('aria-label', aide);
+                input.disabled = !s.modifiable;
+                input.oninput = () => { e[cle] = input.value; };
+                li.appendChild(input);
+            });
+            if (s.modifiable) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'lien';
+                b.textContent = '✕';
+                b.setAttribute('aria-label', 'Retirer le destinataire extérieur');
+                b.onclick = () => { s.exterieurs.splice(i, 1); afficherActeurs(); };
+                li.appendChild(b);
+            }
+            exterieurs.appendChild(li);
+        });
+
+        [['acteurs-signataires', 'Aucun signataire.'], ['acteurs-principal', 'Aucun destinataire principal.'],
+         ['acteurs-copies', 'Aucun destinataire en copie.'], ['acteurs-exterieurs', 'Aucun destinataire extérieur.']]
+            .forEach(([id, texte]) => {
+                const liste = document.getElementById(id);
+                if (!liste.children.length) {
+                    const li = document.createElement('li');
+                    li.className = 'vide';
+                    li.textContent = texte;
+                    liste.appendChild(li);
+                }
+            });
+
+        const patient = document.getElementById('acteurs-patient');
+        patient.checked = s.copieAuPatient;
+        patient.disabled = !s.modifiable;
+        document.getElementById('acteurs-ajouter-exterieur').hidden = !s.modifiable;
+        document.getElementById('acteurs-enregistrer').hidden = !s.modifiable;
+        document.querySelectorAll('#acteurs .recherche').forEach(zone => {
+            zone.hidden = !s.modifiable || (zone.dataset.cible === 'principal' && s.principal);
+        });
+    }
+
+    /** Champ de recherche de professionnels (2 caractères min.) ; le choix est ajouté à la cible. */
+    function brancherRecherche(zone) {
+        const cible = zone.dataset.cible;
+        const input = document.createElement('input');
+        input.placeholder = { signataires: 'Ajouter un signataire…', principal: 'Choisir le destinataire principal…',
+            copies: 'Ajouter un destinataire en copie…' }[cible];
+        input.setAttribute('aria-label', input.placeholder);
+        input.autocomplete = 'off';
+        const propositions = document.createElement('ul');
+        propositions.className = 'propositions';
+        zone.appendChild(input);
+        zone.appendChild(propositions);
+        let minuterie = null;
+
+        const fermerPropositions = () => { input.value = ''; propositions.innerHTML = ''; };
+        const ajouter = ps => {
+            const s = saisieActeurs;
+            fermerPropositions();
+            if (cible === 'signataires') {
+                if (s.signataires.some(x => x.id === ps.id)) return afficherMessageActeurs(ps.libelle + ' signe déjà ce document.');
+                s.signataires.push(ps);
+            } else {
+                const dejaDestinataire = (s.principal && s.principal.id === ps.id) || s.copies.some(x => x.id === ps.id);
+                if (dejaDestinataire) return afficherMessageActeurs(ps.libelle + ' est déjà destinataire.');
+                if (cible === 'principal') s.principal = ps; else s.copies.push(ps);
+            }
+            afficherMessageActeurs('');
+            afficherActeurs();
+        };
+
+        input.oninput = () => {
+            clearTimeout(minuterie);
+            const texte = input.value.trim();
+            if (texte.length < 2) { propositions.innerHTML = ''; return; }
+            minuterie = setTimeout(async () => {
+                const resultats = await (await fetch('/api/professionnels?texte=' + encodeURIComponent(texte))).json();
+                propositions.innerHTML = '';
+                if (!resultats.length) {
+                    const li = document.createElement('li');
+                    li.className = 'vide';
+                    li.style.padding = '6px 8px';
+                    li.textContent = 'Aucun professionnel.';
+                    propositions.appendChild(li);
+                }
+                resultats.forEach(ps => {
+                    const li = document.createElement('li');
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.textContent = ps.libelle + (ps.specialites ? ' — ' + ps.specialites : '');
+                    b.onclick = () => ajouter(ps);
+                    li.appendChild(b);
+                    propositions.appendChild(li);
+                });
+            }, 250);
+        };
+        input.onkeydown = e => { if (e.key === 'Escape' && propositions.innerHTML) { e.preventDefault(); propositions.innerHTML = ''; } };
+    }
+    document.querySelectorAll('#acteurs .recherche').forEach(brancherRecherche);
+
+    document.getElementById('acteurs-ajouter-exterieur').onclick = () => {
+        saisieActeurs.exterieurs.push({ nom: '', prenom: '', email: '' });
+        afficherActeurs();
+        const champs = document.querySelectorAll('#acteurs-exterieurs input');
+        champs[champs.length - 3].focus();
+    };
+    document.getElementById('acteurs-patient').onchange = e => { saisieActeurs.copieAuPatient = e.target.checked; };
+    document.getElementById('acteurs-fermer').onclick = () => dialogueActeurs.close();
+    dialogueActeurs.addEventListener('close', () => rafraichirDocuments());
+
+    document.getElementById('acteurs-enregistrer').onclick = async () => {
+        const s = saisieActeurs;
+        const vide = v => !v || !v.trim();
+        const saisie = {
+            signataires: s.signataires.map(ps => ps.id),
+            destinatairePrincipal: s.principal ? s.principal.id : null,
+            copies: s.copies.map(ps => ps.id),
+            exterieurs: s.exterieurs.filter(e => !(vide(e.nom) && vide(e.prenom) && vide(e.email)))
+                .map(e => ({ nom: e.nom.trim(), prenom: e.prenom.trim() || null, email: e.email.trim() || null })),
+            copieAuPatient: s.copieAuPatient
+        };
+        const r = await fetch('/api/documents/' + encodeURIComponent(s.nom) + '/acteurs', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(saisie)
+        });
+        if (!r.ok) {
+            const corps = await r.json().catch(() => ({}));
+            afficherMessageActeurs(corps.message || 'Enregistrement impossible (HTTP ' + r.status + ')');
+            return;
+        }
+        afficherMessageActeurs('Enregistré.', true);
+    };
+
     // --- Éditeur OnlyOffice ------------------------------------------------------------------
 
     async function chargerApi() {
@@ -363,6 +674,8 @@
         const configuration = await (await fetch('/api/documents/' + encodeURIComponent(nom) + '/configuration')).json();
         if (editeur) editeur.destroyEditor();
         window.PocCr.documentCourant = nom;
+        const fiche = documentsTous.find(d => d.nom === nom);
+        window.PocCr.documentId = fiche ? fiche.id : null;
         document.getElementById('cible').innerHTML = '';
         document.getElementById('vue-liste').classList.add('cache');
         document.getElementById('vue-editeur').classList.add('actif');
@@ -373,6 +686,7 @@
     function fermerEditeur() {
         if (editeur) { editeur.destroyEditor(); editeur = null; }
         window.PocCr.documentCourant = null;
+        window.PocCr.documentId = null;
         document.getElementById('vue-editeur').classList.remove('actif');
         document.getElementById('vue-liste').classList.remove('cache');
         document.getElementById('retour').hidden = true;
