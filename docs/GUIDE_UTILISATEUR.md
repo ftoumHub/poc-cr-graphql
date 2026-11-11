@@ -1,7 +1,7 @@
 # Guide utilisateur — POC compte rendu médical GraphQL
 
 Ce guide explique comment installer le projet, rédiger un compte rendu dans OnlyOffice avec
-l'onglet « Données patient », puis faire évoluer les données proposées.
+l'onglet « Données du compte rendu », puis faire évoluer les données proposées.
 
 > Toutes les données du projet sont **fictives**. Le POC n'a ni authentification ni chiffrement :
 > à n'utiliser que sur un poste de développement.
@@ -66,56 +66,68 @@ Bons cas d'essai :
 
 ## 4. Rédiger un compte rendu
 
-### 4.1 Créer et ouvrir un document
+> Deux vidéos commentées montrent ce parcours de bout en bout : [`docs/videos/`](videos/README.md).
 
-Sur http://localhost:8081, saisissez un nom (lettres, chiffres, `-`, `_`), puis **Créer**.
-Le document s'ouvre dans OnlyOffice, avec l'onglet **Données patient** sur le côté.
+### 4.1 Choisir le patient, créer et ouvrir un document
+
+Sur http://localhost:8081, **sélectionnez d'abord le patient** dans le tableau (les filtres de
+colonnes aident à le retrouver), puis saisissez un nom de document (lettres, chiffres, `-`, `_`) et
+cliquez sur **Créer pour <patient>**. Le document s'ouvre dans OnlyOffice, avec l'onglet
+**Données du compte rendu** sur le côté.
+
+Le patient est **fixé par le document** dès sa création : l'onglet l'affiche en haut et ne permet
+pas d'en changer. Un compte rendu ne peut pas mélanger deux patients ; un document qui contiendrait
+des données d'un autre patient est bloqué (bandeau rouge).
 
 Si l'onglet n'apparaît pas, ouvrez le menu **Modules complémentaires** (Plugins) de l'éditeur.
 
-### 4.2 Choisir le patient
+### 4.2 Choisir un champ dans l'arborescence
 
-Dans **Patient**, tapez au moins 2 caractères (IPP ou début du nom), puis cliquez sur le patient.
+L'onglet présente deux racines :
+- **Patient** : identité, observations, traitements, séjour de référence, séjours… ;
+- **Document** : signataires, destinataires, établissement émetteur, validation…
 
-Dès qu'une première donnée de ce patient est insérée, le document lui est **définitivement
-rattaché** : la recherche disparaît et le bandeau « Patient fixé par le document » s'affiche.
-C'est voulu : un compte rendu ne peut pas mélanger deux patients.
+Les nœuds marqués ▸ se déplient (clic sur ▸, flèche → au clavier). Un badge **liste** signale une
+liste, un badge **réglable** un champ qui a des filtres.
 
-### 4.3 Insérer un champ dans une phrase
+- **Un clic** sélectionne un champ : sous l'arborescence s'affichent ses **réglages** (filtres,
+  colonnes) et un **aperçu** de sa valeur pour ce patient.
+- **Un double-clic**, ou **Entrée**, insère le champ à la position du curseur dans le document.
 
-Placez le curseur dans le texte, puis cliquez sur **Insérer** à côté du champ (Nom de naissance,
-Âge, Date de naissance…). La valeur apparaît dans la phrase, dans un champ grisé.
+Le curseur reste dans le document : continuez à taper après le champ inséré. Le champ ne se modifie
+pas à la main (il se met à jour depuis le serveur) ; il se supprime comme un mot. Survolez-le pour
+voir son libellé.
 
-Ce champ ne se modifie pas à la main : il se met à jour depuis le serveur. Vous pouvez le
-supprimer comme un mot. Survolez-le pour voir son libellé.
+### 4.3 Insérer une valeur dans une phrase
 
-> Après une insertion, si la frappe semble bloquée, déplacez le curseur avec la flèche droite ou
-> ajoutez un espace : le curseur est resté à l'intérieur du champ.
+Double-cliquez sur une valeur (Nom de naissance, Âge, Date de naissance…) : elle apparaît dans la
+phrase. Les objets se déplient pour atteindre leurs valeurs, par exemple **Séjour de référence ›
+Service**. Le séjour de référence est le séjour **en cours**, sinon le **dernier terminé** ; les
+séjours programmés à venir ne sont pas pris en compte. Une valeur absente s'affiche « — ».
 
-### 4.4 Insérer une information du séjour
+Une valeur située **sous une liste** s'insère en ligne, valeurs séparées par des virgules : par
+exemple **Document › Signataires › Professionnel signataire › Nom** donne « DURAND, PETIT ».
 
-Ouvrez le bloc **Séjour de référence**, puis insérez Service, Date d'entrée, Motif, Durée…
-Le séjour de référence est le séjour **en cours**, sinon le **dernier terminé**. Les séjours
-programmés à venir ne sont pas pris en compte. Pour un patient sans séjour, le champ affiche « — ».
+### 4.4 Régler les filtres
 
-### 4.5 Insérer un tableau (biologie, traitements, séjours)
+Certains champs ont des réglages, préremplis avec leur valeur par défaut :
+- **Observations** : **Catégorie** (Biologie ou Constante), **Code** (un examen précis, par exemple
+  `HBA1C`), **Depuis** (une durée : `P3M` = 3 mois, `P1Y` = 1 an, `P15D` = 15 jours, ou une date
+  `2026-01-31`) ;
+- **Traitements** et **Séjours** : **En cours uniquement** ;
+- **Adresse** d'un professionnel : son **type** (professionnelle, personnelle…) ; **Téléphone** : fixe,
+  portable, télécopie…
 
-Ouvrez le bloc de la liste voulue, par exemple **Observations**, puis :
-
-1. cochez les colonnes à afficher ;
-2. réglez les filtres :
-   - **Catégorie** : Biologie ou Constante ;
-   - **Code** : un examen précis, par exemple `HBA1C` ;
-   - **Depuis** : une durée (`P3M` = 3 mois, `P1Y` = 1 an, `P15D` = 15 jours) ou une date
-     (`2026-01-31`) ;
-   - **En cours uniquement**, pour les traitements et les séjours ;
-3. cliquez sur **Insérer le tableau**.
-
-Vous pouvez insérer plusieurs tableaux de la même liste avec des filtres différents, par exemple
-la biologie des 3 derniers mois et les constantes du jour.
-
+Les réglages s'appliquent à l'insertion suivante : on peut insérer plusieurs fois le même champ avec
+des filtres différents (la biologie des 3 derniers mois et les constantes du jour).
 Préférez les **durées** aux dates dans un gabarit : « 3 derniers mois » reste juste quel que soit
-le jour où le gabarit est utilisé.
+le jour où il est utilisé.
+
+### 4.5 Insérer un tableau (biologie, traitements, séjours, signataires…)
+
+Sélectionnez une **liste** (badge « liste »), réglez ses filtres et cochez les **colonnes** à
+afficher (valeurs des éléments, ou de leurs objets, par exemple « Professionnel signataire › Nom »),
+puis double-cliquez : le tableau est inséré.
 
 ### 4.6 Accorder en genre et en nombre
 
@@ -131,7 +143,7 @@ hospitalisé/hospitalisée…) ou **Personnalisé…**, puis **Insérer l'accord
 | Indéterminé ou inconnu | forme neutre (ex. « né(e) »), sinon « né/née » |
 
 **Nombre**, selon le nombre d'éléments d'une liste : choisissez la liste (traitements, séjours,
-observations), ses filtres, puis vérifiez les formes proposées :
+observations, signataires…), ses filtres, puis vérifiez les formes proposées :
 - **Aucun** (facultatif) : « aucun traitement en cours » ;
 - **Singulier**, utilisé pour 0 et 1 : « {n} traitement en cours » ;
 - **Pluriel** : « {n} traitements en cours ».
@@ -187,18 +199,20 @@ principal.
 
 ## 5. Travailler avec des gabarits
 
-Un gabarit est un document type, par exemple « CR d'hospitalisation en endocrinologie », sans
-patient.
+Un gabarit est un document type, par exemple « CR d'hospitalisation en endocrinologie », **sans
+patient**.
 
-1. Créez un document et cochez **Mode gabarit** (sans choisir de patient).
+1. Sans sélectionner de patient, saisissez un nom puis **Créer un gabarit**. L'onglet indique
+   « Gabarit : aucun patient ».
 2. Rédigez et insérez champs, tableaux et accords : des repères s'affichent, comme
-   `«Nom de naissance»`, `«Patient/Patiente»` ou `«n traitements en cours»`.
-3. Pour l'utiliser, dupliquez le fichier `data/documents/<gabarit>.docx` sous un autre nom,
-   ouvrez la copie, choisissez un patient puis **Rafraîchir les données** : tous les repères sont
-   remplacés et le document est rattaché au patient.
+   `«Nom de naissance»`, `«né/née»` ou `«n traitements en cours»`. Un gabarit ne se valide pas.
+3. Désignez si besoin ses **Acteurs** (signataires, destinataires) : ils seront repris par chaque
+   compte rendu créé à partir du gabarit.
+4. Pour l'utiliser : **sélectionnez le patient**, puis, sur la ligne du gabarit (section
+   « Gabarits »), cliquez sur **Instancier pour <patient>**, nommez la copie et validez. La copie
+   s'ouvre ; **Rafraîchir les données** remplace tous les repères par les données du patient.
 
-> Il n'y a pas encore de bouton « Nouveau document depuis un gabarit » : la copie de fichier est
-> manuelle.
+Un document qui a déjà un patient ne peut être dupliqué que pour ce même patient.
 
 ---
 

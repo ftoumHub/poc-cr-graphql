@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Données patient</title>
+    <title>Données du compte rendu</title>
     <!-- SDK des plugins servi par le Document Server (URL du POC, à paramétrer). -->
     <script src="http://localhost:8080/sdkjs-plugins/v1/plugins.js"></script>
     <link rel="stylesheet" href="styles.css">
@@ -10,20 +10,18 @@
 <body>
 <div id="contenu">
 
+<div id="bandeau" class="bandeau" role="status" hidden></div>
+
 <section>
     <h4>Patient</h4>
-    <div id="patient-verrou" class="bandeau" hidden></div>
-    <div id="patient-recherche">
-        <input id="recherche" placeholder="IPP ou nom (2 car. min.)" autocomplete="off">
-        <ul id="resultats" class="liste"></ul>
-    </div>
-    <div id="patient-courant" class="patient">Aucun patient sélectionné</div>
-    <label class="option"><input type="checkbox" id="mode-gabarit"> Mode gabarit (liaisons sans patient)</label>
+    <div id="patient" class="patient">Chargement…</div>
 </section>
 
 <section>
-    <h4>Champs</h4>
-    <div id="champs">Chargement du schéma…</div>
+    <h4 id="titre-champs">Champs</h4>
+    <p class="aide">Clic : réglages et aperçu. Double-clic ou Entrée : insérer.</p>
+    <ul id="arbre" role="tree" aria-labelledby="titre-champs"></ul>
+    <div id="reglages" class="reglages" aria-live="polite"></div>
 </section>
 
 <section>
@@ -35,7 +33,7 @@
     <h4>Document</h4>
     <button id="rafraichir">Rafraîchir les données</button>
     <label class="option"><input type="checkbox" id="auto"> Auto (30 s)</label>
-    <div id="etat" class="etat"></div>
+    <div id="etat" class="etat" role="status"></div>
 </section>
 
 <section>

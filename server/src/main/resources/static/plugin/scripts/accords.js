@@ -34,7 +34,9 @@
     var PREREGLAGES_NOMBRE = {
         traitements: { '0': 'aucun traitement', '1': '{n} traitement', '*': '{n} traitements' },
         observations: { '0': 'aucun résultat', '1': '{n} résultat', '*': '{n} résultats' },
-        sejours: { '0': 'aucun séjour', '1': '{n} séjour', '*': '{n} séjours' }
+        sejours: { '0': 'aucun séjour', '1': '{n} séjour', '*': '{n} séjours' },
+        signataires: { '0': 'aucun signataire', '1': '{n} signataire', '*': '{n} signataires' },
+        destinatairesEnCopie: { '0': 'aucun destinataire en copie', '1': '{n} destinataire en copie', '*': '{n} destinataires en copie' }
     };
     var NOMBRE_GENERIQUE = { '0': 'aucun élément', '1': '{n} élément', '*': '{n} éléments' };
 
