@@ -15,6 +15,8 @@ import java.util.UUID;
  * @param donneesJson      réponse GraphQL (bloc data) sérialisée de façon canonique (clés triées)
  * @param empreinteDonnees SHA-256 de donneesJson
  * @param empreinteDocx    SHA-256 du docx scellé, null tant que le scellement n'a pas eu lieu
+ * @param documentId       identifiant de la fiche du document ; null pour les validations antérieures aux fiches
+ * @param valideurId       professionnel valideur (signataire principal) ; null pour les validations antérieures
  */
 public record Validation(String document,
                          UUID patientId,
@@ -23,7 +25,9 @@ public record Validation(String document,
                          String empreinteDonnees,
                          Instant valideLe,
                          String validePar,
-                         String empreinteDocx) {
+                         String empreinteDocx,
+                         UUID documentId,
+                         UUID valideurId) {
 
     public Validation {
         Objects.requireNonNull(document, "document");
@@ -44,7 +48,7 @@ public record Validation(String document,
             throw new DocumentDejaScelle(document);
         }
         return new Validation(document, patientId, requete, donneesJson, empreinteDonnees, valideLe, validePar,
-                Empreinte.sha256(docx));
+                Empreinte.sha256(docx), documentId, valideurId);
     }
 
     public static Builder builder() {
@@ -59,6 +63,8 @@ public record Validation(String document,
         private String empreinteDonnees;
         private Instant valideLe;
         private String validePar;
+        private UUID documentId;
+        private UUID valideurId;
 
         private Builder() {
         }
@@ -68,6 +74,8 @@ public record Validation(String document,
         public Builder requete(String requete) { this.requete = requete; return this; }
         public Builder valideLe(Instant valideLe) { this.valideLe = valideLe; return this; }
         public Builder validePar(String validePar) { this.validePar = validePar; return this; }
+        public Builder documentId(UUID documentId) { this.documentId = documentId; return this; }
+        public Builder valideurId(UUID valideurId) { this.valideurId = valideurId; return this; }
 
         /** Fixe les données et calcule leur empreinte : les deux ne peuvent pas diverger. */
         public Builder donneesJson(String donneesJson) {
@@ -77,7 +85,8 @@ public record Validation(String document,
         }
 
         public Validation construire() {
-            return new Validation(document, patientId, requete, donneesJson, empreinteDonnees, valideLe, validePar, null);
+            return new Validation(document, patientId, requete, donneesJson, empreinteDonnees, valideLe, validePar, null,
+                    documentId, valideurId);
         }
     }
 

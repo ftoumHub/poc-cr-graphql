@@ -4,6 +4,7 @@ import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
 import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu.CompteRenduDejaValide;
+import fr.ftoumhub.poccr.application.ValidationCompteRendu.ValidationImpossible;
 import fr.ftoumhub.poccr.domaine.ResultatPage;
 import fr.ftoumhub.poccr.domaine.document.DocumentIntrouvable;
 import fr.ftoumhub.poccr.domaine.patient.FiltrePatients;
@@ -53,8 +54,8 @@ public class ControleurDocuments {
     private static final int PRET_A_ENREGISTRER = 2;
     private static final int ENREGISTREMENT_FORCE = 6;
 
-    /** En attendant l'authentification : identité fixe du rédacteur. */
-    private static final String VALIDEUR_POC = "Dr POC";
+    /** En attendant l'authentification : nom de l'utilisateur affiché par l'éditeur (le valideur est le signataire principal). */
+    private static final String UTILISATEUR_EDITEUR = "Dr POC";
 
     private final StockageDocuments stockage;
     private final GestionDocuments gestion;
@@ -167,7 +168,7 @@ public class ControleurDocuments {
         editorConfig.put("callbackUrl", base + "/callback");
         editorConfig.put("lang", "fr");
         editorConfig.put("mode", valide ? "view" : "edit");
-        editorConfig.put("user", Map.of("id", "poc-medecin", "name", VALIDEUR_POC));
+        editorConfig.put("user", Map.of("id", "poc-medecin", "name", UTILISATEUR_EDITEUR));
         editorConfig.put("plugins", Map.of(
                 "autostart", List.of(proprietes.guidPlugin()),
                 "pluginsData", List.of(proprietes.urlServeurPourNavigateur() + "/plugin/config.json")));
@@ -218,7 +219,7 @@ public class ControleurDocuments {
 
     @PostMapping("/documents/{nom}/validation")
     public Validation valider(@PathVariable String nom, @RequestBody DemandeValidation demande) {
-        Validation v = validation.valider(new NomDocument(nom), demande.patientId(), demande.requete(), VALIDEUR_POC);
+        Validation v = validation.valider(new NomDocument(nom), demande.patientId(), demande.requete());
         LOG.info("Compte rendu {} validé, empreinte des données {}", nom, v.empreinteDonnees());
         return v;
     }
@@ -231,6 +232,11 @@ public class ControleurDocuments {
     @ExceptionHandler(CompteRenduDejaValide.class)
     ResponseEntity<Map<String, String>> dejaValide(CompteRenduDejaValide e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(ValidationImpossible.class)
+    ResponseEntity<Map<String, String>> impossible(ValidationImpossible e) {
+        return ResponseEntity.unprocessableEntity().body(Map.of("message", e.getMessage()));
     }
 
     @ExceptionHandler(RequeteRejetee.class)

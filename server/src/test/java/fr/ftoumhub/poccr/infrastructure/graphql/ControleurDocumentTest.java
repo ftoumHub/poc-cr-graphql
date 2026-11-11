@@ -18,6 +18,11 @@ import fr.ftoumhub.poccr.domaine.professionnel.TypeMedecin;
 import fr.ftoumhub.poccr.domaine.professionnel.TypeTelephone;
 import fr.ftoumhub.poccr.domaine.validation.NomDocument;
 import fr.ftoumhub.poccr.domaine.validation.Validation;
+import fr.ftoumhub.poccr.domaine.validation.ValidationEnCours;
+import fr.ftoumhub.poccr.domaine.validation.VariablesDocument;
+import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier.RequeteRejetee;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.graphql.ExecutionGraphQlService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tranche GraphQL de la racine document, ports en mémoire : contrat des champs (noms du CDF)
@@ -65,6 +71,9 @@ class ControleurDocumentTest {
 
     @Autowired
     Journal journal;
+
+    @Autowired
+    ExecuteurGraphQl executeur;
 
     @BeforeEach
     void effacerLeJournal() {
@@ -216,6 +225,49 @@ class ControleurDocumentTest {
         assertThat(volumineux.get("telephonesDe")).isEqualTo(volumineux.get("adressesDe"));
     }
 
+    // --- exécution à la validation ---------------------------------------------------------------
+
+    private static final String REQUETE_VALIDATION = """
+            query DonneesDocument($doc: ID!) { document(id: $doc) {
+              c0: validation { dateValidation heureValidation psValidant { nom } }
+              c1: signatairePrincipal { medecin { nom } }
+            } }""";
+
+    @Test
+    void la_validation_en_cours_est_figee_avec_les_donnees_du_document() {
+        String donnees = executeur.executer(REQUETE_VALIDATION, new VariablesDocument(CR_SIMPLE, UUID.randomUUID()),
+                new ValidationEnCours(CR_SIMPLE, VALIDATION, DURAND));
+
+        assertThat(donnees).isEqualTo("{\"document\":{\"c0\":{\"dateValidation\":\"2026-11-12\","
+                + "\"heureValidation\":\"10:15\",\"psValidant\":{\"nom\":\"DURAND\"}},"
+                + "\"c1\":{\"medecin\":{\"nom\":\"DURAND\"}}}}");
+    }
+
+    @Test
+    void la_validation_en_cours_d_un_autre_document_n_est_pas_visible() {
+        String donnees = executeur.executer(REQUETE_VALIDATION, new VariablesDocument(CR_SIMPLE, UUID.randomUUID()),
+                new ValidationEnCours(CR_VOLUMINEUX, VALIDATION, DURAND));
+
+        assertThat(donnees).contains("\"c0\":null");
+    }
+
+    @Test
+    void un_document_introuvable_rejette_la_requete() {
+        UUID inconnu = UUID.randomUUID();
+
+        assertThatThrownBy(() -> executeur.executer(REQUETE_VALIDATION,
+                new VariablesDocument(inconnu, UUID.randomUUID()), new ValidationEnCours(inconnu, VALIDATION, DURAND)))
+                .isInstanceOf(RequeteRejetee.class)
+                .hasMessageContaining("Document introuvable");
+    }
+
+    @Test
+    void seule_l_operation_donnees_document_est_executee() {
+        assertThatThrownBy(() -> executeur.executer("query Autre($doc: ID!) { document(id: $doc) { titre } }",
+                new VariablesDocument(CR_SIMPLE, UUID.randomUUID()), new ValidationEnCours(CR_SIMPLE, VALIDATION, DURAND)))
+                .isInstanceOf(RequeteRejetee.class);
+    }
+
     // --- ports en mémoire -----------------------------------------------------------------------
 
     static class Journal {
@@ -236,6 +288,11 @@ class ControleurDocumentTest {
         @Bean
         Journal journal() {
             return new Journal();
+        }
+
+        @Bean
+        ExecuteurGraphQl executeurGraphQl(ExecutionGraphQlService graphQl) {
+            return new ExecuteurGraphQl(graphQl, new ObjectMapper());
         }
 
         @Bean

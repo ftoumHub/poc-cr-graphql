@@ -39,8 +39,9 @@ public class ConfigurationDomaine {
 
     @Bean
     ValidationCompteRendu validationCompteRendu(ExecuteurRequetesDossier executeur, ArchiveValidations archive,
+                                                Documents documents, ProfessionnelsSante professionnels,
                                                 Clock horloge) {
-        return new ValidationCompteRendu(executeur, archive, horloge);
+        return new ValidationCompteRendu(executeur, archive, documents, professionnels, horloge);
     }
 
     @Bean

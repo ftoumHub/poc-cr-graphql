@@ -13,6 +13,7 @@ import fr.ftoumhub.poccr.domaine.professionnel.ProfessionnelSante;
 import fr.ftoumhub.poccr.domaine.professionnel.Telephone;
 import fr.ftoumhub.poccr.domaine.professionnel.TypeAdresse;
 import fr.ftoumhub.poccr.domaine.professionnel.TypeTelephone;
+import fr.ftoumhub.poccr.domaine.validation.ValidationEnCours;
 import graphql.schema.DataFetchingEnvironment;
 import org.dataloader.DataLoader;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -46,6 +47,8 @@ public class ControleurDocument {
     static final String CHARGEUR_PROFESSIONNELS = "professionnels";
     static final String CHARGEUR_COORDONNEES = "coordonnees";
     static final String CHARGEUR_ETABLISSEMENTS = "etablissements";
+    /** Contexte GraphQL : validation en cours de production (voir ExecuteurGraphQl). */
+    static final String CLE_VALIDATION_EN_COURS = "poc.validationEnCours";
 
     private static final ZoneId FUSEAU = ZoneId.of("Europe/Paris");
     private static final DateTimeFormatter HEURE = DateTimeFormatter.ofPattern("HH:mm");
@@ -149,9 +152,20 @@ public class ControleurDocument {
         return acteurs(document, env, ActeursDocument::copieAuPatient);
     }
 
+    /**
+     * Validation archivée ; à défaut, celle en cours de production pour ce document (la requête figée
+     * à la validation est exécutée avant l'archivage) ; sinon null.
+     */
     @SchemaMapping(typeName = "Document")
-    public ValidationVue validation(Document document) {
-        return consultation.validation(document).map(v -> new ValidationVue(v.valideLe(), null)).orElse(null);
+    public ValidationVue validation(Document document, DataFetchingEnvironment env) {
+        return consultation.validation(document)
+                .map(v -> new ValidationVue(v.valideLe(), v.valideurId()))
+                .orElseGet(() -> {
+                    ValidationEnCours enCours = env.getGraphQlContext().get(CLE_VALIDATION_EN_COURS);
+                    return enCours != null && enCours.documentId().equals(document.id())
+                            ? new ValidationVue(enCours.valideLe(), enCours.valideurId())
+                            : null;
+                });
     }
 
     // --- Validation -----------------------------------------------------------------------------

@@ -104,16 +104,24 @@ Changer ce format = incrémenter `v` et garder la lecture des anciens tags.
 ## Invariants à ne pas casser
 
 - **Un document = un patient** (identitovigilance) : dès qu'une liaison porte `p`, la sélection est
-  verrouillée ; plusieurs patients dans un document = erreur bloquante.
+  verrouillée ; plusieurs patients dans un document = erreur bloquante. Le patient est aussi enregistré
+  sur la fiche du document (`document.patient_id`) : la validation refuse un autre patient.
 - **Les tags sont revalidés contre le schéma introspecté** avant compilation (champ, sous-champ,
   colonnes, valeurs d'enum, chaînes via `JSON.stringify`) : aucun GraphQL arbitraire depuis un tag.
 - **À la validation, le serveur fait foi** : il réexécute la requête (`ExecuteurGraphQl`, opération
   `DonneesDocument` uniquement) ; le plugin écrit les valeurs renvoyées, jamais celles qu'il affichait.
+  Les variables `$id` (patient) et `$doc` (document) sont **imposées par le serveur** ; les liaisons
+  de la racine `document` ne portent jamais d'identifiant (c'est toujours le document courant).
+- **Prérequis de validation** : un signataire principal (il devient le valideur) et un patient.
+  La date et le valideur sont fixés avant l'exécution et visibles dans `document.validation`.
+- **Compte rendu validé = figé** : nom, patient, signataires et destinataires ne changent plus
+  (`DocumentFige`, 409).
 - **JSON canonique** (clés triées) pour une empreinte reproductible.
 - **Scellement** : première sauvegarde après validation = docx scellé ; suivantes ignorées ; le
   callback répond toujours `{"error":0}` (sinon OnlyOffice réessaie en boucle).
 - **Pas de N+1** : champs à arguments via DataLoaders dont la clé contient le filtre ;
-  `sejours` / `sejourCourant` partagent un chargeur.
+  `sejours` / `sejourCourant` partagent un chargeur. Racine `document` : quatre chargeurs (acteurs,
+  professionnels, coordonnées, établissements), jamais enchaînés dans un même champ.
 - **Formatage des enums piloté par le type** (libellés = descriptions des valeurs dans le schéma) :
   une chaîne en majuscules d'un champ non-enum (« MARTIN ») n'est jamais reformatée.
 - **Accords** : sexe inconnu → forme neutre, sinon « m/f » (ne jamais supposer un genre) ;
@@ -149,7 +157,8 @@ Changer ce format = incrémenter `v` et garder la lecture des anciens tags.
 
 ## Raccourcis de POC (dette assumée)
 
-- JWT OnlyOffice désactivé, pas d'authentification, valideur fixe « Dr POC ».
+- JWT OnlyOffice désactivé, pas d'authentification ; le valideur est le signataire principal du
+  document (l'éditeur affiche toujours l'utilisateur « Dr POC »).
 - Le plugin lit le document courant via `window.top.PocCr.documentCourant` (page hôte même origine).
 - Introspection active en permanence ; tout le schéma `Patient` est proposé.
 - Archive des validations en fichiers JSON à côté du docx.
