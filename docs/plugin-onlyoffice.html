@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plugin OnlyOffice du POC</title>
+<style>
+:root {
+  --fond:#f6f7f9; --carte:#ffffff; --texte:#1d2330; --discret:#5b6474; --bord:#d8dce3; --bord-fort:#9aa3b2;
+  --accent:#2f5bd3; --accent-doux:#e7edfc; --code:#f1f3f6; --ok:#1f7a4d; --ok-doux:#e3f4ea;
+  --alerte:#9a5b00; --alerte-doux:#fff4dc; --trait:#3b4252;
+  --z-nav:#e8f0ff; --z-ds:#fdeee3; --z-spring:#e5f5ea; --z-pg:#efe8fb; --z-plugin:#fff6d6;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --fond:#14171c; --carte:#1c2027; --texte:#e6e9ef; --discret:#9aa3b2; --bord:#2e3440; --bord-fort:#5b6474;
+  --accent:#7ea2ff; --accent-doux:#1f2a44; --code:#232833; --ok:#6fd39c; --ok-doux:#183326;
+  --alerte:#f0b85a; --alerte-doux:#3a2c12; --trait:#c8ceda;
+  --z-nav:#1b2640; --z-ds:#3a261a; --z-spring:#17321f; --z-pg:#2a2140; --z-plugin:#3a3214; } }
+:root[data-theme="dark"] {
+  --fond:#14171c; --carte:#1c2027; --texte:#e6e9ef; --discret:#9aa3b2; --bord:#2e3440; --bord-fort:#5b6474;
+  --accent:#7ea2ff; --accent-doux:#1f2a44; --code:#232833; --ok:#6fd39c; --ok-doux:#183326;
+  --alerte:#f0b85a; --alerte-doux:#3a2c12; --trait:#c8ceda;
+  --z-nav:#1b2640; --z-ds:#3a261a; --z-spring:#17321f; --z-pg:#2a2140; --z-plugin:#3a3214; }
+* { box-sizing:border-box; }
+html { scroll-padding-top:68px; }
+body { margin:0; background:var(--fond); color:var(--texte); font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
+header { max-width:1100px; margin:0 auto; padding:28px 16px 8px; }
+header h1 { margin:0 0 6px; font-size:26px; line-height:1.25; }
+header p { margin:0; color:var(--discret); }
+/* --- Barre du haut, burger et menu latéral -------------------------------------------- */
+:root { --haut:52px; --largeur-menu:280px; }
+.barre { position:fixed; top:0; left:0; right:0; height:var(--haut); z-index:30; display:flex; align-items:center; gap:12px;
+  padding:0 12px; background:var(--carte); border-bottom:1px solid var(--bord); }
+.burger { flex:none; width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--bord); border-radius:8px;
+  background:var(--fond); color:var(--texte); cursor:pointer; padding:0; }
+.burger:hover { border-color:var(--accent); color:var(--accent); }
+.burger:focus-visible, .menu a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.burger span, .burger span::before, .burger span::after { display:block; width:18px; height:2px; border-radius:2px;
+  background:currentColor; position:relative; transition:transform .2s, background .2s; }
+.burger span::before, .burger span::after { content:""; position:absolute; left:0; }
+.burger span::before { top:-6px; } .burger span::after { top:6px; }
+body.menu-ouvert .burger span { background:transparent; }
+body.menu-ouvert .burger span::before { transform:translateY(6px) rotate(45deg); }
+body.menu-ouvert .burger span::after { transform:translateY(-6px) rotate(-45deg); }
+.barre .nom-doc { font-weight:600; font-size:14px; white-space:nowrap; }
+.barre .fil { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--discret); font-size:14px; }
+.barre .fil::before { content:"›"; margin-right:8px; }
+.menu { position:fixed; top:var(--haut); bottom:0; left:0; width:var(--largeur-menu); z-index:25; overflow-y:auto;
+  background:var(--carte); border-right:1px solid var(--bord); padding:14px 10px 40px;
+  transform:translateX(-100%); visibility:hidden; transition:transform .22s ease, visibility .22s; }
+body.menu-ouvert .menu { transform:none; visibility:visible; }
+.menu .titre-menu { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--discret); margin:0 8px 8px; }
+.menu ol { list-style:none; margin:0; padding:0; }
+.menu a { display:flex; gap:8px; padding:6px 10px; border-radius:6px; color:var(--texte); text-decoration:none; font-size:14px;
+  line-height:1.35; border-left:3px solid transparent; }
+.menu a:hover { background:var(--fond); color:var(--accent); }
+.menu a .n { color:var(--discret); min-width:1.6em; font-variant-numeric:tabular-nums; }
+.menu li.actif > a { background:var(--accent-doux); color:var(--accent); border-left-color:var(--accent); font-weight:600; }
+.menu li.actif > a .n { color:var(--accent); }
+.menu ol ol { margin:2px 0 6px 30px; display:none; border-left:1px solid var(--bord); }
+.menu li.actif > ol { display:block; }
+.menu ol ol a { font-size:13px; padding:4px 10px; color:var(--discret); border-left:0; border-radius:0 6px 6px 0; }
+.menu ol ol li.actif > a { background:none; color:var(--accent); font-weight:600; }
+.voile { display:none; }
+.decale { transition:margin-left .22s ease; padding-top:var(--haut); }
+@media (min-width:1000px) {
+  body.menu-ouvert .decale { margin-left:var(--largeur-menu); }
+}
+@media (max-width:999px) {
+  .voile { display:block; position:fixed; inset:var(--haut) 0 0 0; z-index:20; background:rgba(0,0,0,.35);
+    opacity:0; pointer-events:none; transition:opacity .22s; }
+  body.menu-ouvert .voile { opacity:1; pointer-events:auto; }
+  .menu { width:min(var(--largeur-menu), 85vw); box-shadow:4px 0 16px rgba(0,0,0,.15); }
+}
+@media (max-width:600px) { .barre .nom-doc { display:none; } .barre .fil::before { content:none; } }
+@media (prefers-reduced-motion:reduce) { .menu, .decale, .voile, .burger span, .burger span::before, .burger span::after { transition:none; } }
+main { max-width:1100px; margin:0 auto; padding:8px 16px 64px; }
+section { background:var(--carte); border:1px solid var(--bord); border-radius:10px; margin:20px 0; padding:4px 20px 18px; }
+h2 { font-size:21px; margin:18px 0 8px; }
+h2 .num { color:var(--accent); margin-right:6px; }
+h3 { font-size:16px; margin:22px 0 6px; }
+p, li { max-width:80ch; }
+a { color:var(--accent); }
+code { font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; background:var(--code); padding:1px 5px; border-radius:4px; }
+pre { background:var(--code); border:1px solid var(--bord); border-radius:8px; padding:12px 14px; overflow-x:auto;
+  font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; margin:8px 0 14px; }
+pre code { background:none; padding:0; font:inherit; }
+.legende { color:var(--discret); font-size:13px; margin:-6px 0 14px; }
+.c { color:var(--discret); }
+table { border-collapse:collapse; width:100%; font-size:14px; margin:8px 0 14px; }
+th, td { text-align:left; vertical-align:top; padding:6px 10px; border-bottom:1px solid var(--bord); }
+th { font-weight:600; background:var(--code); }
+.tableau { overflow-x:auto; }
+.note, .attention, .acquis { border-radius:8px; padding:10px 14px; margin:12px 0; border:1px solid var(--bord); }
+.note { background:var(--accent-doux); }
+.attention { background:var(--alerte-doux); }
+.acquis { background:var(--ok-doux); }
+.note strong:first-child, .attention strong:first-child, .acquis strong:first-child { display:block; margin-bottom:2px; }
+.lecture { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin:10px 0 6px; }
+.lecture a { display:block; text-decoration:none; color:var(--texte); border:1px solid var(--bord); border-radius:8px;
+  padding:10px 12px; background:var(--fond); }
+.lecture a:hover { border-color:var(--accent); }
+.lecture b { display:block; color:var(--accent); font-size:13px; }
+.lecture span { font-size:14px; }
+.schema { overflow-x:auto; margin:10px 0 4px; border:1px solid var(--bord); border-radius:8px; background:var(--fond); }
+.schema svg { display:block; min-width:760px; width:100%; height:auto; }
+svg text { fill:var(--texte); font:12px system-ui,-apple-system,"Segoe UI",sans-serif; }
+svg .titre { font-weight:600; font-size:13px; }
+svg .petit { font-size:11px; fill:var(--discret); }
+svg .mono { font:11.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+svg .bx { fill:var(--carte); stroke:var(--bord-fort); stroke-width:1; }
+svg .z-nav { fill:var(--z-nav); stroke:var(--bord-fort); }
+svg .z-ds { fill:var(--z-ds); stroke:var(--bord-fort); }
+svg .z-spring { fill:var(--z-spring); stroke:var(--bord-fort); }
+svg .z-pg { fill:var(--z-pg); stroke:var(--bord-fort); }
+svg .z-plugin { fill:var(--z-plugin); stroke:var(--bord-fort); }
+svg .fl { stroke:var(--trait); stroke-width:1.4; fill:none; marker-end:url(#tete); }
+svg .fl2 { stroke:var(--trait); stroke-width:1.4; fill:none; marker-end:url(#tete); marker-start:url(#queue); }
+svg .retour { stroke:var(--trait); stroke-width:1.2; fill:none; stroke-dasharray:5 4; marker-end:url(#tete); }
+svg .vie { stroke:var(--bord-fort); stroke-dasharray:3 4; }
+svg .noteb { fill:var(--alerte-doux); stroke:var(--bord-fort); }
+svg .tete { fill:var(--trait); }
+.chaine { display:flex; flex-wrap:wrap; align-items:stretch; gap:0; margin:12px 0; }
+.chaine > div { flex:1 1 150px; border:1px solid var(--bord-fort); border-radius:8px; background:var(--fond); padding:8px 10px;
+  font-size:13px; position:relative; margin:0 18px 10px 0; }
+.chaine > div:not(:last-child)::after { content:"→"; position:absolute; right:-16px; top:50%; transform:translateY(-50%);
+  color:var(--accent); font-weight:700; }
+.chaine b { display:block; font-size:13px; color:var(--accent); }
+.chaine code { font-size:11.5px; }
+.grille2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
+.grille2 > div { border:1px solid var(--bord); border-radius:8px; padding:4px 14px 8px; background:var(--fond); }
+.grille2 h4 { margin:10px 0 4px; font-size:14px; }
+.badge { display:inline-block; font-size:11px; padding:0 6px; border-radius:10px; border:1px solid var(--bord-fort); color:var(--discret); vertical-align:middle; }
+.badge.ok { border-color:var(--ok); color:var(--ok); }
+.badge.av { border-color:var(--alerte); color:var(--alerte); }
+pre.onglet { background:var(--carte); font-size:12px; line-height:1.6; }
+a.ext::after { content:"↗"; font-size:.8em; margin-left:2px; text-decoration:none; display:inline-block; }
+ul.liens-doc { margin:4px 0 0; padding-left:20px; } ul.liens-doc li { margin:3px 0; }
+pre.onglet .badge { font-family:system-ui,sans-serif; }
+footer { color:var(--discret); font-size:13px; max-width:1100px; margin:0 auto; padding:0 16px 40px; }
+@media (max-width:600px) { section { padding:2px 12px 14px; } header h1 { font-size:22px; } }
+</style>
+</head>
+<body>
+<script>
+  // État initial du menu avant le premier rendu : ouvert sur grand écran (sauf choix contraire mémorisé), fermé sinon.
+  (function () {
+    var pref = null;
+    try { pref = localStorage.getItem('doc-plugin-menu'); } catch (e) {}
+    if (window.matchMedia('(min-width:1000px)').matches && pref !== 'ferme') document.body.classList.add('menu-ouvert');
+  })();
+</script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="tete" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="tete" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="queue" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="tete" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="barre">
+  <button type="button" class="burger" id="burger" aria-controls="menu" aria-expanded="false" aria-label="Afficher le sommaire"><span></span></button>
+  <span class="nom-doc">Plugin OnlyOffice du POC</span>
+  <span class="fil" id="fil" aria-live="polite"></span>
+</div>
+
+<nav class="menu" id="menu" aria-label="Sommaire">
+  <p class="titre-menu">Sommaire</p>
+  <ol>
+    <li><a href="#lire"><span class="n">0.</span>Comment lire ce document</a></li>
+    <li><a href="#architecture"><span class="n">1.</span>Architecture d'ensemble</a></li>
+    <li><a href="#prerequis"><span class="n">2.</span>Prérequis</a></li>
+    <li><a href="#anatomie"><span class="n">3.</span>Anatomie du plugin</a></li>
+    <li><a href="#deploiement"><span class="n">4.</span>Packaging et déploiement</a></li>
+    <li><a href="#onlyoffice"><span class="n">5.</span>Dialogue avec OnlyOffice</a></li>
+    <li><a href="#backend"><span class="n">6.</span>Dialogue avec le backend</a></li>
+    <li><a href="#chargement"><span class="n">7.</span>Du schéma GraphQL au document</a></li>
+    <li><a href="#graphql"><span class="n">8.</span>Exemples GraphQL</a></li>
+    <li><a href="#validation"><span class="n">9.</span>Validation et scellement</a></li>
+    <li><a href="#tests"><span class="n">10.</span>Tests et débogage</a></li>
+    <li><a href="#limites"><span class="n">11.</span>Limites</a></li>
+  </ol>
+</nav>
+<div class="voile" id="voile"></div>
+
+<div class="decale">
+<header>
+  <h1>Le plugin OnlyOffice « Données du compte rendu »</h1>
+  <p>Comment il a été construit, packagé et déployé, comment il dialogue avec l'éditeur OnlyOffice et avec le serveur
+    Spring Boot (REST + GraphQL), et comment les données du dossier patient arrivent jusque dans le document.
+    État du code : branche <code>feature/contrat-champs-fusion</code>, novembre 2026.</p>
+</header>
+
+
+<main>
+
+<!-- ===================================================================================== -->
+<section id="lire">
+  <h2><span class="num">0.</span>Comment lire ce document</h2>
+  <p>Les questions posées ont été regroupées dans l'ordre où l'on en a besoin : d'abord <em>où</em> le plugin
+    s'insère, puis <em>ce qu'il faut</em> pour en écrire un, <em>comment il est livré</em>, et enfin
+    <em>comment il parle</em> à l'éditeur puis au serveur.</p>
+  <div class="lecture">
+    <a href="#architecture"><b>« Où se situe le plugin ? »</b><span>Vue d'ensemble des quatre composants et des trois origines web.</span></a>
+    <a href="#prerequis"><b>« Que faut-il pour développer un plugin ? »</b><span>Connaissances, outils, contraintes propres à OnlyOffice.</span></a>
+    <a href="#deploiement"><b>« Comment est-il packagé et déployé ? »</b><span>Dossier statique Spring, déclaration dans la configuration de l'éditeur, CORS.</span></a>
+    <a href="#onlyoffice"><b>« Comment communique-t-il avec OnlyOffice ? »</b><span><code>executeMethod</code>, <code>callCommand</code>, content controls et tags.</span></a>
+    <a href="#backend"><b>« Comment interagit-il avec le backend ? »</b><span>REST pour la fiche et la validation, GraphQL pour les données.</span></a>
+    <a href="#chargement"><b>« Comment les données sont-elles chargées ? »</b><span>schema.graphqls → introspection → modèle → arborescence et réglages ; liaison → requête unique → rendu.</span></a>
+    <a href="#graphql"><b>« Des exemples de requêtes ? »</b><span>Introspection, en-tête patient, requête compilée et sa réponse, archive réelle.</span></a>
+  </div>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="architecture">
+  <h2><span class="num">1.</span>Architecture d'ensemble</h2>
+  <p>Le plugin n'est pas une application à part : c'est une <strong>page web dans une iframe</strong>, affichée par
+    l'éditeur OnlyOffice dans un onglet latéral droit. Il y a trois niveaux d'imbrication dans le navigateur et deux
+    origines web différentes (<code>:8081</code> pour Spring, <code>:8080</code> pour le Document Server).</p>
+
+  <div class="schema">
+  <svg viewBox="0 0 960 500" role="img" aria-labelledby="t-archi">
+    <title id="t-archi">Architecture : navigateur, Document Server, Spring Boot, PostgreSQL</title>
+    <!-- Navigateur -->
+    <rect x="16" y="16" width="590" height="468" rx="10" class="bx"/>
+    <text x="32" y="38" class="titre">Navigateur du médecin</text>
+    <!-- Page hôte -->
+    <rect x="34" y="52" width="554" height="414" rx="8" class="z-spring"/>
+    <text x="50" y="74" class="titre">Page hôte — index.html</text>
+    <text x="50" y="92" class="petit">origine http://localhost:8081 · window.PocCr.documentCourant = "demo"</text>
+    <!-- Editeur -->
+    <rect x="52" y="108" width="518" height="340" rx="8" class="z-ds"/>
+    <text x="68" y="130" class="titre">Éditeur OnlyOffice (iframe)</text>
+    <text x="68" y="148" class="petit">origine http://localhost:8080 · créé par new DocsAPI.DocEditor(…)</text>
+    <!-- Document -->
+    <rect x="70" y="166" width="250" height="262" rx="6" class="bx"/>
+    <text x="84" y="188" class="titre">Document .docx</text>
+    <text x="84" y="210">Le patient <tspan class="mono">[MARTIN]</tspan> est</text>
+    <text x="84" y="228"><tspan class="mono">[née]</tspan> le <tspan class="mono">[12/03/1958]</tspan>.</text>
+    <rect x="84" y="244" width="222" height="56" rx="4" class="bx"/>
+    <text x="94" y="264" class="mono">[ tableau observations ]</text>
+    <text x="94" y="284" class="petit">contrôle bloc</text>
+    <text x="84" y="324" class="petit">[…] = content control</text>
+    <text x="84" y="342" class="petit">tag = liaison JSON v2</text>
+    <text x="84" y="360" class="petit mono">{"v":2,"r":"patient",</text>
+    <text x="84" y="376" class="petit mono"> "c":"nom","m":"i",…}</text>
+    <!-- Plugin -->
+    <rect x="360" y="166" width="190" height="262" rx="6" class="z-plugin"/>
+    <text x="374" y="188" class="titre">Plugin (iframe)</text>
+    <text x="374" y="206" class="petit">servi par :8081/plugin/</text>
+    <text x="374" y="232">Patient</text>
+    <text x="374" y="252">Arborescence des champs</text>
+    <text x="374" y="272">Accords</text>
+    <text x="374" y="292">Rafraîchir · Auto</text>
+    <text x="374" y="312">Valider</text>
+    <text x="374" y="340" class="petit">plugins.js (SDK, :8080)</text>
+    <text x="374" y="356" class="petit">liaisons · graphql · accords</text>
+    <text x="374" y="372" class="petit">rendu · code</text>
+    <!-- plugin <-> document -->
+    <line x1="358" y1="270" x2="324" y2="270" class="fl2"/>
+    <text x="300" y="456" class="petit">↔ executeMethod / callCommand (postMessage géré par le SDK)</text>
+
+    <!-- Spring -->
+    <rect x="660" y="30" width="284" height="246" rx="10" class="z-spring"/>
+    <text x="676" y="54" class="titre">Serveur Spring Boot :8081</text>
+    <text x="676" y="80" class="mono">/                page hôte</text>
+    <text x="676" y="100" class="mono">/plugin/**       plugin (statique)</text>
+    <text x="676" y="120" class="mono">/graphql         GraphQL</text>
+    <text x="676" y="140" class="mono">/graphiql        console</text>
+    <text x="676" y="160" class="mono">/api/documents/… REST</text>
+    <text x="676" y="180" class="mono">  …/configuration</text>
+    <text x="676" y="200" class="mono">  …/contenu  …/callback</text>
+    <text x="676" y="220" class="mono">  …/fiche  …/validation</text>
+    <text x="676" y="250" class="petit">DataLoaders · ExecuteurGraphQl</text>
+    <!-- DS -->
+    <rect x="660" y="330" width="170" height="80" rx="10" class="z-ds"/>
+    <text x="674" y="354" class="titre">Document Server</text>
+    <text x="674" y="372" class="petit">Docker, :8080 → 80</text>
+    <text x="674" y="390" class="petit">api.js, sdkjs-plugins,</text>
+    <text x="674" y="404" class="petit">conversion, co-édition</text>
+    <!-- PG -->
+    <rect x="850" y="330" width="94" height="80" rx="10" class="z-pg"/>
+    <text x="862" y="354" class="titre">PostgreSQL</text>
+    <text x="862" y="372" class="petit">:5432</text>
+    <text x="862" y="390" class="petit">Flyway V1–V4</text>
+
+    <!-- arrows -->
+    <line x1="590" y1="72" x2="656" y2="72" class="fl"/>
+    <text x="596" y="66" class="petit">REST</text>
+    <line x1="552" y1="230" x2="656" y2="130" class="fl"/>
+    <text x="566" y="196" class="petit">fetch /graphql</text>
+    <text x="566" y="210" class="petit">/api (même origine)</text>
+    <line x1="572" y1="380" x2="656" y2="370" class="fl2"/>
+    <text x="574" y="400" class="petit">édition</text>
+    <line x1="745" y1="326" x2="745" y2="280" class="fl2"/>
+    <text x="752" y="300" class="petit">docx + callback</text>
+    <text x="752" y="314" class="petit">(host.docker.internal)</text>
+    <line x1="897" y1="280" x2="897" y2="326" class="fl"/>
+    <text x="902" y="300" class="petit">JDBC</text>
+  </svg>
+  </div>
+  <p class="legende">Le plugin et la page hôte sont servis par Spring : ils partagent l'origine <code>:8081</code>, ce qui
+    permet au plugin d'appeler <code>/graphql</code> sans CORS et de lire <code>window.top.PocCr</code>.</p>
+
+  <div class="tableau"><table>
+    <tr><th>Composant</th><th>Rôle</th><th>Où dans le dépôt</th></tr>
+    <tr><td>Page hôte</td><td>Liste des patients et documents, création, ouverture de l'éditeur</td><td><code>server/src/main/resources/static/index.html</code></td></tr>
+    <tr><td>Document Server</td><td>Éditeur Word en ligne, SDK des plugins, conversion, appel du callback de sauvegarde</td><td><code>docker-compose.yml</code> (image <code>onlyoffice/documentserver</code>)</td></tr>
+    <tr><td>Plugin</td><td>Onglet « Données du compte rendu » : choisir, insérer, rafraîchir, valider</td><td><code>server/src/main/resources/static/plugin/</code></td></tr>
+    <tr><td>Serveur Spring</td><td>Stockage des docx, configuration de l'éditeur, GraphQL du dossier, validation et scellement</td><td><code>server/src/main/java/fr/ftoumhub/poccr/</code></td></tr>
+  </table></div>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="prerequis">
+  <h2><span class="num">2.</span>Prérequis pour développer un plugin OnlyOffice</h2>
+
+  <div class="grille2">
+    <div>
+      <h4>Connaissances</h4>
+      <ul>
+        <li><strong>HTML / JavaScript</strong> côté navigateur. Le plugin est une page web ordinaire.</li>
+        <li><strong>ES5</strong> pour tout code exécuté <em>dans</em> le document (<code>callCommand</code>,
+          scripts des content controls) : il est sérialisé en texte puis évalué par l'éditeur.</li>
+        <li><strong>API des plugins</strong> OnlyOffice : objet <code>window.Asc.plugin</code>,
+          <code>executeMethod</code>, <code>callCommand</code>, <code>Asc.scope</code>.</li>
+        <li><strong>API Document Builder</strong> (<code>Api.CreateParagraph</code>, <code>Api.CreateTable</code>,
+          <code>Api.CreateInlineLvlSdt</code>…).</li>
+        <li><strong>Content controls</strong> OOXML (<code>w:sdt</code>) : tag, alias, verrou, en ligne / bloc.</li>
+        <li>Côté données : <strong>GraphQL</strong> (requêtes, alias, introspection).</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Outils</h4>
+      <ul>
+        <li><strong>Un Document Server</strong> qui tourne : <code>docker compose up -d</code> (port 8080).
+          Sans lui, impossible de voir l'onglet ; les tests Node ne font que simuler l'éditeur.</li>
+        <li><strong>Un serveur web</strong> pour servir le plugin : ici Spring Boot (<code>mvn spring-boot:run</code>, port 8081).</li>
+        <li><strong>Node ≥ 20</strong> pour les tests <code>node:test</code> du plugin (le Node 16 par défaut du poste est trop ancien).</li>
+        <li><strong>JDK 21 + Maven</strong> pour le serveur.</li>
+        <li><strong>Outils de développement du navigateur</strong> : choisir le contexte de la console sur
+          l'iframe du plugin (voir <a href="#tests">§10</a>).</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Les cinq éléments indispensables à tout plugin</h3>
+  <div class="tableau"><table>
+    <tr><th>#</th><th>Élément</th><th>Rôle</th><th>Dans ce POC</th></tr>
+    <tr><td>1</td><td><code>config.json</code></td><td>Manifeste : nom, <code>guid</code> unique, type d'affichage, page d'entrée, icônes, éditeurs supportés</td><td><code>plugin/config.json</code></td></tr>
+    <tr><td>2</td><td>Page d'entrée HTML</td><td>Interface de l'onglet ; charge le SDK puis les scripts</td><td><code>plugin/index.html</code></td></tr>
+    <tr><td>3</td><td>SDK <code>plugins.js</code></td><td>Fournit <code>window.Asc.plugin</code> et le canal de messages avec l'éditeur. Il est <strong>servi par le Document Server</strong></td><td><code>http://localhost:8080/sdkjs-plugins/v1/plugins.js</code></td></tr>
+    <tr><td>4</td><td><code>Asc.plugin.init</code></td><td>Point d'entrée appelé par l'éditeur quand l'iframe est prête</td><td><code>scripts/code.js</code></td></tr>
+    <tr><td>5</td><td>Un moyen de déclarer le plugin</td><td>Installation dans le Document Server, ou URL donnée dans la configuration de l'éditeur</td><td><code>editorConfig.plugins.pluginsData</code> (voir <a href="#deploiement">§4</a>)</td></tr>
+  </table></div>
+
+  <h3>Contraintes à connaître avant d'écrire la première ligne</h3>
+  <ul>
+    <li><strong>Pas de <code>alert</code> / <code>confirm</code> / <code>prompt</code></strong> : ils bloquent l'éditeur entier.
+      Le POC confirme la validation en deux clics (<code>demanderValidation</code> puis <code>valider</code>).</li>
+    <li><strong>Code passé à <code>callCommand</code> = ES5, sans fermeture</strong> : la fonction est transformée en
+      texte, elle ne voit pas les variables du plugin. Les données passent par <code>Asc.scope</code>.</li>
+    <li><strong>CORS</strong> : le manifeste est lu depuis l'origine du Document Server. Sans en-têtes CORS sur
+      <code>/plugin/**</code>, l'onglet n'apparaît jamais, sans message d'erreur.</li>
+    <li><strong>Le conteneur ne voit pas <code>localhost</code></strong> du poste : le Document Server joint Spring
+      par <code>host.docker.internal</code>, et <code>ALLOW_PRIVATE_IP_ADDRESS=true</code> est nécessaire.</li>
+    <li><strong>Épingler la version du Document Server</strong> : l'API varie d'une version à l'autre (cf. l'ordre des
+      arguments de <code>Api.CreateTable</code>, <a href="#onlyoffice">§5</a>).</li>
+    <li><strong>JWT</strong> : désactivé dans le POC (<code>JWT_ENABLED=false</code>). En production, la configuration
+      de l'éditeur et les callbacks doivent être signés.</li>
+  </ul>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="anatomie">
+  <h2><span class="num">3.</span>Anatomie du plugin</h2>
+  <p>Un plugin OnlyOffice est un <strong>dossier de fichiers web</strong> qui suit une structure attendue par l'éditeur :
+    un manifeste, une page d'entrée, du code qui utilise le SDK, des icônes. Cette section décrit chaque élément
+    <em>tel que la documentation OnlyOffice le définit</em>, puis la façon dont le POC l'utilise.</p>
+
+  <div class="note"><strong>Documentation officielle OnlyOffice : par où commencer</strong>
+    <ul class="liens-doc">
+      <li><a class="ext" href="https://api.onlyoffice.com/docs/plugins/get-started/overview" target="_blank" rel="noopener">Vue d'ensemble des plugins</a> et
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/get-started/quick-start" target="_blank" rel="noopener">démarrage rapide</a></li>
+      <li><a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration" target="_blank" rel="noopener">Configuration (<code>config.json</code>)</a>, avec ses pages
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/types" target="_blank" rel="noopener">types</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/variations" target="_blank" rel="noopener">variations</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/entry-point" target="_blank" rel="noopener">point d'entrée</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/icons-and-branding" target="_blank" rel="noopener">icônes</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/localization" target="_blank" rel="noopener">localisation</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/styles-and-theming" target="_blank" rel="noopener">styles et thèmes</a></li>
+      <li><a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview" target="_blank" rel="noopener">Interagir avec les éditeurs</a> :
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/asc-plugin" target="_blank" rel="noopener">objet <code>Asc.plugin</code></a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-call-methods" target="_blank" rel="noopener">appeler des méthodes</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-call-commands" target="_blank" rel="noopener">appeler des commandes</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-attach-events" target="_blank" rel="noopener">s'abonner aux événements</a></li>
+      <li>Exemples proches de ce POC :
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/samples/work-with-content-controls-tags" target="_blank" rel="noopener">tags de content controls</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/samples/work-with-content-controls-content" target="_blank" rel="noopener">contenu des content controls</a>,
+        <a class="ext" href="https://api.onlyoffice.com/docs/plugins/samples/content-controls-navigation" target="_blank" rel="noopener">navigation entre content controls</a></li>
+    </ul>
+  </div>
+
+  <h3>3.1 Les fichiers et leur rôle pour OnlyOffice</h3>
+<pre><code>server/src/main/resources/static/plugin/
+├── config.json            <span class="c">manifeste lu par l'éditeur</span>
+├── index.html             <span class="c">point d'entrée : interface de l'onglet + chargement des scripts</span>
+├── styles.css
+├── resources/
+│   ├── icone.png          <span class="c">icônes déclarées dans config.json</span>
+│   └── icone@2x.png
+└── scripts/               <span class="c">JS sans build, chargés dans cet ordre :</span>
+    ├── liaisons.js        <span class="c">format des tags, validation contre le schéma, compilation en requête</span>
+    ├── graphql.js         <span class="c">fetch /graphql, introspection → modèle des champs</span>
+    ├── accords.js         <span class="c">accords en genre et en nombre, préréglages</span>
+    ├── rendu.js           <span class="c">formatage des valeurs, textes en ligne, scripts Document Builder</span>
+    └── code.js            <span class="c">orchestration : interface ↔ éditeur ↔ serveur (Asc.plugin.init)</span></code></pre>
+  <div class="tableau"><table>
+    <tr><th>Élément</th><th>Ce qu'OnlyOffice en attend</th><th>Dans le POC</th><th>Documentation</th></tr>
+    <tr><td><code>config.json</code></td><td>Obligatoire. Contient « les données principales du plugin nécessaires à son enregistrement » : identité, page d'entrée, type d'affichage, éditeurs supportés</td><td>Une seule variation, onglet de droite, éditeur de texte</td><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration" target="_blank" rel="noopener">Configuration</a></td></tr>
+    <tr><td><code>index.html</code></td><td>Page désignée par <code>variations[].url</code>. Charge <code>plugins.js</code> (obligatoire), éventuellement <code>plugins-ui.js</code> et <code>plugins.css</code>, puis le code du plugin</td><td>Charge le SDK depuis le Document Server, puis les cinq scripts</td><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/entry-point" target="_blank" rel="noopener">Point d'entrée</a></td></tr>
+    <tr><td>Code du plugin</td><td>La documentation l'appelle <code>plugin.js</code>. Il définit <code>window.Asc.plugin.init</code> et les autres gestionnaires</td><td>Réparti en cinq modules ; seul <code>code.js</code> touche <code>Asc.plugin</code></td><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/asc-plugin" target="_blank" rel="noopener"><code>Asc.plugin</code></a></td></tr>
+    <tr><td><code>resources/</code> (icônes)</td><td>Icônes du bouton de la barre d'outils, déclinées par échelle (100 % à 200 %), état (normal, survol) et thème (clair, sombre)</td><td>Deux PNG (100 % et 200 %), sans variante de thème</td><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/icons-and-branding" target="_blank" rel="noopener">Icônes et image de marque</a></td></tr>
+    <tr><td>Styles</td><td>Facultatifs. <code>plugins-ui.js</code> et <code>plugins.css</code> donnent l'apparence de l'éditeur ; <code>onThemeChanged</code> suit le thème clair ou sombre</td><td><code>styles.css</code> maison ; thème de l'éditeur non suivi</td><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/styles-and-theming" target="_blank" rel="noopener">Styles et thèmes</a></td></tr>
+    <tr><td>Traductions</td><td>Facultatives. Dossier <code>translations/</code> et gestionnaire <code>onTranslate</code></td><td>Interface en français uniquement ; seul <code>nameLocale</code> est renseigné</td><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/localization" target="_blank" rel="noopener">Localisation</a></td></tr>
+  </table></div>
+
+  <h3>3.2 Le manifeste <code>config.json</code></h3>
+<pre><code>{
+  "name": "Données du compte rendu",
+  "nameLocale": { "fr": "Données du compte rendu" },
+  "guid": "asc.{6B0E1C2A-6E2D-4C5B-9A1F-2C7D3E4F5A60}",
+  "version": "0.2.0",
+  "variations": [{
+    "description": "Insérer des données du dossier patient et du document liées à GraphQL",
+    "url": "index.html",
+    "icons": ["resources/icone.png", "resources/icone@2x.png"],
+    "isViewer": true,
+    "EditorsSupport": ["word"],
+    "isVisual": true, "isModal": false, "isInsideMode": true,
+    "type": "panelRight",
+    "initDataType": "none", "initData": "",
+    "isUpdateOleOnResize": false,
+    "buttons": [],
+    "size": [380, 600]
+  }]
+}</code></pre>
+  <p>Chaque clé, telle que la décrit la <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration" target="_blank" rel="noopener">page de configuration</a>, et ce qu'elle produit ici :</p>
+  <div class="tableau"><table>
+    <tr><th>Clé</th><th>Définition OnlyOffice</th><th>Valeur et effet dans le POC</th></tr>
+    <tr><td><code>name</code>, <code>nameLocale</code></td><td>Nom affiché dans la barre d'outils, et ses traductions par code de langue à deux lettres</td><td>« Données du compte rendu » : titre de l'onglet</td></tr>
+    <tr><td><code>guid</code></td><td>Identifiant du plugin, au format <code>asc.{UUID}</code></td><td>Repris dans <code>poc.editeur.guid-plugin</code> pour l'<code>autostart</code> : les deux valeurs doivent rester identiques</td></tr>
+    <tr><td><code>version</code></td><td>Version du plugin (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/development-workflow/publishing/versioning-and-updates" target="_blank" rel="noopener">versions et mises à jour</a>)</td><td><code>0.2.0</code> ; à incrémenter à chaque livraison</td></tr>
+    <tr><td><code>baseUrl</code>, <code>minVersion</code>, <code>group</code>, <code>help</code></td><td>Facultatifs : chemin de base, version minimale de l'éditeur, groupe dans l'onglet Plugins, lien d'aide</td><td>Non utilisés. <code>minVersion</code> serait utile pour signaler la dépendance au Document Server 10</td></tr>
+    <tr><td><code>variations</code></td><td>Tableau de « sous-plugins » ; chacun a sa page, son type, ses icônes (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/variations" target="_blank" rel="noopener">variations</a>)</td><td>Une seule variation</td></tr>
+    <tr><td><code>url</code></td><td>Page HTML d'entrée de la variation</td><td><code>index.html</code>, résolu par rapport à l'URL du manifeste</td></tr>
+    <tr><td><code>type</code></td><td><code>system</code>, <code>background</code>, <code>window</code>, <code>panel</code> (panneau gauche), <code>panelRight</code> (panneau droit), <code>unvisible</code> (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/types" target="_blank" rel="noopener">types de plugins</a>)</td><td><code>panelRight</code> : onglet latéral droit avec un bouton dans la barre de droite</td></tr>
+    <tr><td><code>isVisual</code>, <code>isModal</code>, <code>isInsideMode</code></td><td><strong>Obsolètes</strong>, remplacés par <code>type</code></td><td>Conservés par prudence, mais redondants avec <code>type: "panelRight"</code>. Candidats à la suppression après un test sur le Document Server</td></tr>
+    <tr><td><code>EditorsSupport</code></td><td>Éditeurs concernés : <code>word</code>, <code>cell</code>, <code>slide</code>, <code>pdf</code></td><td><code>["word"]</code> : éditeur de texte uniquement</td></tr>
+    <tr><td><code>isViewer</code></td><td>« Indique si le plugin fonctionne quand le document est disponible en mode lecture seule ». La doc décrit aussi <code>isDisplayedInViewer</code> (affichage en mode lecture)</td><td><code>true</code> : l'onglet doit rester visible sur un compte rendu validé, ouvert en <code>mode: "view"</code>. <span class="badge av">à confirmer</span> la formulation de la doc est ambiguë, et <code>isDisplayedInViewer</code> pourrait être nécessaire</td></tr>
+    <tr><td><code>initDataType</code>, <code>initData</code></td><td>Données transmises par l'éditeur au démarrage : <code>text</code>, <code>html</code>, <code>ole</code>, <code>none</code>…</td><td><code>none</code> : le plugin lit lui-même le document (<code>GetAllContentControls</code>)</td></tr>
+    <tr><td><code>buttons</code></td><td>Boutons du cadre du plugin (OK, Annuler…), utilisés surtout par le type <code>window</code></td><td><code>[]</code> : toutes les actions sont dans l'onglet</td></tr>
+    <tr><td><code>size</code></td><td>Taille <code>[largeur, hauteur]</code>, <strong>prise en compte seulement pour le type <code>window</code></strong></td><td>Sans effet pour un <code>panelRight</code></td></tr>
+    <tr><td><code>isUpdateOleOnResize</code></td><td>Redessiner un objet OLE redimensionné (plugins OLE seulement)</td><td>Sans effet ici</td></tr>
+    <tr><td><code>icons</code></td><td>Ancien format : liste de fichiers. Format recommandé : un motif d'URL avec <code>%theme-type%</code>, <code>%state%</code>, <code>%scale%</code>…</td><td>Ancien format, deux échelles</td></tr>
+    <tr><td><code>description</code></td><td>Texte affiché dans la place de marché des plugins</td><td>Informatif (plugin non publié)</td></tr>
+    <tr><td><code>events</code></td><td>Obsolète depuis la 8.2, remplacé par <code>attachEditorEvent</code> (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-attach-events" target="_blank" rel="noopener">événements</a>)</td><td>Non utilisé : le POC rafraîchit à la demande ou toutes les 30 s</td></tr>
+  </table></div>
+
+  <h3>3.3 La page d'entrée <code>index.html</code></h3>
+  <p>D'après la <a class="ext" href="https://api.onlyoffice.com/docs/plugins/configuration/entry-point" target="_blank" rel="noopener">documentation du point d'entrée</a>,
+    le <code>&lt;head&gt;</code> charge <code>plugins.js</code>, « le fichier de base nécessaire au bon fonctionnement avec les éditeurs »,
+    puis le code du plugin. Le <code>&lt;body&gt;</code> contient les conteneurs de l'interface.</p>
+<pre><code>&lt;!-- SDK des plugins servi par le Document Server (URL du POC, à paramétrer). --&gt;
+&lt;script src="http://localhost:8080/sdkjs-plugins/v1/plugins.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="styles.css"&gt;
+…
+&lt;script src="scripts/liaisons.js"&gt;&lt;/script&gt;   <span class="c">&lt;!-- modules purs d'abord --&gt;</span>
+&lt;script src="scripts/graphql.js"&gt;&lt;/script&gt;
+&lt;script src="scripts/accords.js"&gt;&lt;/script&gt;
+&lt;script src="scripts/rendu.js"&gt;&lt;/script&gt;
+&lt;script src="scripts/code.js"&gt;&lt;/script&gt;      <span class="c">&lt;!-- définit Asc.plugin.init en dernier --&gt;</span></code></pre>
+  <div class="tableau"><table>
+    <tr><th>Point</th><th>Documentation</th><th>Choix du POC</th></tr>
+    <tr><td>Source de <code>plugins.js</code></td><td>Les exemples le chargent depuis <code>https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.js</code></td><td>Chargé depuis le Document Server lui-même : même version que l'éditeur, aucun accès Internet requis. L'URL est en dur et doit devenir un paramètre d'environnement</td></tr>
+    <tr><td><code>plugins-ui.js</code>, <code>plugins.css</code></td><td>Facultatifs : composants et styles alignés sur l'éditeur</td><td>Non utilisés : interface et styles maison (<code>styles.css</code>)</td></tr>
+    <tr><td>Accessibilité</td><td>Non traitée par la doc</td><td>Arborescence ARIA (<code>role="tree"</code>), zones <code>aria-live</code> pour l'état et l'aperçu</td></tr>
+  </table></div>
+
+  <h3>3.4 Le code : gestionnaires de <code>Asc.plugin</code></h3>
+  <p>« <code>window.Asc.plugin</code> est l'objet principal du SDK des plugins », disponible une fois <code>plugins.js</code> chargé
+    (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/asc-plugin" target="_blank" rel="noopener">référence <code>Asc.plugin</code></a>).
+    Le plugin y attache des gestionnaires que l'éditeur appelle :</p>
+  <div class="tableau"><table>
+    <tr><th>Gestionnaire / appel</th><th>Rôle selon OnlyOffice</th><th>Dans le POC</th></tr>
+    <tr><td><code>init()</code></td><td>Point d'entrée, appelé quand le plugin est « initialisé et prêt à exécuter sa logique principale »</td><td>Fiche du document, en-tête patient, introspection, arborescence, contrôle du patient (<a href="#chargement">§7.1</a>)</td></tr>
+    <tr><td><code>button(id)</code></td><td>Clic sur un bouton du plugin ; <code>id = -1</code> pour la fermeture ou une interruption</td><td>Ferme le plugin (<code>executeCommand('close', '')</code>, appel hérité du SDK historique, absent de la page de référence actuelle)</td></tr>
+    <tr><td><code>executeMethod(nom, [params], rappel)</code></td><td>Appelle une méthode de l'éditeur ; le résultat arrive dans le rappel. <code>onMethodReturn</code> est obsolète (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-call-methods" target="_blank" rel="noopener">appeler des méthodes</a>)</td><td>Forme avec rappel, enveloppée dans une promesse (<code>methode()</code>, <a href="#onlyoffice">§5.2</a>)</td></tr>
+    <tr><td><code>callCommand(fn, isClose, isCalc, rappel)</code></td><td>Exécute une fonction Office JavaScript API dans le document, « dans son propre contexte, isolé des autres données JavaScript ». Les données passent par <code>Asc.scope</code> (<a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-call-commands" target="_blank" rel="noopener">appeler des commandes</a>)</td><td><code>commande()</code> avec <code>isClose = false</code> et <code>isCalc = true</code> (<a href="#onlyoffice">§5.3</a>)</td></tr>
+    <tr><td><code>onThemeChanged(theme)</code></td><td>Changement de thème de l'éditeur ; appeler d'abord <code>onThemeChangedBase</code></td><td>Non utilisé : l'onglet garde son thème clair</td></tr>
+    <tr><td><code>onTranslate()</code></td><td>Traduction de l'interface au démarrage et au changement de langue</td><td>Non utilisé</td></tr>
+    <tr><td><code>attachEditorEvent(nom, fn)</code></td><td>Abonnement aux événements de l'éditeur (ex. <code>onChangeContentControl</code>)</td><td>Non utilisé. Piste pour rafraîchir ou contrôler un contrôle au moment où il change</td></tr>
+  </table></div>
+
+  <h3>3.5 Les modules JavaScript</h3>
+  <p>OnlyOffice n'impose aucune organisation du code. Dans le POC, chaque fichier est une <strong>IIFE</strong> qui s'expose
+    deux fois : sur <code>window</code> pour le navigateur, et par <code>module.exports</code> pour les tests Node.
+    Il n'y a ni bundler ni dépendance npm.</p>
+<pre><code>(function (racine) {
+    'use strict';
+    function construireRequete(liaisons, modele) { … }
+    var api = { construireRequete: construireRequete, … };
+    racine.PocCrLiaisons = api;                                          <span class="c">// navigateur</span>
+    if (typeof module !== 'undefined' &amp;&amp; module.exports) module.exports = api;   <span class="c">// node --test</span>
+})(typeof window !== 'undefined' ? window : globalThis);</code></pre>
+  <div class="chaine">
+    <div><b>liaisons.js</b><code>PocCrLiaisons</code><br>pur, testable</div>
+    <div><b>graphql.js</b><code>PocCrGraphQl</code><br>fetch + introspection</div>
+    <div><b>accords.js</b><code>PocCrAccords</code><br>pur</div>
+    <div><b>rendu.js</b><code>PocCrRendu</code><br>utilise accords + liaisons</div>
+    <div><b>code.js</b>utilise les quatre<br>seul à toucher <code>Asc.plugin</code> et le DOM</div>
+  </div>
+  <p class="legende">Seul <code>code.js</code> dépend de l'éditeur : tout le reste se teste sans OnlyOffice.
+    Pour mettre au point la partie liée à l'éditeur, voir <a class="ext" href="https://api.onlyoffice.com/docs/plugins/development-workflow/debugging-plugins" target="_blank" rel="noopener">déboguer un plugin</a>
+    et <a class="ext" href="https://api.onlyoffice.com/docs/plugins/development-workflow/common-errors-solutions" target="_blank" rel="noopener">erreurs fréquentes</a>.</p>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="deploiement">
+  <h2><span class="num">4.</span>Packaging et déploiement</h2>
+
+  <div class="acquis"><strong>En une phrase</strong>
+    Le plugin n'est ni compilé ni zippé : c'est un dossier statique embarqué dans le jar Spring Boot, servi sous
+    <code>/plugin/</code>, et signalé à l'éditeur, document par document, par la configuration que Spring génère.</div>
+
+  <h3>4.1 Packaging : un dossier de ressources statiques</h3>
+  <p>Tout ce qui se trouve sous <code>src/main/resources/static/</code> est copié dans le jar par <code>mvn package</code>
+    et servi à la racine par Spring MVC. Le plugin est donc disponible à
+    <code>http://localhost:8081/plugin/config.json</code>, <code>…/plugin/index.html</code>, etc. Une nouvelle version
+    du plugin = une nouvelle version du serveur. Pensez à incrémenter <code>version</code> dans <code>config.json</code>
+    et à vider le cache du navigateur si l'onglet ne se met pas à jour.</p>
+  <p>Ce choix a un avantage décisif : <strong>le plugin et <code>/graphql</code> ont la même origine</strong>. Aucune
+    configuration CORS n'est nécessaire pour les appels de données.</p>
+
+  <h3>4.2 Déploiement : déclaration dans la configuration de l'éditeur</h3>
+  <p class="legende">Référence : <a class="ext" href="https://api.onlyoffice.com/docs/docs-api/usage-api/config/editor/plugins" target="_blank" rel="noopener">editorConfig.plugins</a> (<code>autostart</code>, <code>pluginsData</code>, <code>options</code>, <code>disable</code>).</p>
+  <p>À l'ouverture d'un document, la page hôte demande sa configuration à Spring
+    (<code>ControleurDocuments.configuration</code>), puis la passe à <code>new DocsAPI.DocEditor</code>.
+    C'est cette configuration qui déclare le plugin :</p>
+<pre><code>GET /api/documents/demo/configuration
+
+{
+  "documentType": "word",
+  "document": {
+    "fileType": "docx",
+    "key": "&lt;clé de version du fichier&gt;",
+    "title": "demo.docx",
+    "url": "http://host.docker.internal:8081/api/documents/demo/contenu",   <span class="c">← vue du conteneur</span>
+    "permissions": { "edit": true }                                         <span class="c">← false si validé</span>
+  },
+  "editorConfig": {
+    "callbackUrl": "http://host.docker.internal:8081/api/documents/demo/callback",
+    "lang": "fr",
+    "mode": "edit",                                                         <span class="c">← "view" si validé</span>
+    "user": { "id": "poc-medecin", "name": "Dr POC" },
+    "plugins": {
+      "autostart":   ["asc.{6B0E1C2A-6E2D-4C5B-9A1F-2C7D3E4F5A60}"],       <span class="c">← ouvre l'onglet</span>
+      "pluginsData": ["http://localhost:8081/plugin/config.json"]          <span class="c">← vue du navigateur</span>
+    }
+  }
+}</code></pre>
+
+  <h3>4.3 Qui voit quelle URL</h3>
+  <p>Le piège principal : certaines URL sont appelées par le <strong>navigateur</strong>, d'autres par le
+    <strong>conteneur</strong> Document Server, pour qui <code>localhost</code> est lui-même.</p>
+  <div class="tableau"><table>
+    <tr><th>Propriété (<code>poc.editeur.*</code>)</th><th>Valeur POC</th><th>Utilisée par</th><th>Pour</th></tr>
+    <tr><td><code>url-document-server</code></td><td><code>http://localhost:8080</code></td><td>navigateur</td><td>charger <code>api.js</code> ; origine autorisée par CORS sur <code>/plugin/**</code></td></tr>
+    <tr><td><code>url-serveur-pour-doc-server</code></td><td><code>http://host.docker.internal:8081</code></td><td>conteneur</td><td>télécharger le docx, appeler le callback de sauvegarde</td></tr>
+    <tr><td><code>url-serveur-pour-navigateur</code></td><td><code>http://localhost:8081</code></td><td>navigateur (iframe éditeur)</td><td>lire <code>config.json</code> du plugin</td></tr>
+    <tr><td><code>guid-plugin</code></td><td><code>asc.{6B0E…5A60}</code></td><td>éditeur</td><td><code>autostart</code> ; doit égaler le <code>guid</code> du manifeste</td></tr>
+  </table></div>
+  <div class="attention"><strong>CORS sur le manifeste</strong>
+    <code>config.json</code> est lu par du JavaScript qui s'exécute dans l'origine <code>:8080</code> (l'iframe de
+    l'éditeur). <code>ConfigurationEditeur.corsPourPlugin</code> autorise donc les <code>GET</code> sur
+    <code>/plugin/**</code> depuis <code>url-document-server</code>. Sans cela, le chargement échoue en silence et
+    l'onglet ne s'affiche pas.</div>
+
+  <h3>4.4 Séquence d'ouverture d'un document</h3>
+  <div class="schema">
+  <svg viewBox="0 0 960 520" role="img" aria-labelledby="t-ouv">
+    <title id="t-ouv">Séquence : de l'ouverture du document au démarrage du plugin</title>
+    <g>
+      <rect x="20" y="16" width="140" height="40" rx="6" class="z-spring"/><text x="90" y="41" text-anchor="middle" class="titre">Page hôte</text>
+      <rect x="220" y="16" width="140" height="40" rx="6" class="z-spring"/><text x="290" y="41" text-anchor="middle" class="titre">Spring :8081</text>
+      <rect x="420" y="16" width="140" height="40" rx="6" class="z-ds"/><text x="490" y="41" text-anchor="middle" class="titre">Document Server</text>
+      <rect x="620" y="16" width="140" height="40" rx="6" class="z-ds"/><text x="690" y="41" text-anchor="middle" class="titre">Éditeur (iframe)</text>
+      <rect x="800" y="16" width="140" height="40" rx="6" class="z-plugin"/><text x="870" y="41" text-anchor="middle" class="titre">Plugin (iframe)</text>
+      <line x1="90" y1="56" x2="90" y2="506" class="vie"/>
+      <line x1="290" y1="56" x2="290" y2="506" class="vie"/>
+      <line x1="490" y1="56" x2="490" y2="506" class="vie"/>
+      <line x1="690" y1="56" x2="690" y2="506" class="vie"/>
+      <line x1="870" y1="56" x2="870" y2="506" class="vie"/>
+    </g>
+    <line x1="90" y1="86" x2="286" y2="86" class="fl"/><text x="98" y="80">① GET /api/editeur/parametres</text>
+    <line x1="90" y1="126" x2="486" y2="126" class="fl"/><text x="98" y="120">② &lt;script&gt; web-apps/apps/api/documents/api.js</text>
+    <line x1="90" y1="166" x2="286" y2="166" class="fl"/><text x="98" y="160">③ GET …/demo/configuration</text>
+    <line x1="290" y1="182" x2="94" y2="182" class="retour"/><text x="120" y="198" class="petit">config (document, editorConfig.plugins)</text>
+    <line x1="90" y1="226" x2="686" y2="226" class="fl"/><text x="98" y="220">④ new DocsAPI.DocEditor('cible', config) → crée l'iframe</text>
+    <line x1="490" y1="266" x2="294" y2="266" class="fl"/><text x="300" y="260">⑤ GET …/contenu (host.docker.internal)</text>
+    <line x1="690" y1="306" x2="294" y2="306" class="fl"/><text x="300" y="300">⑥ GET /plugin/config.json (CORS)</text>
+    <line x1="690" y1="346" x2="866" y2="346" class="fl"/><text x="698" y="340">⑦ autostart guid → iframe</text>
+    <line x1="870" y1="386" x2="294" y2="386" class="fl"/><text x="300" y="380">⑧ GET /plugin/index.html, scripts/*.js, styles.css</text>
+    <line x1="870" y1="426" x2="494" y2="426" class="fl"/><text x="500" y="420">⑨ sdkjs-plugins/v1/plugins.js (SDK)</text>
+    <rect x="770" y="448" width="180" height="44" rx="6" class="noteb"/>
+    <text x="860" y="467" text-anchor="middle">⑩ Asc.plugin.init()</text>
+    <text x="860" y="484" text-anchor="middle" class="petit">voir §7</text>
+  </svg>
+  </div>
+  <p class="legende">③ et ④ sont rejoués à chaque ouverture : la configuration dépend de l'état du document
+    (<code>mode: "view"</code> après validation).</p>
+
+  <h3>4.5 Autres modes de déploiement possibles</h3>
+  <p class="legende">Référence : <a class="ext" href="https://api.onlyoffice.com/docs/plugins/development-workflow/installing-and-testing/docs-on-premises-installation" target="_blank" rel="noopener">installation sur ONLYOFFICE Docs on-premises</a> · <a class="ext" href="https://api.onlyoffice.com/docs/plugins/development-workflow/publishing/private-distribution" target="_blank" rel="noopener">distribution privée</a>.</p>
+  <p>OnlyOffice propose d'autres façons d'installer un plugin. Elles ne sont <strong>pas utilisées</strong> dans le POC
+    et n'y ont pas été testées ; elles sont listées pour situer le choix fait.</p>
+  <div class="tableau"><table>
+    <tr><th>Mode</th><th>Principe</th><th>Avantage</th><th>Inconvénient</th></tr>
+    <tr><td><strong><code>pluginsData</code></strong> <span class="badge ok">POC</span></td><td>URL du <code>config.json</code> passée dans la configuration de l'éditeur</td><td>Livré avec l'application, versionné avec elle, activable document par document, même origine que l'API</td><td>CORS à régler sur le manifeste</td></tr>
+    <tr><td>Dossier <code>sdkjs-plugins</code> du Document Server</td><td>Copier le dossier du plugin dans <code>/var/www/onlyoffice/documentserver/sdkjs-plugins/</code> (volume Docker)</td><td>Disponible pour tous les documents</td><td>Couplé à l'installation du Document Server ; le plugin ne serait plus en même origine que <code>/graphql</code></td></tr>
+    <tr><td>Archive <code>.plugin</code></td><td>Zip du dossier (manifeste à la racine), installé via le gestionnaire de plugins ou les Desktop Editors</td><td>Distribution à des postes</td><td>Sans objet pour une application web métier</td></tr>
+  </table></div>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="onlyoffice">
+  <h2><span class="num">5.</span>Comment le plugin dialogue avec OnlyOffice</h2>
+  <p>Le plugin ne touche jamais au DOM de l'éditeur : il vit dans une autre iframe. Le SDK <code>plugins.js</code>
+    échange des messages (<code>postMessage</code>) avec l'éditeur. Le plugin dispose de trois leviers.</p>
+
+  <div class="schema">
+  <svg viewBox="0 0 960 300" role="img" aria-labelledby="t-canaux">
+    <title id="t-canaux">Les trois canaux plugin vers éditeur</title>
+    <rect x="20" y="20" width="230" height="260" rx="10" class="z-plugin"/>
+    <text x="36" y="46" class="titre">Plugin — code.js</text>
+    <text x="36" y="72" class="mono">methode(nom, params)</text>
+    <text x="36" y="142" class="mono">commande(fn, donnees)</text>
+    <text x="36" y="212" class="mono">R.scriptValeur(…)</text>
+    <text x="36" y="230" class="petit">texte de script dans Props.Script</text>
+
+    <rect x="710" y="20" width="230" height="260" rx="10" class="z-ds"/>
+    <text x="726" y="46" class="titre">Éditeur OnlyOffice</text>
+    <text x="726" y="72">API « méthodes »</text>
+    <text x="726" y="142">Document Builder (Api.*)</text>
+    <text x="726" y="212">Document Builder, dans</text>
+    <text x="726" y="228">le contrôle remplacé</text>
+
+    <line x1="250" y1="68" x2="706" y2="68" class="fl"/>
+    <text x="264" y="60" class="titre">① Asc.plugin.executeMethod(nom, [params], rappel)</text>
+    <text x="264" y="88" class="petit">GetAllContentControls · InsertAndReplaceContentControls · SetEditingRestrictions</text>
+    <line x1="250" y1="138" x2="706" y2="138" class="fl"/>
+    <text x="264" y="130" class="titre">② Asc.plugin.callCommand(fonction ES5, false, true, rappel)</text>
+    <text x="264" y="158" class="petit">données via Asc.scope.donnees · insertion en ligne, mise à jour en ligne, déverrouillage</text>
+    <line x1="250" y1="208" x2="706" y2="208" class="fl"/>
+    <text x="264" y="200" class="titre">③ InsertAndReplaceContentControls([{ Props, Script }])</text>
+    <text x="264" y="228" class="petit">tableaux (contrôles bloc) · données injectées en JSON littéral</text>
+    <line x1="706" y1="258" x2="254" y2="258" class="retour"/>
+    <text x="264" y="276" class="petit">résultats renvoyés au rappel → promesses côté plugin</text>
+  </svg>
+  </div>
+
+  <h3>5.1 Cycle de vie</h3>
+<pre><code>window.Asc.plugin.init = function () {       <span class="c">// appelé quand l'iframe et le SDK sont prêts</span>
+    brancherInterface();
+    chargerFiche()                             <span class="c">// REST : quel document, quel patient</span>
+        .then(G.chargerSchema)                 <span class="c">// GraphQL : introspection</span>
+        .then(function (modele) { …; return controlerPatient(); })
+        .then(verifierValidation)
+        .catch(afficherErreur);
+};
+window.Asc.plugin.button = function () { this.executeCommand('close', ''); };</code></pre>
+
+  <h3>5.2 Canal ① : l'API « méthodes »</h3>
+  <p>Le POC enveloppe <code>executeMethod</code> dans une promesse :</p>
+<pre><code>function methode(nom, parametres) {
+    return new Promise(function (ok) {
+        window.Asc.plugin.executeMethod(nom, parametres || [], ok);
+    });
+}</code></pre>
+  <div class="tableau"><table>
+    <tr><th>Méthode</th><th>Utilisation</th><th>Statut</th></tr>
+    <tr><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/document-api/Methods/GetAllContentControls" target="_blank" rel="noopener"><code>GetAllContentControls</code></a></td><td>Lire tous les contrôles et leur <code>Tag</code> : retrouver les liaisons du document, contrôler le patient</td><td><span class="badge ok">confirmé DS 10.0</span></td></tr>
+    <tr><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/document-api/Methods/InsertAndReplaceContentControls" target="_blank" rel="noopener"><code>InsertAndReplaceContentControls</code></a></td><td>Insérer un contrôle bloc (sans <code>InternalId</code>) ou remplacer son contenu (avec <code>InternalId</code>)</td><td><span class="badge ok">confirmé DS 10.0</span></td></tr>
+    <tr><td><a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/document-api/Methods/SetEditingRestrictions" target="_blank" rel="noopener"><code>SetEditingRestrictions("readOnly")</code></a></td><td>Passer le document en lecture seule après validation</td><td><span class="badge ok">confirmé DS 10.0</span></td></tr>
+  </table></div>
+
+  <h3>5.3 Canal ② : <code>callCommand</code> et Document Builder</h3>
+  <p class="legende">Références : <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/overview/how-to-call-commands" target="_blank" rel="noopener">callCommand</a> · <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api" target="_blank" rel="noopener">Office JavaScript API (texte)</a> · <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/Api/Methods/CreateInlineLvlSdt" target="_blank" rel="noopener">CreateInlineLvlSdt</a> · <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/ApiInlineLvlSdt" target="_blank" rel="noopener">ApiInlineLvlSdt</a> (<a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/ApiInlineLvlSdt/Methods/SetTag" target="_blank" rel="noopener">SetTag</a>, <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/ApiInlineLvlSdt/Methods/SetLock" target="_blank" rel="noopener">SetLock</a>) · <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/ApiDocument/Methods/InsertContent" target="_blank" rel="noopener">InsertContent</a></p>
+  <p>Utilisé pour ce que l'API « méthodes » ne sait pas faire : les contrôles <strong>en ligne</strong> (dans une phrase).
+    La fonction est <strong>sérialisée</strong> et exécutée dans le contexte du document : ES5 seulement, aucune
+    variable du plugin accessible. Les données passent par <code>Asc.scope</code>.</p>
+<pre><code>function commande(fonction, donnees) {
+    return new Promise(function (ok) {
+        window.Asc.scope.donnees = donnees;
+        window.Asc.plugin.callCommand(fonction, false, true, ok);   <span class="c">// isClose=false, isCalc=true</span>
+    });
+}
+
+<span class="c">// Insère un contrôle en ligne à la position du curseur.</span>
+function insererEnLigne(controle) {
+    return commande(function () {
+        var d = Asc.scope.donnees;               <span class="c">// { texte, tag, alias, lock }</span>
+        var cc = Api.CreateInlineLvlSdt();
+        var run = Api.CreateRun();
+        run.AddText(d.texte);
+        cc.AddElement(run, 0);
+        cc.SetTag(d.tag);                        <span class="c">// la liaison JSON</span>
+        cc.SetAlias(d.alias);                    <span class="c">// visible au survol</span>
+        cc.SetLock(d.lock);                      <span class="c">// "contentLocked"</span>
+        var p = Api.CreateParagraph();
+        p.AddInlineLvlSdt(cc);
+        Api.GetDocument().InsertContent([p], true);   <span class="c">// true = fusion dans le paragraphe courant</span>
+    }, controle);
+}</code></pre>
+
+  <h3>5.4 Canal ③ : un script dans un contrôle bloc</h3>
+  <p class="legende">Références : <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/document-api/Methods/InsertAndReplaceContentControls" target="_blank" rel="noopener">InsertAndReplaceContentControls</a> · <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/Api/Methods/CreateTable" target="_blank" rel="noopener">Api.CreateTable</a> · <a class="ext" href="https://api.onlyoffice.com/docs/office-api/usage-api/document-api/ApiTable/Methods/GetRowsCount" target="_blank" rel="noopener">GetRowsCount</a> · <a class="ext" href="https://api.onlyoffice.com/docs/plugins/interacting-with-editors/document-api/Enumeration/ContentControlLock" target="_blank" rel="noopener">valeurs de Lock</a></p>
+  <p>Pour un tableau, <code>InsertAndReplaceContentControls</code> reçoit un <code>Script</code> Document Builder
+    sous forme de <strong>chaîne</strong>, construite par <code>rendu.js</code>. Les données y sont injectées avec
+    <code>JSON.stringify</code>, jamais par concaténation brute :</p>
+<pre><code>ecrireControles([{
+    Props: { Tag: '{"v":2,"r":"patient","p":"…","c":"observations",…}',
+             Alias: 'Observations (biologie, constantes) (categorie=BIOLOGIE)',
+             Lock: 0,                          <span class="c">// 0 = contenu verrouillé, contrôle supprimable</span>
+             InternalId: '…' },                <span class="c">// absent → insertion au curseur</span>
+    Script: 'var entetes = ["Examen","Valeur","Unité"]; var lignes = [["HbA1c","7.2","%"]];' +
+            'var t = Api.CreateTable(entetes.length, lignes.length + 1);' +
+            'if (t.GetRowsCount() !== lignes.length + 1) t = Api.CreateTable(lignes.length + 1, entetes.length);' +
+            '…; Api.GetDocument().InsertContent([t]);'
+}]);</code></pre>
+
+  <h3>5.5 Le content control comme support de la donnée</h3>
+  <p>Chaque donnée insérée est un content control. Son <strong>tag</strong> porte la <em>liaison</em> (ce qu'il faut
+    demander à GraphQL), son contenu porte la <em>valeur</em> affichée. Le document se suffit à lui-même : à la
+    réouverture, le plugin relit les tags et sait tout rafraîchir.</p>
+  <div class="tableau"><table>
+    <tr><th>Usage</th><th>Type de contrôle</th><th>Écrit par</th><th>Verrou en édition</th><th>Verrou après validation</th></tr>
+    <tr><td>Valeur, valeurs jointes, accord</td><td>en ligne (<code>"m":"i"</code>)</td><td><code>callCommand</code></td><td><code>"contentLocked"</code></td><td><code>"sdtContentLocked"</code></td></tr>
+    <tr><td>Liste d'objets</td><td>bloc (tableau)</td><td><code>InsertAndReplaceContentControls</code></td><td><code>Lock: 0</code></td><td><code>Lock: 1</code></td></tr>
+  </table></div>
+  <p class="legende">En édition, le médecin ne peut pas retoucher la valeur à la main mais peut supprimer le contrôle. Une fois validé, ni l'un ni l'autre.</p>
+
+  <h3>5.6 Deux pièges rencontrés sur le Document Server 10.0</h3>
+  <div class="attention"><strong>Ordre des arguments de <code>Api.CreateTable</code></strong>
+    La version testée attend (lignes, colonnes), l'inverse de la documentation. Seuls les tableaux 2 × 2
+    fonctionnaient. Le script vérifie <code>GetRowsCount()</code> et recrée le tableau si besoin.</div>
+  <div class="attention"><strong>Un contrôle bloc verrouillé ignore son remplacement</strong>
+    Avec <code>Lock</code> 0 ou 1, <code>InsertAndReplaceContentControls</code> ne remplace pas le contenu et ne
+    signale rien. <code>ecrireControles</code> déverrouille d'abord les contrôles visés (<code>SetLock("unlocked")</code>
+    via <code>callCommand</code>), puis le remplacement repose le verrou demandé.</div>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="backend">
+  <h2><span class="num">6.</span>Comment le plugin interagit avec le backend</h2>
+  <p>Le plugin utilise <code>fetch</code> avec des chemins relatifs. Servi par Spring, il est dans la même origine que
+    l'API : pas de CORS, pas de configuration d'URL.</p>
+
+  <div class="grille2">
+    <div>
+      <h4>REST : le contexte du document</h4>
+      <p>Ce que le plugin doit savoir <em>avant</em> de demander des données : quel document, quel patient, déjà validé ou non.</p>
+    </div>
+    <div>
+      <h4>GraphQL : les données</h4>
+      <p>Le schéma (introspection), l'en-tête patient, puis <strong>une seule requête</strong> pour toutes les liaisons du document.</p>
+    </div>
+  </div>
+
+  <h3>6.1 Savoir quel document est ouvert</h3>
+  <p>L'éditeur ne transmet pas au plugin l'identité du document. Le POC passe par la page hôte, de même origine :</p>
+<pre><code><span class="c">// page hôte, à l'ouverture</span>
+window.PocCr.documentCourant = nom;
+
+<span class="c">// plugin (code.js)</span>
+function nomDocument() {
+    try { return window.top.PocCr &amp;&amp; window.top.PocCr.documentCourant; }
+    catch (e) { return null; }                 <span class="c">// autre origine : accès refusé</span>
+}</code></pre>
+  <p class="legende">Raccourci de POC. Piste documentée : <a class="ext" href="https://api.onlyoffice.com/docs/docs-api/usage-api/config/editor/plugins" target="_blank" rel="noopener"><code>editorConfig.plugins.options</code></a> transmet des paramètres à un plugin désigné par son guid (identifiant du document, jeton…). Non essayé dans le POC.</p>
+
+  <h3>6.2 Appels du plugin</h3>
+  <div class="tableau"><table>
+    <tr><th>Appel</th><th>Quand</th><th>Réponse</th></tr>
+    <tr><td><code>GET /api/documents/{nom}/fiche</code></td><td>Au démarrage</td><td><code>{ id, nom, titre, patientId, valide }</code> — <code>patientId</code> nul = gabarit</td></tr>
+    <tr><td><code>POST /graphql</code> — <code>Introspection</code></td><td>Au démarrage</td><td>Tous les types du schéma, leurs champs, arguments et descriptions</td></tr>
+    <tr><td><code>POST /graphql</code> — en-tête patient</td><td>Au démarrage (si patient)</td><td><code>{ id ipp nom prenom dateNaissance sexe }</code></td></tr>
+    <tr><td><code>POST /graphql</code> — <code>DonneesDocument</code></td><td>Aperçu, insertion, rafraîchissement</td><td>Un alias <code>c0, c1…</code> par liaison</td></tr>
+    <tr><td><code>GET /api/documents/{nom}/validation</code></td><td>Au démarrage</td><td><code>404</code> si brouillon, sinon l'état de validation</td></tr>
+    <tr><td><code>POST /api/documents/{nom}/validation</code></td><td>Clic sur « Confirmer la validation »</td><td>Données figées par le serveur (voir <a href="#validation">§9</a>)</td></tr>
+  </table></div>
+  <p>Les autres points d'entrée REST sont appelés par la page hôte (<code>/patients</code>, <code>/documents</code>,
+    <code>/configuration</code>…) ou par le Document Server (<code>/contenu</code>, <code>/callback</code>), jamais par le plugin.</p>
+
+  <h3>6.3 Le client GraphQL du plugin</h3>
+  <p>Volontairement minimal (<code>graphql.js</code>) : un <code>POST</code> JSON, et les erreurs GraphQL deviennent des exceptions.</p>
+<pre><code>function executer(requete, variables) {
+    return fetch('/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: requete, variables: variables || {} })
+    }).then(function (reponse) {
+        if (!reponse.ok) throw new Error('GraphQL HTTP ' + reponse.status);
+        return reponse.json();
+    }).then(function (corps) {
+        if (corps.errors &amp;&amp; corps.errors.length) throw new Error(corps.errors.map(…).join('\n'));
+        return corps.data;
+    });
+}</code></pre>
+
+  <h3>6.4 Côté serveur : résoudre sans N+1</h3>
+  <ul>
+    <li><code>ControleurDossierPatient</code> et <code>ControleurDocument</code> (Spring for GraphQL) résolvent les champs.</li>
+    <li>Les champs à arguments (<code>observations</code>, <code>traitements</code>) passent par des <strong>DataLoaders</strong>
+      dont la clé contient le filtre : deux alias <code>observations(categorie: BIOLOGIE)</code> et
+      <code>observations(categorie: CONSTANTE)</code> donnent deux clés, regroupées par filtre en SQL.</li>
+    <li><code>sejours</code> et <code>sejourCourant</code> partagent un chargeur : demander les deux = une requête SQL.</li>
+    <li>Racine <code>document</code> : quatre chargeurs (acteurs, professionnels, coordonnées, établissements).</li>
+  </ul>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="chargement">
+  <h2><span class="num">7.</span>Comment les données sont chargées dans le plugin : du schéma GraphQL au document</h2>
+
+  <h3>7.1 Démarrage : de <code>init</code> à l'arborescence</h3>
+  <div class="schema">
+  <svg viewBox="0 0 960 470" role="img" aria-labelledby="t-init">
+    <title id="t-init">Séquence de démarrage du plugin</title>
+    <rect x="20" y="16" width="150" height="40" rx="6" class="z-plugin"/><text x="95" y="41" text-anchor="middle" class="titre">Plugin</text>
+    <rect x="220" y="16" width="150" height="40" rx="6" class="z-spring"/><text x="295" y="41" text-anchor="middle" class="titre">Page hôte (top)</text>
+    <rect x="420" y="16" width="150" height="40" rx="6" class="z-spring"/><text x="495" y="41" text-anchor="middle" class="titre">REST /api</text>
+    <rect x="620" y="16" width="150" height="40" rx="6" class="z-spring"/><text x="695" y="41" text-anchor="middle" class="titre">/graphql</text>
+    <rect x="800" y="16" width="140" height="40" rx="6" class="z-ds"/><text x="870" y="41" text-anchor="middle" class="titre">Éditeur</text>
+    <line x1="95" y1="56" x2="95" y2="456" class="vie"/>
+    <line x1="295" y1="56" x2="295" y2="456" class="vie"/>
+    <line x1="495" y1="56" x2="495" y2="456" class="vie"/>
+    <line x1="695" y1="56" x2="695" y2="456" class="vie"/>
+    <line x1="870" y1="56" x2="870" y2="456" class="vie"/>
+
+    <line x1="95" y1="86" x2="291" y2="86" class="fl"/><text x="102" y="80">① PocCr.documentCourant</text>
+    <line x1="295" y1="100" x2="99" y2="100" class="retour"/><text x="200" y="114" class="petit">"demo"</text>
+    <line x1="95" y1="140" x2="491" y2="140" class="fl"/><text x="102" y="134">② GET /api/documents/demo/fiche</text>
+    <line x1="495" y1="154" x2="99" y2="154" class="retour"/><text x="300" y="168" class="petit">{ id, patientId, valide }</text>
+    <line x1="95" y1="194" x2="691" y2="194" class="fl"/><text x="102" y="188">③ query patient(id) — en-tête « MARTIN Claire — IPP 100001 »</text>
+    <line x1="95" y1="234" x2="691" y2="234" class="fl"/><text x="102" y="228">④ query Introspection</text>
+    <line x1="695" y1="248" x2="99" y2="248" class="retour"/><text x="400" y="262" class="petit">__schema.types</text>
+    <rect x="20" y="276" width="300" height="40" rx="6" class="noteb"/>
+    <text x="32" y="294">⑤ analyserSchema → modèle</text>
+    <text x="32" y="309" class="petit">afficherArbre() · afficherAccords()</text>
+    <line x1="95" y1="346" x2="866" y2="346" class="fl"/><text x="102" y="340">⑥ executeMethod("GetAllContentControls") → tags</text>
+    <rect x="20" y="362" width="300" height="40" rx="6" class="noteb"/>
+    <text x="32" y="380">⑦ identitovigilance</text>
+    <text x="32" y="395" class="petit">un autre patient dans un tag → onglet bloqué</text>
+    <line x1="95" y1="432" x2="491" y2="432" class="fl"/><text x="102" y="426">⑧ GET …/validation → 404 ou état validé</text>
+  </svg>
+  </div>
+
+  <h3>7.2 Le schéma GraphQL pilote l'onglet</h3>
+  <p>Le plugin ne contient <strong>aucune liste de champs en dur</strong>. Tout ce que l'onglet propose (champs,
+    libellés, listes, filtres, valeurs d'enum, valeurs par défaut) vient de <code>schema.graphqls</code>, lu à chaque
+    démarrage par introspection. Le chargement suit cinq étapes :</p>
+  <div class="chaine">
+    <div><b>schema.graphqls</b>types, champs, arguments et <em>descriptions</em> côté serveur</div>
+    <div><b>Introspection</b><code>G.chargerSchema()</code> : <code>POST /graphql</code>, réponse <code>__schema.types</code></div>
+    <div><b>Modèle</b><code>G.analyserSchema()</code> : types objets réduits à leurs champs utiles</div>
+    <div><b>Interface</b>arborescence, réglages, colonnes, accords</div>
+    <div><b>Garde-fou</b>chaque tag est revalidé contre le modèle avant compilation</div>
+  </div>
+  <p>Chaque élément du schéma a un effet précis dans le plugin :</p>
+  <div class="tableau"><table>
+    <tr><th>Dans <code>schema.graphqls</code></th><th>Dans le modèle</th><th>Effet dans le plugin</th></tr>
+    <tr><td>Champ <code>patient</code> / <code>document</code> de <code>Query</code></td><td><code>racines</code></td><td>Les deux racines de l'arborescence (« Patient », « Document »). <code>rechercherPatients</code> n'en est pas une</td></tr>
+    <tr><td><code>"Nom de naissance" nom: String!</code></td><td><code>libelle</code>, <code>kind: SCALAR</code></td><td>Feuille de l'arbre « Nom de naissance », insérée <strong>en ligne</strong></td></tr>
+    <tr><td>Description absente</td><td><code>libelle</code> = nom technique</td><td>L'onglet affiche <code>nom</code> tel quel : toujours documenter les champs</td></tr>
+    <tr><td><code>id: ID!</code></td><td>écarté</td><td>Jamais proposé</td></tr>
+    <tr><td>Champ de type objet : <code>sejourCourant: Sejour</code></td><td><code>kind: OBJECT</code>, <code>liste: false</code></td><td>Nœud dépliable ; ne s'insère pas tel quel (« Choisissez un champ de… »)</td></tr>
+    <tr><td>Liste d'objets : <code>observations: [Observation!]!</code></td><td><code>liste: true</code></td><td>Badge « liste » ; insertion en <strong>tableau</strong> ; ses sous-champs s'insèrent en ligne, joints par des virgules ; proposée pour l'accord en nombre</td></tr>
+    <tr><td>Arguments : <code>observations(categorie: …, code: …, depuis: …)</code></td><td><code>args</code></td><td>Badge « réglable » ; un contrôle de saisie par argument dans les réglages</td></tr>
+    <tr><td>Valeur par défaut : <code>actifsSeulement: Boolean = false</code></td><td><code>defaut</code></td><td>Préremplit la saisie</td></tr>
+    <tr><td><code>enum Sexe { "Féminin" FEMININ … }</code></td><td><code>valeursEnum</code>, <code>libellesEnum</code></td><td>Listes déroulantes des arguments ; texte écrit dans le document (« Féminin » plutôt que <code>FEMININ</code>)</td></tr>
+    <tr><td><code>Patient.sexe</code> de type enum</td><td>champ <code>sexe</code> du type racine</td><td>Active le bloc « Accord en genre »</td></tr>
+  </table></div>
+
+  <h3>7.3 Étape 1 : l'introspection et sa réponse brute</h3>
+  <p>Au démarrage, <code>chargerSchema()</code> envoie la requête <code>Introspection</code> (texte complet en
+    <a href="#graphql">§8.1</a>). La réponse décrit <strong>tous</strong> les types du schéma. Les types y sont
+    « emballés » : <code>[Observation!]!</code> devient une chaîne <code>NON_NULL → LIST → NON_NULL → OBJECT</code>. C'est pour
+    cela que la requête redemande <code>ofType</code> sur quatre niveaux. Extrait pour le type <code>Patient</code> :</p>
+<pre><code>{ "data": { "__schema": { "types": [
+  { "name": "Patient", "kind": "OBJECT", "description": null,
+    "fields": [
+      { "name": "id", "description": null, "args": [],
+        "type": { "kind": "NON_NULL", "name": null, "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null } } },
+      { "name": "nom", "description": "Nom de naissance", "args": [],
+        "type": { "kind": "NON_NULL", "name": null, "ofType": { "kind": "SCALAR", "name": "String", "ofType": null } } },
+      { "name": "sexe", "description": "Sexe", "args": [],
+        "type": { "kind": "NON_NULL", "name": null, "ofType": { "kind": "ENUM", "name": "Sexe", "ofType": null } } },
+      { "name": "observations", "description": "Observations (biologie, constantes)",
+        "args": [
+          { "name": "categorie", "description": "Catégorie d'observation", "defaultValue": null,
+            "type": { "kind": "ENUM", "name": "CategorieObservation", "ofType": null } },
+          { "name": "depuis", "description": "Depuis : durée ISO (P3M, P1Y) ou date (2026-01-31)", "defaultValue": null,
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null } }, …
+        ],
+        "type": { "kind": "NON_NULL", "name": null, "ofType":
+                  { "kind": "LIST", "name": null, "ofType":
+                    { "kind": "NON_NULL", "name": null, "ofType":
+                      { "kind": "OBJECT", "name": "Observation", "ofType": null } } } } },
+      { "name": "traitements", "description": "Traitements",
+        "args": [ { "name": "actifsSeulement", "description": "En cours uniquement", "defaultValue": "false",
+                    "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null } } ], … },
+      …
+    ],
+    "enumValues": null },
+  { "name": "Sexe", "kind": "ENUM", "fields": null,
+    "enumValues": [ { "name": "FEMININ", "description": "Féminin" }, { "name": "MASCULIN", "description": "Masculin" },
+                    { "name": "INDETERMINE", "description": "Indéterminé" }, { "name": "INCONNU", "description": "Inconnu" } ] },
+  { "name": "Query", "kind": "OBJECT", "fields": [ { "name": "patient", … }, { "name": "document", … }, … ] },
+  { "name": "__Schema", "kind": "OBJECT", … },
+  …
+] } } }</code></pre>
+  <p class="legende">Les <code>defaultValue</code> arrivent sous forme de texte GraphQL : <code>"false"</code>, <code>"PROFESSIONNELLE"</code>, <code>"\"P3M\""</code>.</p>
+
+  <h3>7.4 Étape 2 : <code>analyserSchema</code> réduit la réponse en modèle</h3>
+  <p>La réponse brute est trop verbeuse pour être parcourue à chaque clic. <code>analyserSchema(types)</code>
+    (<code>graphql.js</code>) la transforme une fois pour toutes :</p>
+  <ol>
+    <li><strong>Filtrer les types</strong> : seuls les types <code>OBJECT</code> sont gardés. <code>Query</code> et les types techniques
+      <code>__Schema</code>, <code>__Type</code>… sont écartés.</li>
+    <li><strong>Dérouler chaque type</strong> (<code>derouler</code>) : retirer les <code>NON_NULL</code> et les <code>LIST</code> et retenir s'il y avait une
+      liste. <code>[Observation!]!</code> devient <code>{ kind: "OBJECT", nom: "Observation", liste: true }</code>.</li>
+    <li><strong>Libellé</strong> = <code>description</code>, sinon le nom du champ. Les champs <code>id</code> sont exclus.</li>
+    <li><strong>Enums</strong> : pour un champ ou un argument enum, rattacher la liste des valeurs (<code>valeursEnum</code>) et
+      leurs descriptions (<code>libellesEnum</code>), lues dans le type enum correspondant.</li>
+    <li><strong>Valeurs par défaut</strong> (<code>lireDefaut</code>) : <code>"\"P3M\""</code> devient <code>"P3M"</code>, <code>"false"</code> devient <code>false</code>,
+      et <code>"PROFESSIONNELLE"</code> reste tel quel.</li>
+    <li><strong>Racines</strong> : chercher <code>patient</code> et <code>document</code> parmi les champs de <code>Query</code>
+      (y compris ceux ajoutés par <code>extend type Query</code>) et noter leur type.</li>
+  </ol>
+<pre><code>{
+  "racines": { "patient": "Patient", "document": "Document" },
+  "types": {
+    "Patient": { "nom": "Patient", "champs": [
+      { "nom": "nom",  "libelle": "Nom de naissance", "kind": "SCALAR", "typeName": "String", "liste": false,
+        "valeursEnum": [], "libellesEnum": null, "args": [] },
+      { "nom": "sexe", "libelle": "Sexe", "kind": "ENUM", "typeName": "Sexe", "liste": false,
+        "valeursEnum": ["FEMININ","MASCULIN","INDETERMINE","INCONNU"],
+        "libellesEnum": { "FEMININ": "Féminin", "MASCULIN": "Masculin", "INDETERMINE": "Indéterminé", "INCONNU": "Inconnu" },
+        "args": [] },
+      { "nom": "observations", "libelle": "Observations (biologie, constantes)",
+        "kind": "OBJECT", "typeName": "Observation", "liste": true,
+        "args": [
+          { "nom": "categorie", "libelle": "Catégorie d'observation", "kind": "ENUM", "typeName": "CategorieObservation",
+            "valeursEnum": ["BIOLOGIE","CONSTANTE"], "libellesEnum": { "BIOLOGIE": "Biologie", "CONSTANTE": "Constante" },
+            "defaut": null },
+          { "nom": "code",   "libelle": "Code (ex. HBA1C)", "kind": "SCALAR", "typeName": "String", "defaut": null, … },
+          { "nom": "depuis", "libelle": "Depuis : durée ISO (P3M, P1Y) ou date (2026-01-31)", "kind": "SCALAR", … } ] },
+      { "nom": "traitements", …, "liste": true,
+        "args": [ { "nom": "actifsSeulement", "kind": "SCALAR", "typeName": "Boolean", "defaut": false, … } ] },
+      { "nom": "sejourCourant", "libelle": "Séjour de référence (en cours, sinon le dernier terminé)",
+        "kind": "OBJECT", "typeName": "Sejour", "liste": false, "args": [] },
+      …
+    ]},
+    "Observation": { … }, "Sejour": { … }, "Document": { … }, "Signataire": { … },
+    "Medecin": { "champs": [ …, { "nom": "adresse", "typeName": "Adresse",
+                                  "args": [ { "nom": "type", "kind": "ENUM", "defaut": "PROFESSIONNELLE", … } ] } ] },
+    …
+  }
+}</code></pre>
+  <p class="legende">Le modèle est conservé dans <code>etat.modele</code> pendant toute la vie de l'onglet. Il est rechargé à chaque ouverture
+    du document : une évolution du schéma côté serveur est visible dès la réouverture suivante.</p>
+
+  <h3>7.5 Étape 3 : du modèle à l'arborescence</h3>
+  <p><code>afficherArbre()</code> ne crée que les deux racines. Les enfants d'un nœud sont calculés
+    <strong>au premier dépliage</strong> (<code>basculer</code> → <code>enfants(noeud)</code>), à partir du type du dernier champ du chemin :</p>
+  <div class="grille2">
+    <div>
+<pre class="onglet"><code>▾ Patient
+    IPP
+    Nom de naissance
+    Prénom
+    Date de naissance
+    Âge (années révolues)
+    Sexe
+  ▸ Observations (biologie, constantes)  <span class="badge">liste</span> <span class="badge">réglable</span>
+  ▸ Traitements                          <span class="badge">liste</span> <span class="badge">réglable</span>
+  ▸ Séjour de référence (en cours, …)
+  ▸ Séjours                              <span class="badge">liste</span> <span class="badge">réglable</span>
+▾ Document
+    Titre du document
+    …
+  ▾ Signataire principal
+    ▾ Professionnel signataire
+        Nom
+        …
+      ▾ Adresse                          <span class="badge">réglable</span>
+          Ville                          <span class="c">← double-clic</span></code></pre>
+    </div>
+    <div>
+      <h4>Règles de construction</h4>
+      <ul>
+        <li>Nœud = <code>{ racine, champs: [Champ…] }</code>. Le chemin du tag (<code>c</code>) est la suite des noms de ces champs.</li>
+        <li>Nature (<code>natureDuNoeud</code>) : <strong>valeur</strong> (scalaire ou enum, feuille), <strong>objet</strong> (dépliable),
+          <strong>liste</strong> (dépliable et insérable en tableau).</li>
+        <li>Badge « liste » si <code>liste: true</code>, badge « réglable » si le champ a des arguments (leurs libellés sont dans l'info-bulle).</li>
+        <li>Pas de cycle : un champ objet dont le type figure déjà parmi les ancêtres n'est pas proposé.</li>
+        <li>Profondeur maximale : 7 segments.</li>
+        <li>Navigation au clavier (flèches, Entrée) : l'arbre suit le motif ARIA <code>tree</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>7.6 Étape 4 : du modèle aux réglages, colonnes et accords</h3>
+  <p>Un clic sur un nœud affiche ses réglages (<code>afficherReglages</code>). Tout est déduit du modèle :</p>
+  <div class="tableau"><table>
+    <tr><th>Élément</th><th>Règle de construction</th><th>Exemple</th></tr>
+    <tr><td>Saisie d'un argument (<code>champArgument</code>)</td><td>Enum : liste déroulante « (toutes) » + valeurs, affichées avec leur <code>libellesEnum</code>. <code>Boolean</code> : case à cocher. Sinon, champ texte. Préremplissage avec <code>defaut</code></td><td>« Observations — Catégorie d'observation » : (toutes) / Biologie / Constante</td></tr>
+    <tr><td>Arguments de tout le chemin</td><td>Les arguments de <strong>chaque</strong> segment sont proposés, rangés par position (<code>"a": {"2": …}</code>)</td><td>Document › Signataire principal › Professionnel › Adresse : « Adresse — Type d'adresse » = Professionnelle</td></tr>
+    <tr><td>Colonnes d'un tableau (<code>choixColonnes</code>)</td><td>Champs valeurs directs de l'élément (cochés), plus les valeurs de ses sous-objets sur un niveau (cochées seulement s'il n'y a aucune valeur directe)</td><td>Signataires : Professionnel › Nom, Professionnel › Prénom…</td></tr>
+    <tr><td>Aperçu</td><td>Liaison construite à partir des réglages, validée contre le modèle, puis envoyée en requête réelle (200 ms après le dernier changement)</td><td>« Aperçu : 3 lignes »</td></tr>
+    <tr><td>Accord en genre (<code>afficherAccords</code>)</td><td>Bloc affiché si le type racine Patient a un champ <code>sexe</code> de type enum</td><td>né / née</td></tr>
+    <tr><td>Accord en nombre</td><td>Une entrée par champ liste des types racines, avec ses arguments</td><td>Patient › Traitements, Document › Signataires…</td></tr>
+  </table></div>
+
+  <h3>7.7 Étape 5 : le modèle comme garde-fou et comme guide de mise en forme</h3>
+  <p>Avant chaque requête (aperçu, insertion, rafraîchissement, validation), <code>L.analyser</code> relit chaque tag
+    <strong>contre le modèle</strong>, pas contre ce que l'onglet a affiché :</p>
+  <ul>
+    <li>chaque segment du chemin doit respecter la syntaxe d'un nom GraphQL, exister dans le type courant, et être un objet s'il n'est pas le dernier (<code>resoudreChemin</code>) ;</li>
+    <li>chaque argument doit exister sur le champ concerné. Une valeur d'enum doit appartenir à <code>valeursEnum</code>, un
+      <code>Boolean</code>, <code>Int</code> ou <code>Float</code> est converti, une chaîne passe par <code>JSON.stringify</code> (<code>formaterArgument</code>) ;</li>
+    <li>une colonne inconnue (tag ancien, schéma modifié) est ignorée. Sans <code>k</code>, les colonnes par défaut viennent du modèle (<code>colonnesParDefaut</code>).</li>
+  </ul>
+  <p>Le même modèle guide la <strong>mise en forme</strong> (<code>rendu.js</code>) :</p>
+  <ul>
+    <li>en-têtes de tableau et alias des contrôles = libellés du chemin (« Observations (biologie, constantes) › Examen ») ;</li>
+    <li>une valeur d'enum est remplacée par sa description (<code>FEMININ</code> devient « Féminin »). Une chaîne d'un champ <em>non</em> enum
+      (« MARTIN ») n'est jamais reformatée.</li>
+  </ul>
+
+  <h3>7.8 Exemple : rendre un nouveau champ insérable</h3>
+  <p>Exemple hypothétique : le champ <code>groupeSanguin</code> n'existe pas dans le schéma actuel. Aucune modification du plugin n'est nécessaire :</p>
+<pre><code><span class="c"># 1. schema.graphqls : déclarer le champ AVEC une description (= son libellé dans l'onglet)</span>
+type Patient {
+    …
+    "Groupe sanguin"
+    groupeSanguin: String
+}
+
+<span class="c">// 2. Java : un resolver (accesseur du record Patient, ou @SchemaMapping(typeName = "Patient"))</span>
+
+<span class="c">// 3. Rouvrir le document : l'introspection renvoie le champ, le modèle le contient,</span>
+<span class="c">//    « Groupe sanguin » apparaît sous Patient et s'insère en ligne au double-clic.</span></code></pre>
+  <div class="note"><strong>Conséquence</strong>
+    Tout le schéma <code>Patient</code> et <code>Document</code> est proposé. Pour masquer un champ technique, il faut aujourd'hui le
+    retirer du schéma. Le filtrage par rôle ou par une directive <code>@insérable</code> est un chantier prévu (<a href="#limites">§11</a>).</div>
+
+  <h3>7.9 Le parcours d'une liaison</h3>
+  <div class="chaine">
+    <div><b>1. Choix</b>clic dans l'arbre + réglages (arguments, colonnes)</div>
+    <div><b>2. Liaison</b><code>L.creer()</code> → objet v2 → tag JSON</div>
+    <div><b>3. Analyse</b><code>L.analyser()</code> contre le modèle : nature valeur / tableau / genre / nombre</div>
+    <div><b>4. Requête</b><code>L.construireRequete()</code> : un alias <code>cN</code> par liaison</div>
+    <div><b>5. Appel</b><code>POST /graphql</code> avec <code>$id</code> et <code>$doc</code></div>
+    <div><b>6. Extraction</b><code>L.valeurs()</code> : <code>data[racine]["c"+i]</code></div>
+    <div><b>7. Rendu</b><code>R.texteEnLigne()</code> ou <code>R.scriptValeur()</code></div>
+    <div><b>8. Écriture</b><code>callCommand</code> ou <code>InsertAndReplaceContentControls</code></div>
+  </div>
+
+  <h3>7.10 Format de la liaison (tag v2)</h3>
+  <div class="tableau"><table>
+    <tr><th>Clé</th><th>Sens</th><th>Exemple</th></tr>
+    <tr><td><code>v</code></td><td>Version du format (les tags v1 sont convertis à la lecture)</td><td><code>2</code></td></tr>
+    <tr><td><code>r</code></td><td>Racine</td><td><code>"patient"</code>, <code>"document"</code></td></tr>
+    <tr><td><code>p</code></td><td>Patient (racine patient seulement) ; absent = gabarit</td><td><code>"1111…1111"</code></td></tr>
+    <tr><td><code>c</code></td><td>Chemin depuis la racine</td><td><code>"sejourCourant.service"</code></td></tr>
+    <tr><td><code>a</code></td><td>Arguments par position de segment</td><td><code>{"0":{"categorie":"BIOLOGIE"}}</code></td></tr>
+    <tr><td><code>k</code></td><td>Colonnes d'un tableau</td><td><code>["libelle","valeur","unite"]</code></td></tr>
+    <tr><td><code>m</code></td><td><code>"i"</code> = en ligne ; absent = bloc</td><td><code>"i"</code></td></tr>
+    <tr><td><code>g</code> / <code>q</code></td><td>Accord en genre / en nombre</td><td><code>{"m":"né","f":"née"}</code></td></tr>
+    <tr><td><code>f</code></td><td>Identifiant CDF (traçabilité, ignoré à la compilation)</td><td></td></tr>
+  </table></div>
+
+  <h3>7.11 Les quatre moments où des données sont chargées</h3>
+  <div class="tableau"><table>
+    <tr><th>Moment</th><th>Liaisons envoyées</th><th>Ce qui est écrit</th></tr>
+    <tr><td><strong>Aperçu</strong> (clic, changement d'argument)</td><td>Celle sélectionnée, après 200 ms sans changement</td><td>Rien dans le document : texte « Aperçu : … » ou « N lignes » dans l'onglet</td></tr>
+    <tr><td><strong>Insertion</strong> (double-clic, Entrée, bouton d'accord)</td><td>Celle sélectionnée</td><td>Un nouveau contrôle au curseur. En gabarit : pas d'appel, un repère <code>«Libellé»</code></td></tr>
+    <tr><td><strong>Rafraîchissement</strong> (bouton ou auto 30 s)</td><td><strong>Toutes</strong> celles du document, en une requête</td><td>Seuls les contrôles dont le tag ou la valeur a changé (empreinte <code>tag|JSON(valeur)</code> par <code>InternalId</code>)</td></tr>
+    <tr><td><strong>Validation</strong></td><td>Toutes, mais exécutées <strong>par le serveur</strong></td><td>Tous les contrôles, avec les valeurs figées et le verrou définitif</td></tr>
+  </table></div>
+  <div class="note"><strong>Gabarit</strong>
+    Un document sans patient est un gabarit : ses liaisons patient n'ont pas de <code>p</code> et affichent des
+    repères. Le rafraîchissement n'y fait rien. Une fois le gabarit dupliqué pour un patient, <code>preparerInstance</code>
+    ajoute le patient de la fiche à chaque liaison (<code>L.avecPatient</code>) avant de compiler la requête.</div>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="graphql">
+  <h2><span class="num">8.</span>Exemples de requêtes GraphQL</h2>
+  <p>Toutes ces requêtes peuvent être rejouées dans <a href="http://localhost:8081/graphiql">GraphiQL</a> (serveur lancé).</p>
+
+  <h3>8.1 Introspection (démarrage)</h3>
+  <p>Envoyée une fois. Elle remonte les descriptions (les libellés), les arguments et leurs valeurs par défaut, les valeurs d'enum.</p>
+<pre><code>query Introspection {
+  __schema {
+    types {
+      name kind description
+      fields {
+        name description
+        args { name description defaultValue type { kind name ofType { kind name ofType { … } } } }
+        type { kind name ofType { kind name ofType { … } } }
+      }
+      enumValues { name description }
+    }
+  }
+}</code></pre>
+  <p class="legende">L'introspection doit rester active (<code>spring.graphql.schema.introspection.enabled: true</code>) : sans elle, l'onglet est vide.</p>
+
+  <h3>8.2 En-tête patient (démarrage)</h3>
+<pre><code>query($id: ID!) { patient(id: $id) { id ipp nom prenom dateNaissance sexe } }
+
+<span class="c">variables :</span> { "id": "11111111-1111-1111-1111-111111111111" }</code></pre>
+
+  <h3>8.3 La requête unique du document</h3>
+  <p>Supposons un compte rendu contenant six contrôles. Leurs tags :</p>
+<pre><code>c0  {"v":2,"r":"patient","p":"1111…","c":"nom","m":"i"}
+c1  {"v":2,"r":"patient","p":"1111…","c":"sexe","m":"i","g":{"m":"né","f":"née"}}
+c2  {"v":2,"r":"patient","p":"1111…","c":"sejourCourant.service","m":"i"}
+c3  {"v":2,"r":"patient","p":"1111…","c":"observations",
+     "a":{"0":{"categorie":"BIOLOGIE","depuis":"P3M"}},"k":["libelle","valeur","unite"]}
+c4  {"v":2,"r":"patient","p":"1111…","c":"traitements",
+     "a":{"0":{"actifsSeulement":true}},"m":"i","q":{"1":"{n} traitement","*":"{n} traitements"}}
+c5  {"v":2,"r":"document","c":"signatairePrincipal.medecin.adresse.ville",
+     "a":{"2":{"type":"PROFESSIONNELLE"}},"m":"i"}</code></pre>
+  <p><code>L.construireRequete</code> les compile en <strong>une seule</strong> opération <code>DonneesDocument</code>
+    (mise en forme ici pour la lecture ; le plugin l'envoie sur une ligne) :</p>
+<pre><code>query DonneesDocument($id: ID!, $doc: ID!) {
+  patient(id: $id) {
+    c0: nom
+    c1: sexe
+    c2: sejourCourant { service }
+    c3: observations(categorie: BIOLOGIE, depuis: "P3M") { libelle valeur unite }
+    c4: traitements(actifsSeulement: true) { __typename }    <span class="c"># accord en nombre : seul le compte compte</span>
+  }
+  document(id: $doc) {
+    c5: signatairePrincipal { medecin { adresse(type: PROFESSIONNELLE) { ville } } }
+  }
+}
+
+<span class="c">variables :</span> { "id": "&lt;patientId de la fiche&gt;", "doc": "&lt;id du document&gt;" }</code></pre>
+  <ul>
+    <li>Les <strong>alias</strong> permettent de demander plusieurs fois le même champ avec des filtres différents
+      (par exemple <code>observations(categorie: BIOLOGIE)</code> et <code>observations(categorie: CONSTANTE)</code>).</li>
+    <li>Seules les variables des racines utilisées sont déclarées : un document sans liaison <code>document</code> n'envoie que <code>$id</code>.</li>
+    <li>La liaison <code>document</code> ne porte jamais d'identifiant : c'est toujours le document courant.</li>
+    <li>Les chaînes passent par <code>JSON.stringify</code>, les enums sont vérifiés contre les valeurs du schéma.</li>
+  </ul>
+
+  <p>Réponse (valeurs illustratives) et ce que le plugin écrit :</p>
+<pre><code>{ "data": {
+    "patient": {
+      "c0": "MARTIN",
+      "c1": "FEMININ",
+      "c2": { "service": "Endocrinologie" },
+      "c3": [ { "libelle": "HbA1c", "valeur": "7.2", "unite": "%" },
+              { "libelle": "Créatinine", "valeur": "78", "unite": "µmol/L" } ],
+      "c4": [ { "__typename": "Traitement" }, { "__typename": "Traitement" } ]
+    },
+    "document": {
+      "c5": { "medecin": { "adresse": { "ville": "Lyon" } } }
+    } } }</code></pre>
+  <div class="tableau"><table>
+    <tr><th>Alias</th><th>Nature</th><th>Texte dans le document</th><th>Règle</th></tr>
+    <tr><td><code>c0</code></td><td>valeur</td><td>MARTIN</td><td>chaîne d'un champ non-enum : jamais reformatée</td></tr>
+    <tr><td><code>c1</code></td><td>genre</td><td>née</td><td>FEMININ → f ; sexe inconnu → « né/née »</td></tr>
+    <tr><td><code>c2</code></td><td>valeur</td><td>Endocrinologie</td><td>on suit le chemin <code>service</code></td></tr>
+    <tr><td><code>c3</code></td><td>tableau</td><td>tableau Examen | Valeur | Unité, 2 lignes</td><td>en-têtes = descriptions du schéma</td></tr>
+    <tr><td><code>c4</code></td><td>nombre</td><td>2 traitements</td><td>0 et 1 au singulier</td></tr>
+    <tr><td><code>c5</code></td><td>valeur</td><td>Lyon</td><td>argument sur le 3ᵉ segment (<code>"a":{"2":…}</code>)</td></tr>
+  </table></div>
+  <p class="legende">Les dates ISO (<code>2026-03-12</code>) deviennent <code>12/03/2026</code> ; une valeur absente devient « — » ;
+    une valeur traversant une liste (ex. <code>sejours.service</code>) est jointe par des virgules.</p>
+
+  <h3>8.4 Une réponse réelle, archivée à la validation</h3>
+  <p>Extrait de <code>server/data/documents/demo.validation.json</code> (compte rendu validé et scellé le 2026-11-08) :</p>
+<pre><code>{
+  "document": "demo",
+  "patientId": "11111111-1111-1111-1111-111111111111",
+  "requete": "query DonneesDocument($id: ID!) { patient(id: $id) { c0: ipp c1: nom c2: prenom } }",
+  "donneesJson": "{\"patient\":{\"c0\":\"100001\",\"c1\":\"MARTIN\",\"c2\":\"Claire\"}}",
+  "empreinteDonnees": "bfd3991a3f2f0253cad1b6ce5b4b3ae5f978f34879914886bbf59d89ab82e092",
+  "valideLe": "2026-11-08T13:48:34.697993364Z",
+  "validePar": "Dr POC",
+  "empreinteDocx": "4b9fe41d3915dcb5fb2b72e28725f9d05c91abadd0252af8717b4c17508bcd95"
+}</code></pre>
+
+  <h3>8.5 Ce qui est refusé avant tout appel</h3>
+<pre><code>{"v":2,"r":"patient","c":"motDePasse"}                                → Champ inconnu : motDePasse
+{"v":2,"r":"patient","c":"observations","a":{"0":{"categorie":"X"}}}  → Valeur inconnue pour categorie : X
+{"v":2,"r":"patient","c":"nom } evil { x"}                            → Champ invalide
+{"v":2,"r":"document","p":"…","c":"titre"}                            → Une liaison document ne porte pas de patient
+{"v":2,"r":"patient","c":"sejourCourant"}                             → Choisissez un champ de « Séjour de référence… »</code></pre>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="validation">
+  <h2><span class="num">9.</span>Validation et scellement : le serveur fait foi</h2>
+  <p>À la validation, le plugin n'envoie <strong>pas</strong> les valeurs qu'il affiche : il envoie la requête. Le serveur
+    la réexécute dans son propre moteur GraphQL, avec des variables qu'il impose, fige la réponse et c'est elle que le
+    plugin écrit.</p>
+  <div class="schema">
+  <svg viewBox="0 0 960 560" role="img" aria-labelledby="t-valid">
+    <title id="t-valid">Séquence de validation et de scellement</title>
+    <rect x="10" y="16" width="140" height="40" rx="6" class="z-plugin"/><text x="80" y="41" text-anchor="middle" class="titre">Plugin</text>
+    <rect x="170" y="16" width="140" height="40" rx="6" class="z-ds"/><text x="240" y="41" text-anchor="middle" class="titre">Éditeur / DS</text>
+    <rect x="330" y="16" width="160" height="40" rx="6" class="z-spring"/><text x="410" y="36" text-anchor="middle" class="titre">ControleurDocuments</text><text x="410" y="50" text-anchor="middle" class="petit">REST</text>
+    <rect x="510" y="16" width="170" height="40" rx="6" class="z-spring"/><text x="595" y="36" text-anchor="middle" class="titre">ValidationCompteRendu</text><text x="595" y="50" text-anchor="middle" class="petit">application</text>
+    <rect x="700" y="16" width="130" height="40" rx="6" class="z-spring"/><text x="765" y="41" text-anchor="middle" class="titre">ExecuteurGraphQl</text>
+    <rect x="850" y="16" width="100" height="40" rx="6" class="z-pg"/><text x="900" y="41" text-anchor="middle" class="titre">Archive</text>
+    <line x1="80" y1="56" x2="80" y2="546" class="vie"/>
+    <line x1="240" y1="56" x2="240" y2="546" class="vie"/>
+    <line x1="410" y1="56" x2="410" y2="546" class="vie"/>
+    <line x1="595" y1="56" x2="595" y2="546" class="vie"/>
+    <line x1="765" y1="56" x2="765" y2="546" class="vie"/>
+    <line x1="900" y1="56" x2="900" y2="546" class="vie"/>
+
+    <rect x="10" y="68" width="220" height="34" rx="6" class="noteb"/>
+    <text x="20" y="90">① construireRequete(toutes les liaisons)</text>
+    <line x1="80" y1="130" x2="406" y2="130" class="fl"/><text x="88" y="124">② POST …/validation { patientId, requete }</text>
+    <line x1="410" y1="164" x2="591" y2="164" class="fl"/><text x="418" y="158">③ valider(nom, patient, requete)</text>
+    <rect x="490" y="176" width="230" height="52" rx="6" class="noteb"/>
+    <text x="500" y="194">④ pas déjà validé · même patient</text>
+    <text x="500" y="210">que la fiche · signataire principal</text>
+    <text x="500" y="223" class="petit">→ valideur ; date fixée avant exécution</text>
+    <line x1="595" y1="252" x2="761" y2="252" class="fl"/><text x="603" y="246">⑤ executer(requete,</text>
+    <text x="603" y="268" class="petit">$id, $doc imposés)</text>
+    <rect x="690" y="278" width="150" height="50" rx="6" class="noteb"/>
+    <text x="700" y="296">opération DonneesDocument</text>
+    <text x="700" y="311">seulement · JSON canonique</text>
+    <text x="700" y="323" class="petit">(clés triées)</text>
+    <line x1="765" y1="346" x2="599" y2="346" class="retour"/><text x="610" y="340" class="petit">donneesJson</text>
+    <line x1="595" y1="370" x2="896" y2="370" class="fl"/><text x="603" y="364">⑥ SHA-256 + enregistrer</text>
+    <line x1="410" y1="396" x2="84" y2="396" class="retour"/><text x="90" y="390" class="petit">⑦ { donneesJson, empreinteDonnees, valideLe, validePar }</text>
+    <line x1="80" y1="430" x2="236" y2="430" class="fl"/><text x="88" y="424">⑧ réécrire, verrou figé</text>
+    <line x1="80" y1="462" x2="236" y2="462" class="fl"/><text x="88" y="456">⑨ SetEditingRestrictions</text>
+    <line x1="240" y1="500" x2="406" y2="500" class="fl"/><text x="248" y="494">⑩ callback status 2</text>
+    <text x="248" y="516" class="petit">(fermeture du document)</text>
+    <line x1="410" y1="532" x2="896" y2="532" class="fl"/><text x="418" y="526">⑪ 1ʳᵉ sauvegarde = docx scellé (empreinteDocx) ; suivantes ignorées</text>
+  </svg>
+  </div>
+<pre><code><span class="c">// plugin (code.js) — extrait de valider()</span>
+var requete = L.construireRequete(instance.liaisons, etat.modele);
+api('POST', '/validation', { patientId: instance.patientId, requete: requete })
+  .then(…)
+  .then(function (validation) {
+      <span class="c">// Les valeurs écrites sont exactement celles figées côté serveur.</span>
+      var valeurs = L.valeurs(instance.liaisons, JSON.parse(validation.donneesJson));
+      return ecrireValeurs(instance, valeurs, VERROU_FIGE, true)
+          .then(function () { return methode('SetEditingRestrictions', ['readOnly']); })
+          .then(function () { afficherEtatValide(validation); });
+  });</code></pre>
+  <ul>
+    <li>Le serveur refuse toute opération autre que <code>DonneesDocument</code> et impose <code>$id</code> / <code>$doc</code> :
+      le plugin ne peut pas faire figer les données d'un autre patient.</li>
+    <li>Le callback répond toujours <code>{"error":0}</code>, même quand il ignore une sauvegarde : sinon OnlyOffice réessaie en boucle.</li>
+    <li>À la réouverture, la configuration passe en <code>mode: "view"</code> et le plugin (<code>isViewer</code>) affiche la date, le valideur et les empreintes.</li>
+  </ul>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="tests">
+  <h2><span class="num">10.</span>Tester et déboguer</h2>
+  <div class="grille2">
+    <div>
+      <h4>Tests unitaires du plugin (sans éditeur)</h4>
+<pre><code>for f in server/src/test/js/*.test.js; do node --test "$f"; done</code></pre>
+      <p>32 tests : liaisons, accords, séjour, validation. Le modèle de test (<code>modele-test.js</code>) est une
+        introspection réduite. Ces tests <strong>simulent</strong> l'éditeur : ils vérifient ce que le plugin envoie,
+        pas qu'OnlyOffice l'accepte.</p>
+    </div>
+    <div>
+      <h4>Sur un vrai Document Server</h4>
+      <ul>
+        <li>Scénarios Playwright dans <code>outils/videos</code> (instance de test sur le port 8082).</li>
+        <li>Console du navigateur : choisir le contexte <em>frame</em> du plugin (<code>index.html</code> sous <code>/plugin/</code>)
+          pour inspecter <code>PocCrLiaisons</code>, <code>PocCrGraphQl</code>…</li>
+        <li>Onglet Réseau : <code>/plugin/config.json</code> doit répondre 200 avec un en-tête
+          <code>Access-Control-Allow-Origin</code>.</li>
+        <li>GraphiQL pour rejouer une requête <code>DonneesDocument</code> copiée depuis l'onglet Réseau.</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Diagnostic rapide</h3>
+  <div class="tableau"><table>
+    <tr><th>Symptôme</th><th>Cause probable</th></tr>
+    <tr><td>Pas d'onglet « Données du compte rendu »</td><td>CORS sur <code>/plugin/**</code>, <code>guid</code> différent entre <code>config.json</code> et <code>guid-plugin</code>, URL <code>pluginsData</code> injoignable</td></tr>
+    <tr><td>Document vide, erreur de téléchargement</td><td>Le conteneur ne joint pas <code>host.docker.internal:8081</code> ; <code>ALLOW_PRIVATE_IP_ADDRESS</code></td></tr>
+    <tr><td>« Document courant inconnu »</td><td>Éditeur ouvert hors de la page hôte : <code>window.top.PocCr</code> absent</td></tr>
+    <tr><td>Arborescence vide</td><td>Introspection désactivée ou erreur GraphQL (voir le message d'état)</td></tr>
+    <tr><td>Tableau non mis à jour</td><td>Contrôle bloc verrouillé non déverrouillé avant remplacement (<a href="#onlyoffice">§5.6</a>)</td></tr>
+    <tr><td>Rien ne s'écrit, aucune erreur</td><td>Code <code>callCommand</code> non ES5 ou utilisant une variable extérieure au lieu d'<code>Asc.scope</code></td></tr>
+  </table></div>
+</section>
+
+<!-- ===================================================================================== -->
+<section id="limites">
+  <h2><span class="num">11.</span>Limites connues et points à confirmer</h2>
+  <h3>Raccourcis de POC</h3>
+  <ul>
+    <li>URL du SDK codée en dur dans <code>plugin/index.html</code> (<code>http://localhost:8080/sdkjs-plugins/v1/plugins.js</code>) : à paramétrer par environnement.</li>
+    <li>Document courant lu par <code>window.top.PocCr</code> : suppose la même origine ; à remplacer par un identifiant transmis dans la configuration de l'éditeur.</li>
+    <li>JWT désactivé, pas d'authentification, valideur = signataire principal, utilisateur affiché « Dr POC ».</li>
+    <li>Introspection ouverte en permanence ; tout le schéma est proposé (filtrage par rôle ou directive à prévoir).</li>
+  </ul>
+  <h3>API OnlyOffice non encore confirmées une par une</h3>
+  <ul>
+    <li>Sémantique exacte de <code>Lock</code> (0/1) dans l'API « méthodes ».</li>
+    <li>Position du curseur après insertion en ligne (risque de rester dans un contrôle verrouillé).</li>
+    <li>Longueur de tag conservée par Word au round-trip.</li>
+    <li>Toutes les méthodes Document Builder utilisées : <code>CreateInlineLvlSdt</code>, <code>RemoveAllElements</code>,
+      <code>GetInternalId</code>, <code>GetClassType</code>, <code>SetTableBorder*</code>…</li>
+  </ul>
+  <p>Voir aussi <code>CLAUDE.md</code> (invariants, décisions) et <code>docs/GUIDE_UTILISATEUR.md</code> (prise en main).</p>
+</section>
+
+</main>
+<footer>Document rédigé à partir du code de la branche <code>feature/contrat-champs-fusion</code> (commit 8cadff0), 12 novembre 2026.</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var corps = document.body;
+  var burger = document.getElementById('burger');
+  var menu = document.getElementById('menu');
+  var voile = document.getElementById('voile');
+  var fil = document.getElementById('fil');
+  var grandEcran = window.matchMedia('(min-width:1000px)');
+
+  // Sous-entrées du sommaire : un lien par titre h3 de chaque section.
+  var sections = Array.prototype.map.call(menu.querySelectorAll(':scope > ol > li'), function (li) {
+    var lien = li.querySelector('a');
+    var section = document.getElementById(lien.getAttribute('href').slice(1));
+    var sous = [];
+    var titres = section.querySelectorAll('h3');
+    if (titres.length) {
+      var ol = document.createElement('ol');
+      Array.prototype.forEach.call(titres, function (h3, i) {
+        if (!h3.id) h3.id = section.id + '-' + (i + 1);
+        var sli = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + h3.id;
+        a.textContent = h3.textContent;
+        sli.appendChild(a);
+        ol.appendChild(sli);
+        sous.push({ li: sli, cible: h3 });
+      });
+      li.appendChild(ol);
+    }
+    return { li: li, cible: section, titre: lien.textContent, sous: sous };
+  });
+
+  function ouvrir(ouvert) {
+    corps.classList.toggle('menu-ouvert', ouvert);
+    burger.setAttribute('aria-expanded', String(ouvert));
+    burger.setAttribute('aria-label', ouvert ? 'Masquer le sommaire' : 'Afficher le sommaire');
+    if (grandEcran.matches) {
+      try { localStorage.setItem('doc-plugin-menu', ouvert ? 'ouvert' : 'ferme'); } catch (e) {}
+    }
+  }
+  burger.setAttribute('aria-expanded', String(corps.classList.contains('menu-ouvert')));
+  burger.addEventListener('click', function () { ouvrir(!corps.classList.contains('menu-ouvert')); });
+  voile.addEventListener('click', function () { ouvrir(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !grandEcran.matches && corps.classList.contains('menu-ouvert')) { ouvrir(false); burger.focus(); }
+  });
+  // Sur petit écran, le menu recouvre la page : il se referme après le choix d'une entrée.
+  menu.addEventListener('click', function (e) {
+    if (e.target.closest('a') && !grandEcran.matches) ouvrir(false);
+  });
+  grandEcran.addEventListener('change', function (e) {
+    var pref = null;
+    try { pref = localStorage.getItem('doc-plugin-menu'); } catch (err) {}
+    corps.classList.toggle('menu-ouvert', e.matches && pref !== 'ferme');
+    burger.setAttribute('aria-expanded', String(corps.classList.contains('menu-ouvert')));
+  });
+
+  // Section courante : la dernière dont le haut a franchi la barre du haut.
+  function courant(liste) {
+    var seuil = 90, choisi = null;
+    liste.forEach(function (x) { if (x.cible.getBoundingClientRect().top <= seuil) choisi = x; });
+    return choisi;
+  }
+  var enAttente = false;
+  function suivre() {
+    enAttente = false;
+    var s = courant(sections) || sections[0];
+    // Bas de page atteint : la dernière section est la section courante.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) s = sections[sections.length - 1];
+    sections.forEach(function (x) {
+      var actif = x === s;
+      x.li.classList.toggle('actif', actif);
+      var a = x.li.querySelector('a');
+      if (actif) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
+    var ss = courant(s.sous);
+    s.sous.forEach(function (x) { x.li.classList.toggle('actif', x === ss); });
+    sections.forEach(function (x) { if (x !== s) x.sous.forEach(function (y) { y.li.classList.remove('actif'); }); });
+    fil.textContent = s.titre.replace(/^\d+\.\s*/, '') + (ss ? ' › ' + ss.cible.textContent : '');
+    // Garder l'entrée active visible dans le menu.
+    var actifLien = (ss ? ss.li : s.li).querySelector('a');
+    var r = actifLien.getBoundingClientRect(), m = menu.getBoundingClientRect();
+    if (r.top < m.top + 40) menu.scrollTop += r.top - m.top - 40;
+    else if (r.bottom > m.bottom - 20) menu.scrollTop += r.bottom - m.bottom + 20;
+  }
+  window.addEventListener('scroll', function () {
+    if (!enAttente) { enAttente = true; requestAnimationFrame(suivre); }
+  }, { passive: true });
+  window.addEventListener('resize', suivre);
+  suivre();
+})();
+</script>
+</body>
+</html>
