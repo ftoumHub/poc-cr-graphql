@@ -44,6 +44,9 @@ Fonctionnalités en place :
 - Les tests JS **simulent** l'éditeur : ils vérifient ce que le plugin envoie, pas qu'OnlyOffice
   l'accepte. Les points ci-dessous n'ont pas été confirmés un par un.
 
+Confirmé aussi (2026-11-21) : événement `onFocusContentControl` (tag du contrôle reçu par le plugin),
+`InsertAndReplaceContentControls` avec plusieurs paragraphes (blocs composés).
+
 Confirmé sur le Document Server 10.0 (2026-11-11, scénarios Playwright `outils/videos`) : chargement du
 plugin `panelRight`, `GetAllContentControls`, `InsertAndReplaceContentControls`, `callCommand`
 (contrôles en ligne, déverrouillage), `SetEditingRestrictions("readOnly")`, validation et scellement.
@@ -173,7 +176,9 @@ graphql-java est conservée : la fusion suffit (786 contrôles = 29 000 caractè
 - **Scellement** : première sauvegarde après validation = docx scellé ; suivantes ignorées ; le
   callback répond toujours `{"error":0}` (sinon OnlyOffice réessaie en boucle).
 - **Plugin** : arborescence issue de l'introspection (racines Patient et Document) ; clic = réglages et
-  aperçu, double-clic / Entrée = insertion. Pas de bouton « Insérer » ni de recherche de patient.
+  aperçu, double-clic / Entrée = insertion. Curseur dans un content control lié (événement
+  `onFocusContentControl`, déclaré dans `config.json`) = son champ est déplié et sélectionné dans l'arborescence,
+  avec les arguments de la liaison (`L.cheminCible`), sans prendre le focus du document. Pas de bouton « Insérer » ni de recherche de patient.
 - **Pas de N+1** : champs à arguments via DataLoaders dont la clé contient le filtre ;
   `sejours` / `sejourCourant` partagent un chargeur. Racine `document` : quatre chargeurs (acteurs,
   professionnels, coordonnées, établissements), jamais enchaînés dans un même champ. Dossier clinique :

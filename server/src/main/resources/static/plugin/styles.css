@@ -49,3 +49,4 @@ button { padding: 4px 8px; cursor: pointer; }
 .reglages .apercu { margin-top: 4px; color: #333; font-style: italic; white-space: pre-line; }
 
 .boutons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+#arbre li.revele > .ligne { background: #fff3c4; transition: background .3s; }

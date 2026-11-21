@@ -60,6 +60,11 @@
             .catch(afficherErreur);
     };
 
+    /** Curseur dans un content control lié : son champ est retrouvé et sélectionné dans l'arborescence. */
+    window.Asc.plugin.event_onFocusContentControl = function (controle) {
+        if (controle && controle.Tag) reveler(controle.Tag);
+    };
+
     window.Asc.plugin.button = function () {
         this.executeCommand('close', '');
     };
@@ -381,18 +386,51 @@
         }
     }
 
+    /**
+     * Déplie l'arborescence jusqu'au champ d'une liaison, le sélectionne avec les arguments de la liaison et
+     * le fait défiler en vue, sans prendre le focus (le curseur reste dans le document).
+     */
+    function reveler(tag) {
+        if (!etat.modele) return;
+        var liaison = L.depuisTag(tag);
+        var cible = liaison && L.cheminCible(liaison);
+        if (!cible) return;
+        var li = Array.prototype.filter.call(document.querySelectorAll('#arbre > li[role=treeitem]'), function (n) {
+            return n.noeud && n.noeud.racine === cible.racine;
+        })[0];
+        if (!li) return;
+        var atteint = li;
+        for (var i = 0; i < cible.segments.length; i++) {
+            basculer(atteint, true);
+            var groupe = atteint.querySelector(':scope > ul');
+            var nom = cible.segments[i];
+            var suivant = groupe && Array.prototype.filter.call(groupe.children, function (n) {
+                var champs = n.noeud && n.noeud.champs;
+                return champs && champs[champs.length - 1].nom === nom;
+            })[0];
+            if (!suivant) break;   // champ masqué (cycle, profondeur) : on s'arrête au plus proche
+            atteint = suivant;
+        }
+        selectionner(atteint, cible.args);
+        atteint.scrollIntoView({ block: 'center' });
+        atteint.classList.add('revele');
+        setTimeout(function () { atteint.classList.remove('revele'); }, 1500);
+    }
+
     // --- Réglages de la sélection ----------------------------------------------------------
 
-    function selectionner(li) {
+    /** @param argsInitiaux arguments à reprendre (clé a d'une liaison) ; sinon ceux par défaut du schéma */
+    function selectionner(li, argsInitiaux) {
         Array.prototype.forEach.call(document.querySelectorAll('#arbre [aria-selected=true]'), function (n) {
             n.setAttribute('aria-selected', 'false');
             n.tabIndex = -1;
         });
         li.setAttribute('aria-selected', 'true');
         li.tabIndex = 0;
-        if (etat.selection === li.noeud) return;
+        if (etat.selection === li.noeud && !argsInitiaux) return;
         etat.selection = li.noeud;
         etat.reglages = { args: {}, colonnes: [] };
+        etat.argsInitiaux = argsInitiaux || null;
         afficherReglages();
     }
 
@@ -447,6 +485,9 @@
         label.textContent = champ.libelle + ' — ' + definition.libelle;
         div.appendChild(label);
         var saisie;
+        // valeur de la liaison révélée depuis le document, sinon valeur par défaut du schéma
+        var reprises = etat.argsInitiaux && etat.argsInitiaux[String(index)];
+        var initial = reprises && reprises[definition.nom] !== undefined ? reprises[definition.nom] : definition.defaut;
         if (definition.kind === 'ENUM') {
             saisie = document.createElement('select');
             [''].concat(definition.valeursEnum).forEach(function (v) {
@@ -455,14 +496,14 @@
                 o.textContent = v ? R.formaterValeur(v, definition.libellesEnum || {}) : '(toutes)';
                 saisie.appendChild(o);
             });
-            saisie.value = definition.defaut || '';
+            saisie.value = initial || '';
         } else if (definition.typeName === 'Boolean') {
             saisie = document.createElement('input');
             saisie.type = 'checkbox';
-            saisie.checked = definition.defaut === true;
+            saisie.checked = initial === true || initial === 'true';
         } else {
             saisie = document.createElement('input');
-            saisie.value = definition.defaut === null || definition.defaut === undefined ? '' : String(definition.defaut);
+            saisie.value = initial === null || initial === undefined ? '' : String(initial);
             saisie.placeholder = definition.nom === 'depuis' ? 'P3M, P1Y ou 2026-01-31' : '';
         }
         label.htmlFor = saisie.id = 'arg-' + index + '-' + definition.nom;

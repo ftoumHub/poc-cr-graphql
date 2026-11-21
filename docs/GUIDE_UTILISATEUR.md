@@ -165,6 +165,13 @@ Exemple de phrase construite avec des champs et des accords :
 > **Patiente** de **58** ans, **née** le **12/04/1968**, **hospitalisée** en **Endocrinologie**
 > depuis le **05/11/2026** pour **Déséquilibre glycémique**, sous **2 traitements en cours**.
 
+### 4.6 bis Retrouver le champ d'une donnée du document
+
+Placez le curseur dans une donnée du document (clic ou flèches) : l'arborescence de l'onglet se déplie jusqu'au
+champ correspondant, le sélectionne et affiche ses réglages (filtres de la donnée) et son aperçu. Pour un fragment
+composé (« Pour chaque… », « Si… »), c'est sa liste ou son premier champ qui est sélectionné. Le curseur reste dans
+le document.
+
 ### 4.7 Rafraîchir les données
 
 - **Rafraîchir les données** relit tout le document en une seule requête et met à jour les champs

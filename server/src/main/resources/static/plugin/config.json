@@ -1,15 +1,22 @@
 {
   "name": "Données du compte rendu",
-  "nameLocale": { "fr": "Données du compte rendu" },
+  "nameLocale": {
+    "fr": "Données du compte rendu"
+  },
   "guid": "asc.{6B0E1C2A-6E2D-4C5B-9A1F-2C7D3E4F5A60}",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "variations": [
     {
       "description": "Insérer des données du dossier patient et du document liées à GraphQL",
       "url": "index.html",
-      "icons": ["resources/icone.png", "resources/icone@2x.png"],
+      "icons": [
+        "resources/icone.png",
+        "resources/icone@2x.png"
+      ],
       "isViewer": true,
-      "EditorsSupport": ["word"],
+      "EditorsSupport": [
+        "word"
+      ],
       "isVisual": true,
       "isModal": false,
       "isInsideMode": true,
@@ -18,7 +25,13 @@
       "initData": "",
       "isUpdateOleOnResize": false,
       "buttons": [],
-      "size": [380, 600]
+      "size": [
+        380,
+        600
+      ],
+      "events": [
+        "onFocusContentControl"
+      ]
     }
   ]
 }

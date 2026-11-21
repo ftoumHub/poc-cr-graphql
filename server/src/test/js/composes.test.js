@@ -124,3 +124,18 @@ test('une valeur absente affiche le texte « e » (vide pour les gabarits conver
   assert.equal(R.texteEnLigne(insere, null, modele), '—');
   assert.throws(() => L.analyser({ v: 3, r: 'patient', c: 'nom', e: 0 }, modele), /valeur absente invalide/);
 });
+
+test("le champ visé par une liaison (navigation depuis le document vers l'arborescence)", () => {
+  assert.deepEqual(L.cheminCible(L.creer('document', 'signatairePrincipal.medecin.adresse.ville', { args: { 2: { type: 'PERSONNELLE' } } })),
+    { racine: 'document', segments: ['signatairePrincipal', 'medecin', 'adresse', 'ville'], args: { 2: { type: 'PERSONNELLE' } } });
+  // liaison composée : sa première boucle
+  assert.deepEqual(L.cheminCible(signataires), { racine: 'document', segments: ['signataires'], args: {} });
+  // valeur relative à une boucle : rattachée au chemin de la liste, arguments décalés
+  const bio = { v: 3, r: 'patient', c: '', t: ['x', { si: { c: 'nom', op: 'nonvide' }, t: [
+    { r: 'patient', c: 'observations.libelle', a: { 0: { categorie: 'BIOLOGIE' } } }] }] };
+  assert.deepEqual(L.cheminCible(bio), { racine: 'patient', segments: ['observations', 'libelle'], args: { 0: { categorie: 'BIOLOGIE' } } });
+  // condition seule : son champ
+  assert.deepEqual(L.cheminCible({ v: 3, r: 'patient', c: '', t: [{ si: { c: 'sexe', op: '=', v: 'FEMININ' }, t: ['Madame'] }] }),
+    { racine: 'patient', segments: ['sexe'], args: {} });
+  assert.equal(L.cheminCible({ v: 3, r: 'patient', c: '', t: ['texte seul'] }), null);
+});

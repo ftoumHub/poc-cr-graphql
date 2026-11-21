@@ -395,8 +395,48 @@
         });
     }
 
+    /**
+     * Champ désigné par une liaison, pour le retrouver dans l'arborescence : { racine, segments, args }
+     * (args par position de segment, comme la clé a). Liaison composée : sa première boucle ou valeur, en chemin
+     * absolu (les références relatives à une boucle sont rattachées au chemin de la liste). null si introuvable.
+     */
+    function cheminCible(liaison) {
+        if (!estCompose(liaison)) {
+            return { racine: liaison.r, segments: liaison.c.split('.'), args: liaison.a || {} };
+        }
+        function absolu(ref, portees) {
+            if (!ref || typeof ref.c !== 'string' || !ref.c) return null;
+            var base = ref.r !== undefined ? { racine: ref.r, segments: [], args: {} }
+                : portees[portees.length - 1 - (ref.s || 0)];
+            if (!base) return null;
+            var args = {};
+            Object.keys(base.args).forEach(function (i) { args[i] = base.args[i]; });
+            Object.keys(ref.a || {}).forEach(function (i) { args[String(parseInt(i, 10) + base.segments.length)] = ref.a[i]; });
+            return { racine: base.racine, segments: base.segments.concat(ref.c.split('.')), args: args };
+        }
+        function premiere(noeuds, portees) {
+            for (var i = 0; i < (noeuds || []).length; i++) {
+                var n = noeuds[i];
+                if (!n || typeof n !== 'object') continue;
+                if (n.chaque) return absolu(n.chaque, portees);
+                if (n.si) {
+                    var dedans = premiere(n.t, portees) || premiere(n.sinon, portees);
+                    if (dedans) return dedans;
+                    var condition = n.si.c ? n.si : null;
+                    if (condition) return absolu(condition, portees);
+                    continue;
+                }
+                var valeur = absolu(n, portees);
+                if (valeur) return valeur;
+            }
+            return null;
+        }
+        return premiere(liaison.t, [{ racine: liaison.r, segments: [], args: {} }]);
+    }
+
     var api = {
         VERSION: VERSION,
+        cheminCible: cheminCible,
         VERSION_ETENDUE: VERSION_ETENDUE,
         FORMATS: FORMATS,
         creer: creer,
