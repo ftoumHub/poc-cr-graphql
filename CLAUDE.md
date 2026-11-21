@@ -8,8 +8,9 @@ avant toute modification. Le guide de manipulation pour un humain est `docs/GUID
 Rédiger des comptes rendus médicaux dans **OnlyOffice** (OOXML natif) en insérant, depuis un onglet
 latéral (plugin), des données patient exposées en **GraphQL** par un serveur **Spring Boot**.
 Chaque donnée insérée est un **content control** dont le tag décrit une *liaison* GraphQL. Toutes
-les liaisons du document sont compilées en **une seule requête** (un alias par liaison), ce qui
-évite l'over-fetching et permet plusieurs fois le même champ avec des filtres différents.
+les liaisons du document sont compilées en **une seule requête** (arbre de sélection fusionné par racine,
+alias en cas de conflit de nom), ce qui évite l'over-fetching et permet plusieurs fois le même champ avec
+des filtres différents.
 
 Fonctionnalités en place :
 - champs simples et sous-champs d'objets insérés **en ligne** (dans une phrase) ; collections en **tableaux** ;
@@ -19,12 +20,20 @@ Fonctionnalités en place :
 - **validation** : le serveur réexécute la requête, fige la réponse (JSON canonique + SHA-256),
   le plugin réécrit les contrôles avec ces valeurs et les verrouille ; la sauvegarde suivante
   **scelle** le docx ; réouverture en lecture seule ;
-- **séjour** : `sejourCourant` (séjour de référence) et `sejours(enCoursSeulement)`.
+- **séjour** : `sejourCourant` (séjour de référence) et `sejours(enCoursSeulement)` ;
+- **gabarits legacy convertis** : les 20 gabarits Velocity de l'application d'origine (`docs/top20-docx.zip`)
+  convertis par `outils/velocity` en content controls (liaisons composées v3 pour les `#foreach` / `#if`),
+  dossier clinique et formulaires dynamiques en GraphQL, trois patients de scénario (V9).
 
 ## ⚠️ État de vérification — à traiter en premier
 
-État au 2026-11-11 :
-- `mvn verify` est **vert** (95 tests JUnit, JDK 21) ; tests JS du plugin verts (32/32, Node 20).
+État au 2026-11-21 :
+- `mvn verify` est **vert** (116 tests JUnit, JDK 21, dont adaptateurs sur PostgreSQL réel) ; tests JS du
+  plugin verts (43, Node 20) ; tests Python du convertisseur verts (15).
+- Gabarits convertis (2026-11-21) : les 20 se rendent pour leur patient de scénario ; dans le vrai OnlyOffice
+  (Playwright, `outils/velocity/test-editeur.js`), « Rafraîchir » sur 7 d'entre eux (jusqu'à 786 contrôles,
+  2,7 s) écrit exactement le texte calculé hors éditeur, contrôles en ligne et blocs composés
+  (`comparer_editeur.py`) ; une copie du 17 a été validée (requête fusionnée réexécutée par le serveur).
 - Le parcours a tourné sur un vrai Document Server : un compte rendu (`demo`) a été validé puis
   scellé le 2026-11-08 ; GraphQL, API documents, plugin servi et accès Document Server → Spring
   vérifiés le 2026-11-11.
@@ -50,7 +59,7 @@ API encore à confirmer explicitement :
   `GetInternalId`, `GetClassType` (`"inlineLvlSdt"`), `SetLock("contentLocked" | "sdtContentLocked")`,
   `InsertContent([p], true)`, `CreateTable`, `SetTableBorder*` ;
 - curseur après insertion en ligne (risque de rester dans un contrôle verrouillé) ;
-- longueur de tag conservée par Word au round-trip.
+- longueur de tag conservée par Word au round-trip (OnlyOffice : tags de ~4 000 caractères conservés).
 
 ## Commandes
 
@@ -60,7 +69,9 @@ cd server && mvn spring-boot:run           # serveur :8081 (Flyway crée schéma
 cd server && mvn verify                    # tests Java ; adaptateurs JDBC sur PostgreSQL 16 via Testcontainers
                                            # (Docker requis pour ces tests, ignorés sans Docker)
 for f in server/src/test/js/*.test.js; do node --test "$f"; done   # tests du plugin (Node ≥ 20)
+python3 -m unittest discover -s outils/velocity -p 'test_*.py'      # tests du convertisseur de gabarits
 ```
+Conversion des gabarits legacy et cas de test de rendu : `outils/velocity/README.md`.
 URLs : http://localhost:8081 (page hôte), http://localhost:8081/graphiql, http://localhost:8080 (Document Server).
 
 ## Architecture
@@ -68,31 +79,39 @@ URLs : http://localhost:8081 (page hôte), http://localhost:8081/graphiql, http:
 ```
 server/
   src/main/java/fr/ftoumhub/poccr/
-    domaine/          patient, observation, traitement, sejour, validation + port/ (interfaces)
-    application/      ConsultationDossierPatient (lecture), ValidationCompteRendu (validation, scellement)
+    domaine/          patient (+ INS), observation, traitement, sejour (+ UF), dossier (allergies, antécédents,
+                      prescriptions, observations médicales, transmissions, entourage, formulaires), validation
+                      + port/ (interfaces, dont DossierClinique)
+    application/      ConsultationDossierPatient, ConsultationDossierClinique (lecture), ValidationCompteRendu
     infrastructure/
       persistance/    *Jdbc (JdbcClient)
-      graphql/        ControleurDossierPatient (DataLoaders), ExecuteurGraphQl, GestionErreursGraphQl
+      graphql/        ControleurDossierPatient, ControleurDossierClinique (DataLoaders clé = patient + filtre),
+                      ControleurDocument, ExecuteurGraphQl, GestionErreursGraphQl
       editeur/        ControleurDocuments (REST OnlyOffice), StockageDocuments, ArchiveValidationsFichiers
     configuration/    @Configuration explicites (pas de component scan)
   src/main/resources/
     graphql/schema.graphqls      source de vérité des champs insérables (descriptions = libellés)
-    db/migration/V1..V4          schéma + données fictives (dates relatives à current_date) ;
-                                 V4 : sexes inconnu/indéterminé, patient volumineux, 20 patients TEST
+    db/migration/V1..V9          schéma + données fictives (dates relatives à current_date) ;
+                                 V4 : sexes inconnu/indéterminé, patient volumineux, 20 patients TEST ;
+                                 V8 : dossier clinique, formulaires ; V9 (générée) : patients de scénario
+                                 DUBOIS / ROUSSEL / BENALI des gabarits convertis
     static/index.html            page hôte (liste, création, ouverture des documents)
     static/plugin/               plugin OnlyOffice (servi par Spring : même origine que /graphql)
-      scripts/liaisons.js        format des tags, compilation en requête, validation contre le schéma
+      scripts/liaisons.js        format des tags, compilation en requête (arbre fusionné), validation
+      scripts/composes.js        liaisons composées v3 (texte, valeurs, boucles, conditions)
       scripts/graphql.js         fetch, introspection -> modèle des champs
       scripts/accords.js         accords genre / nombre, préréglages
       scripts/rendu.js           formatage, scripts Document Builder, textes en ligne
       scripts/code.js            orchestration UI <-> document <-> serveur
   src/test/java                  JUnit 5 + AssertJ (domaine, cas d'utilisation, tranche @GraphQlTest)
   src/test/js                    node:test (plugin)
+outils/velocity/                 conversion des gabarits Velocity (Python), rendu hors éditeur, scénarios de test
+docs/gabarits-convertis/         20 gabarits convertis, rapport de conversion, catalogue, rendus PDF
 docker-compose.yml               JWT désactivé, ALLOW_PRIVATE_IP_ADDRESS=true (POC uniquement)
 server/data/documents/           .docx et .validation.json (relatif au répertoire de lancement, ignoré par git)
 ```
 
-## Format de liaison (tag du content control) — v2
+## Format de liaison (tag du content control) — v2 / v3
 
 ```json
 {"v":2,"r":"patient","p":"<patientId>","c":"observations","a":{"0":{"categorie":"BIOLOGIE","depuis":"P3M"}},"k":["libelle","valeur"]}
@@ -110,10 +129,18 @@ server/data/documents/           .docx et .validation.json (relatif au répertoi
 | `g` | accord genre `{"m","f","n"?}` (champ enum terminal, `sexe`) |
 | `q` | accord nombre `{"0"?,"1","*"}`, `{n}` = nombre ; chemin terminé par une liste ; requête `{ __typename }` |
 | `f` | `CHAMP_ID` du catalogue CDF (traçabilité, ignoré à la compilation) |
+| `x` | v3 : format d'une valeur (`maj`, `date-longue`, `date-jour-longue`) |
+| `e` | v3 : texte d'une valeur absente (défaut « — » ; `""` dans les gabarits convertis) |
+| `t` | v3 : **liaison composée** (`c` vide) — nœuds texte, valeur `{c,a,s,r,x}`, accord `{c,g}`, boucle `{chaque,t}`, condition `{si,t,sinon}` ; voir `composes.js` |
 
 Nature d'une liaison (`liaisons.js` `analyser`) : valeur (jointe par « , » si le chemin traverse une
-liste), tableau (liste d'objets), accord. Changer ce format = incrémenter `v` et garder la lecture des
-anciens tags.
+liste), tableau (liste d'objets), accord, composée. Les tags v3 sont ceux qui utilisent `x`, `e` ou `t`.
+Changer ce format = incrémenter `v` et garder la lecture des anciens tags.
+
+Compilation : toutes les liaisons d'une racine forment un seul arbre de sélection (`planifier`) ; premier
+niveau aliasé `c<k>`, alias `a<k>` plus bas seulement en cas de conflit de nom ; `valeurs(liaisons, data,
+modele)` relit la réponse liaison par liaison (le modèle est requis). La limite de 15 000 jetons de
+graphql-java est conservée : la fusion suffit (786 contrôles = 29 000 caractères).
 
 ## Invariants à ne pas casser
 
@@ -124,6 +151,7 @@ anciens tags.
   dupliquant pour un patient ; un document qui a un patient ne se duplique que pour lui.
 - **Les tags sont revalidés contre le schéma introspecté** avant compilation (champ, sous-champ,
   colonnes, valeurs d'enum, chaînes via `JSON.stringify`) : aucun GraphQL arbitraire depuis un tag.
+  Idem pour chaque nœud d'une liaison composée ; les littéraux de ses conditions ne quittent pas le plugin.
 - **À la validation, le serveur fait foi** : il réexécute la requête (`ExecuteurGraphQl`, opération
   `DonneesDocument` uniquement) ; le plugin écrit les valeurs renvoyées, jamais celles qu'il affichait.
   Les variables `$id` (patient) et `$doc` (document) sont **imposées par le serveur** ; les liaisons
@@ -139,7 +167,9 @@ anciens tags.
   aperçu, double-clic / Entrée = insertion. Pas de bouton « Insérer » ni de recherche de patient.
 - **Pas de N+1** : champs à arguments via DataLoaders dont la clé contient le filtre ;
   `sejours` / `sejourCourant` partagent un chargeur. Racine `document` : quatre chargeurs (acteurs,
-  professionnels, coordonnées, établissements), jamais enchaînés dans un même champ.
+  professionnels, coordonnées, établissements), jamais enchaînés dans un même champ. Dossier clinique :
+  un chargeur par liste (clé = patient + filtre, filtre nul compris), adresses et professionnels via les
+  chargeurs du document.
 - **Formatage des enums piloté par le type** (libellés = descriptions des valeurs dans le schéma) :
   une chaîne en majuscules d'un champ non-enum (« MARTIN ») n'est jamais reformatée.
 - **Accords** : sexe inconnu → forme neutre, sinon « m/f » (ne jamais supposer un genre) ;
@@ -190,7 +220,9 @@ anciens tags.
 2. **Rattacher le document à un séjour** (question ouverte) : verrouiller le numéro de venue dans
    les liaisons comme le patient (`"sv":"V2026000101"`), exposer `Patient.sejour(numero:)`, sinon
    `sejourCourant` peut basculer sur une nouvelle venue avant validation.
-3. Enrichir le dossier : antécédents, allergies, médecin traitant.
+3. Gabarits convertis (`docs/conception/2026-11-21-conversion-gabarits-velocity.md` §9) : choix des
+   éléments du multicontexte à l'instanciation (instance de formulaire, observations), images (signatures,
+   logos, datamatrix INS), mise en forme fine des blocs composés.
 4. Sécurité : JWT Document Server, jeton OIDC transmis au plugin, identité réelle du valideur,
    traces d'accès HDS côté GraphQL, identifiant de document passé par la configuration de l'éditeur.
 5. Introspection sur plusieurs niveaux ; filtrage des champs proposés (rôle ou directive `@insérable`).

@@ -14,6 +14,9 @@ public interface FichiersDocuments {
 
     void creerVierge(NomDocument nom);
 
+    /** Crée le document avec le contenu donné (import d'un gabarit) ; refuse un nom déjà pris. */
+    void creer(NomDocument nom, byte[] contenu);
+
     void renommer(NomDocument ancien, NomDocument nouveau);
 
     void dupliquer(NomDocument source, NomDocument copie);

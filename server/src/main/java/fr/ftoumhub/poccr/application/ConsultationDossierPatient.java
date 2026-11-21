@@ -66,6 +66,10 @@ public class ConsultationDossierPatient {
         return patient.ageLe(aujourdhui());
     }
 
+    public String ageEnTexteDe(Patient patient) {
+        return patient.ageEnTexteLe(aujourdhui());
+    }
+
     public FiltreObservations filtre(CategorieObservation categorie, String code, String depuis) {
         LocalDate debut = FenetreTemporelle.debut(depuis, aujourdhui()).orElse(null);
         return new FiltreObservations(categorie, code, debut);

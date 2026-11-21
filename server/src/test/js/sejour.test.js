@@ -18,8 +18,7 @@ test('chaque sous-champ inséré ne demande que lui-même', () => {
     L.creer('patient', 'sejours', { enLigne: true, args: { 0: { enCoursSeulement: true } }, nombre: A.prereglageNombre('sejours') })
   ], modele);
   assert.equal(requete, 'query DonneesDocument($id: ID!) { patient(id: $id) { ' +
-    'c0: sejourCourant { service } c1: sejourCourant { dateEntree } ' +
-    'c2: sejours(enCoursSeulement: true) { __typename } } }');
+    'c0: sejourCourant { service dateEntree } c1: sejours(enCoursSeulement: true) { __typename } } }');
 });
 
 test('le sous-champ est formaté selon son type, et un séjour absent affiche un tiret', () => {

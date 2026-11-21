@@ -165,6 +165,14 @@ public class ControleurDocuments {
         return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
     }
 
+    /** Importe un .docx (corps de la requête) comme gabarit : document sans patient. */
+    @PostMapping(path = "/documents/import", consumes = "application/octet-stream")
+    public ResponseEntity<Void> importer(@RequestParam String nom, @RequestParam(required = false) String titre,
+                                         @RequestBody byte[] contenu) {
+        gestion.importerGabarit(new NomDocument(nom), titre, contenu);
+        return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
+    }
+
     /**
      * Duplique un document (validé ou non) sous un nouveau nom : la copie démarre comme un
      * brouillon éditable qui réutilise les content controls de la source, sans sa validation.

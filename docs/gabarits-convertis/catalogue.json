@@ -1,0 +1,5939 @@
+{
+ "formulaires": [
+  {
+   "modele": "446",
+   "libelle": "Formulaire 446",
+   "contexte": false,
+   "rubriques": [
+    {
+     "code": "FA_CMCR_ATCDCHIR",
+     "libelle": "Antécédents médicaux ou chirurgicaux",
+     "comparee_a": []
+    },
+    {
+     "code": "FA_CMCR_ATCDMED_DUPLI",
+     "libelle": "Antécédents médicaux ou chirurgicaux",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": []
+  },
+  {
+   "modele": "9115288183063597159",
+   "libelle": "Formulaire 9115288183063597159",
+   "contexte": false,
+   "rubriques": [
+    {
+     "code": "BRA_ASS_SOC_ADRESSE2",
+     "libelle": "Adresse",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_ADRESSE3",
+     "libelle": "Adresse",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_CAF_NUM_ALLOC",
+     "libelle": "Numéro allocataire",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_CODE_POSTAL2",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_CODE_POSTAL3",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_EMAIL2",
+     "libelle": "Email",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_EMAIL3",
+     "libelle": "Email",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_MDPH_NUM_DOSSIER",
+     "libelle": "Numéro de dossier",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_NOM2",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_NOM3",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_PRENOM6",
+     "libelle": "La mère",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_PRENOM7",
+     "libelle": "Le père",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_REF_COORDO",
+     "libelle": "Référents",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_REF_DR",
+     "libelle": "Docteur",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_REF_PARAMED",
+     "libelle": "Référents",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_TEL2",
+     "libelle": "Téléphone fixe",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_TEL3",
+     "libelle": "Téléphone portable",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_VILLE1",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_VILLE2",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": []
+  },
+  {
+   "modele": "9115405773860914995",
+   "libelle": "Formulaire 9115405773860914995",
+   "contexte": false,
+   "rubriques": [
+    {
+     "code": "BRA_ASS_SOC_DDN3",
+     "libelle": "Date de naissance",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_DDN4",
+     "libelle": "Date de naissance",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_DDN5",
+     "libelle": "Date de naissance",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_DDN6",
+     "libelle": "Date de naissance",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_NOM4",
+     "libelle": "Fraterie : Nom – Prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_NOM5",
+     "libelle": "Nom – Prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_NOM6",
+     "libelle": "Nom – Prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_NOM7",
+     "libelle": "Nom – Prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_PRENOM2",
+     "libelle": "Email",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_PRENOM3",
+     "libelle": "Sexe",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_PRENOM4",
+     "libelle": "Sexe",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_PRENOM5",
+     "libelle": "Sexe",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_ASS_SOC_REF_COORDO",
+     "libelle": "Référents",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_ADRESS_BMERE",
+     "libelle": "Adresse",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_ADRESS_BPERE",
+     "libelle": "Adresse",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_ADRESS_PCONF",
+     "libelle": "Adresse",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_ADRESS_PPREV",
+     "libelle": "Adresse",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_BILAN_OBJ",
+     "libelle": "BILAN DU(DES) PRECEDENTS OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_DEM_APREV_AAH_DDV",
+     "libelle": "Dossier accordé : Date de validité",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_DOSSAAH_DOSS_AMONTER",
+     "libelle": "Dossier à monter",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_DOSSAAH_OUINON",
+     "libelle": "Dossier AAH",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_DOSSAVS_DOSS_AMONTER",
+     "libelle": "Dossier à monter",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_DOSSAVS_OUINON",
+     "libelle": "Dossier AVS",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_NP_BMERE",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_NP_BPERE",
+     "libelle": "Nom et prénom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_NP_PCONF",
+     "libelle": "Nom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_NP_PREV",
+     "libelle": "Nom",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_OBJ_COCONSTRUIT",
+     "libelle": "OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_PLACEMT_ETB_DATE_DEM",
+     "libelle": "Dates demandées",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_PLACEMT_ETB_OUINON",
+     "libelle": "Placement établissement",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_SOUHAIT_PATIENT",
+     "libelle": "SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_SYNTH_ENTRET_PATIENT",
+     "libelle": "SYNTHESE DE L’ENTRETIEN AVEC LE PATIENT ET/OU L’ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_TEL_PCONF",
+     "libelle": "Téléphone portable",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_TEL_PERSO_BMERE",
+     "libelle": "Téléphone portable",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_TEL_PERSO_BPERE",
+     "libelle": "Téléphone portable",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_TEL_PREV",
+     "libelle": "Téléphone portable",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_TEL_TRAV_MERE",
+     "libelle": "Téléphone travail",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_ADMIN_TEL_TRAV_PERE",
+     "libelle": "Téléphone travail",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_EDUC_BILAN_OBJ",
+     "libelle": "BILAN DU(DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_EDUC_SOUHAIT_PATIENT",
+     "libelle": "SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_EDUC_SYNTHESE",
+     "libelle": "SYNTHESE EDUCATIF",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_EDUC_SYNT_ENTRPATIENT",
+     "libelle": "SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_PSY_SYNTHESE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_BILAN_OBJ_APA",
+     "libelle": "BILAN DU (DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_BILAN_OBJ_DIET",
+     "libelle": "BILAN DU (DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_BILAN_OBJ_ERGO",
+     "libelle": "BILAN DU (DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_BILAN_OBJ_KINE",
+     "libelle": "BILAN DU (DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_BILAN_OBJ_NEUROPSY",
+     "libelle": "BILAN DU (DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_BILAN_OBJ_PSYMOT",
+     "libelle": "BILAN DU (DES) PRECEDENT(S) OBJECTIF(S)",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_APA",
+     "libelle": "OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_DIET",
+     "libelle": "OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_EDUC",
+     "libelle": "OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_ERGO",
+     "libelle": "• OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_KINE",
+     "libelle": "• OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_NPSY",
+     "libelle": "OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_OBJ_COCONSTRUIT_PMOT",
+     "libelle": "OBJECTIF(S) COCONSTRUIT(S) AVEC LE PATIENT ET MOYENS MIS EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SOUHAIT_PATIENT_APA",
+     "libelle": "SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SOUHAIT_PATIENT_DIET",
+     "libelle": "SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SOUHAIT_PATIENT_ERGO",
+     "libelle": "• SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SOUHAIT_PATIENT_KINE",
+     "libelle": "• SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SOUHAIT_PATIENT_NPSY",
+     "libelle": "SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SOUHAIT_PATIENT_PMOT",
+     "libelle": "SOUHAIT DU PATIENT",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNTHESE",
+     "libelle": "SYNTHESE DE REEDUCATION",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNT_ENTRPATIENT_APA",
+     "libelle": "SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNT_ENTRPATIENT_DIET",
+     "libelle": "SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNT_ENTRPATIENT_ERGO",
+     "libelle": "• SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNT_ENTRPATIENT_KINE",
+     "libelle": "• SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNT_ENTRPATIENT_NPSY",
+     "libelle": "SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_REED_SYNT_ENTRPATIENT_PMOT",
+     "libelle": "SYNTHESE DE L'ENTRETIEN AVEC LE PATIENT ET/OU L'ENTOURAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCOLAIRE_SYNTHESE",
+     "libelle": "SYNTHESE SCOLAIRE DE L’ANNEE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCO_CLASSE_PRATIQUEE",
+     "libelle": "Classe pratiquée",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCO_DESC_PERIODE",
+     "libelle": "DESCRIPTION DE LA PERIODE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCO_OBJ_MOYENS",
+     "libelle": "OBJECTIFS ET MOYENS A METTRE EN ŒUVRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCO_SOUHAIT_ELEVE",
+     "libelle": "SOUHAITS DE L’ELEVE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCO_SYNTHESE",
+     "libelle": "SYNTHESE SCOLAIRE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SCO_TPS_DE_SCO",
+     "libelle": "Temps de scolarisation",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COCHE_GASTR",
+     "libelle": "Trachéotomie",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COCHE_IRRIG_ANAL",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COCHE_PANSEMENT",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COCHE_PERFUSION",
+     "libelle": "Trachéotomie",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COCHE_SONDAGE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COCHE_TRACH",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COM_GASTR",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COM_IRRIG_ANAL",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COM_PANSEMENT",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COM_PERF",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COM_SONDAGE",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_COM_TRACH",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_SYNTH_AVQ",
+     "libelle": "SYNTHESE ACTES DE LA VIE QUOTIDIENNE",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_SYNTH_SOINSIDE",
+     "libelle": "SYNTHESE SOINS INFIRMIERS",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_TRAITMT",
+     "libelle": "TRAITEMENTS",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI24_SOINS_VIESOC",
+     "libelle": "Vie sociale",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_AIDE_DEPL1",
+     "libelle": "Marche",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_ENTERALE",
+     "libelle": "Alimentation entérale",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_ENT_TYPE",
+     "libelle": "Alimentation entérale",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_MATERIEL",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_REGIME_OUINON",
+     "libelle": "Régime",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_REGIME_TYPE",
+     "libelle": "Si oui, type de régime",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_TEXT_ALIM",
+     "libelle": "Texture alimentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_ALIM_TEXT_BOISSON",
+     "libelle": "Boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_COM_ECRITE",
+     "libelle": "Ecrite",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_COM_NONVERB",
+     "libelle": "Non verbale",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_COM_VERB",
+     "libelle": "Verbale",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_CONT_FEC_OUINON",
+     "libelle": "Continence fécale",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_CONT_FEC_PERIODE",
+     "libelle": "Jour/Nuit",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_CONT_URI_OUINON",
+     "libelle": "Continence urinaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_CONT_URI_PERIODE",
+     "libelle": "Jour/Nuit",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_DEPL_FRE",
+     "libelle": "Fauteuil roulant électrique",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_DEPL_FRM",
+     "libelle": "Fauteuil roulant manuel",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_SOM_APPAR",
+     "libelle": "Appareillage",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_SOM_BARRIERE",
+     "libelle": "Barrière de lit",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_SOM_CHGT_POSITIO",
+     "libelle": "Changement de position",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_SOM_COUSSIN",
+     "libelle": "Coussin de positionnement",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_SOM_MATELAS",
+     "libelle": "Type de matelas",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_TRANSF_LEVEPERS",
+     "libelle": "Lève personne",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_TRANSF_LITFAUT",
+     "libelle": "Transfert lit-fauteuil",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_TRANSF_PLANCHE",
+     "libelle": "Planche",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_TRANSF_RETLIT",
+     "libelle": "Retournement dans le lit",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_PPI_SOINS_AVQ_TRANSF_VERTIC",
+     "libelle": "Verticalisateur",
+     "comparee_a": []
+    },
+    {
+     "code": "BRA_REE_RU_ERG_BL_FON_HH",
+     "libelle": "7",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": []
+  },
+  {
+   "modele": "CTX-BILAPA_III_MOTARRET",
+   "libelle": "Documents d’admission",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "BILAPA_III_MOTARRET",
+     "libelle": "Raison de l’arrêt",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_III_NBPAS",
+     "libelle": "Nombre de pas sur 10 mètres",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_III_PERMAR",
+     "libelle": "Périmètre de marche",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_III_TPS",
+     "libelle": "Temps réalisé sans interruption",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_IV_CANNE",
+     "libelle": "Avec la canne ou sur les accoudoirs",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_IV_GEN",
+     "libelle": "En s’appuyant sur les genoux",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_IV_RELCHAIS",
+     "libelle": "Relevés de chaise",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_IV_SSAID",
+     "libelle": "Sans aide",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_I_APPCHUT",
+     "libelle": "Appréhension face à la chute",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_I_ATTSOUH",
+     "libelle": "Attentes et souhaits de la personne en APA",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_I_DEPLA",
+     "libelle": "La personne se déplace",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_I_PASSSPORTA",
+     "libelle": "Passé sportif de la personne",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_COMMVERB",
+     "libelle": "La personne communique verbalement avec les autres",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_DANG",
+     "libelle": "La personne se met en danger",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_DEMO",
+     "libelle": "La personne comprend et est capable de réaliser la tâche après une démonstration",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_DOUB",
+     "libelle": "sonne est capable de réaliser une double tâche (tâche attentionnelle et motrice)",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_IMPLACT",
+     "libelle": "La personne est impliquée et participe dans l’activité",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_INIT",
+     "libelle": "La personne est capable de prendre des initiatives et de faire des choix",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_MEMINTER",
+     "libelle": "La personne se souvient de l’activité de mon intervention",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_PLAIS",
+     "libelle": "La personne prend du plaisir à venir et à participer à l’activité",
+     "comparee_a": []
+    },
+    {
+     "code": "BILAPA_V_VERB",
+     "libelle": "nne comprend et est capable de réaliser la tâche après mes explications verbales",
+     "comparee_a": []
+    },
+    {
+     "code": "CONPSYCOGNI_DUPLI",
+     "libelle": "Contexte psychologique et cognitif",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEAITEC",
+     "libelle": "Aides techniques",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEANT",
+     "libelle": "Antécédents médicaux et chirurgicaux",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEANTCHI",
+     "libelle": "Antécédents médicaux et chirurgicaux",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEECG",
+     "libelle": "ECG",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCAR",
+     "libelle": "Examen cardio-vasculaire",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCARD_DUPLI",
+     "libelle": "Examen cardio-vasculaire",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCONCUL",
+     "libelle": "Conclusion de l’examen",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCONCUL_DUPLI",
+     "libelle": "/ informations et avis du patient (ou de la personne de confiance si nécessaire)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCU",
+     "libelle": "Examen cutané",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCU_DUPLI",
+     "libelle": "Organes sensoriels",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCU_DUPLI2",
+     "libelle": "Examen cutané",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMCU_DUPLI_DUPLI2",
+     "libelle": "Douleur et sensoriel",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMDIGES",
+     "libelle": "Examen de l’appareil digestif",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMDIGES_DUPLI",
+     "libelle": "Examen digestif",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMLOCO",
+     "libelle": "Examen de l’appareil locomoteur et autonomie – état cognitif",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMLOCO_DUPLI",
+     "libelle": "Examen locomoteur",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMNEURO",
+     "libelle": "Examen neurologique et évaluation psychologique",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMNEURO_DUPLI",
+     "libelle": "Examen neurologique",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMPNEUMO",
+     "libelle": "Examen pleuropulmonaire",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMPNEUMO_DUPL",
+     "libelle": "Examen pulmonaire",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMUROGEN",
+     "libelle": "Examen uro-génital",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEEXAMUROGEN_DUPLI",
+     "libelle": "Examen uro-génital",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEGGAITEC",
+     "libelle": "Aides techniques",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEHM",
+     "libelle": "Histoire actuelle de la pathologie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEMODEVIE",
+     "libelle": "Mode de vie avant l’hospitalisation, évaluation sociale",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEMOTIF",
+     "libelle": "Motif d’admission et provenance",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMEOBPT",
+     "libelle": "Objectif et projet thérapeutique",
+     "comparee_a": []
+    },
+    {
+     "code": "RUDMESURV",
+     "libelle": "Surveillance",
+     "comparee_a": []
+    },
+    {
+     "code": "RUENSCORE",
+     "libelle": "Echelle de Norton",
+     "comparee_a": []
+    },
+    {
+     "code": "RUTTSCORE",
+     "libelle": "Test Tinetti",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMTEMPSEXEC",
+     "libelle": "Temps d’exécution en seconde",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMTOTALGETUP",
+     "libelle": "Up and go score",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-CHUTECIRCONSTANCE",
+   "libelle": "■ Nombre total de déclarations de chute sur le séjour :",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "CHUTECIRCONSTANCE",
+     "libelle": "Circonstance de la chute",
+     "comparee_a": []
+    },
+    {
+     "code": "CHUTETENSION",
+     "libelle": "Etat de la tension / normale usager",
+     "comparee_a": []
+    },
+    {
+     "code": "SWM",
+     "libelle": "Autre(s) soignant(s) présent(s) dans l’unité",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHINFPR",
+     "libelle": "Infirmier(e) présent(e)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEACTIONAUTRE",
+     "libelle": "Si autre, précision",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEACTIONENCOURS",
+     "libelle": "Quelle était l’action en cours ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEAGITE",
+     "libelle": "Le patient est-il agité ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEAIDEMOMCHUTE",
+     "libelle": "Cette aide était-elle utilisée au moment de la chute ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEAIDETECH",
+     "libelle": "Le patient utilise-t-il une aide technique lors de ses déplacements ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEAJEUN",
+     "libelle": "Était-il à jeun ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTECANBEQDEA",
+     "libelle": "Si oui, laquelle",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEEBRIETE",
+     "libelle": "Un état d’ébriété a-t-il favorisé la chute ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEECLAIRAGE",
+     "libelle": "L’éclairage était-il suffisant ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEEVALUATIONMEDICAL",
+     "libelle": "Conclusions du médecin",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEHEURE",
+     "libelle": "Date et heure de la chute",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTELIEU",
+     "libelle": "Lieu de la chute",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTELUNETTES",
+     "libelle": "atient porte habituellement des lunettes, les portait-il au moment de la chute ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTELUNETTES2",
+     "libelle": "Si oui, les portait-il au moment de la chute",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEMALAISE",
+     "libelle": "A-t-il présenté un malaise ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEMEDECIN",
+     "libelle": "Un médecin a-t-il été appelé d’urgence ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEOBSTACLE",
+     "libelle": "Un obstacle peut-il avoir été responsable de la chute ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEOBSTACLELEQUEL",
+     "libelle": "Si oui, lequel ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTEPORTAITIL",
+     "libelle": "Que portait-il ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTESOL",
+     "libelle": "Le sol était-il glissant ou collant ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTETEMP",
+     "libelle": "Température",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTETRANSPORT",
+     "libelle": "Le patient a-t-il était transporté vers l’hôpital ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTETRAUMADESCRIPT",
+     "libelle": "Si oui, les décrire",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCHUTETRAUMATISME",
+     "libelle": "La chute a-t-elle causé des traumatismes physiques ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMSOICH",
+     "libelle": "Soignant ayant constaté la chute",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-ANIM_ANI_PREC",
+   "libelle": "■ Nombre total de dossiers escarres saisis :",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "ANIM_ANI_PREC",
+     "libelle": "Si autres, précisions",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_AUTR_CI",
+     "libelle": "Si Autres Souhaits, précisions",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_CINE",
+     "libelle": "Si cinéma, type de film",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_JEU_PREC",
+     "libelle": "Précisions",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SORT",
+     "libelle": "Si autres, précisions",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_1",
+     "libelle": "•",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_2",
+     "libelle": "•",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_3",
+     "libelle": "•",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_ANIMAL",
+     "libelle": "Si rencontre avec l’animal",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_BILAN",
+     "libelle": "Bilan trimestriel",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_COMMENT",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_COMMENT_V2",
+     "libelle": "Visite d’accueil",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_INTER",
+     "libelle": "Si rencontre intergénérationnelle",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_JEUX",
+     "libelle": "Si jeux, type de jeux",
+     "comparee_a": []
+    },
+    {
+     "code": "ANIM_SOUHAITS_SORT",
+     "libelle": "Si sorties extérieures, promenades",
+     "comparee_a": []
+    },
+    {
+     "code": "APA_BILAN",
+     "libelle": "Bilan APA",
+     "comparee_a": []
+    },
+    {
+     "code": "APA_REEVAL",
+     "libelle": "Réévaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "BEMATERIELMOBILITEV2",
+     "libelle": "Aides matérielles",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_ALIM_AIDE",
+     "libelle": "Aide repas",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_ALIM_APPETIT",
+     "libelle": "Appétit",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_ALIM_ETATDENT",
+     "libelle": "Mauvais état dentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_ALIM_PERTEPOIDS",
+     "libelle": "Perte de poids récente",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_ALIM_PRISEPOIDS",
+     "libelle": "Prise de poids récente",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_ALIM_TEXTURE",
+     "libelle": "Type texture",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_BILANMOB_COM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_COMMUNIC_COM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_DOULEUR_COM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_MAT_PERSO_ETB",
+     "libelle": "Matériel personnel / Etablissement",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_MOBILITE_HEMIPL",
+     "libelle": "Hémiplégie",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_MOBILITE_PARAP",
+     "libelle": "Paraplégie",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_REPOS",
+     "libelle": "Sommeil / Conditions et Rituels",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_REPOS_COM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_REPOS_SIESTE",
+     "libelle": "Sieste",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_REPOS_SIESTE_PRE",
+     "libelle": "Si oui, précisez",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_SOINSPERSO_COIF",
+     "libelle": "Coiffeur",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_SOINSPERSO_COM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_SOINSPERSO_DOUCHE",
+     "libelle": "Douche",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_SOINSPERSO_LINGE",
+     "libelle": "Entretien du linge par la famille",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_SOINSPERSO_PEDICURE",
+     "libelle": "Pédicure",
+     "comparee_a": []
+    },
+    {
+     "code": "BE_SOINSPERSO_RASAGE",
+     "libelle": "Rasage",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_AFF_ID",
+     "libelle": "Consentement pour l’affichage de son identité sur la porte de chambre",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_AUTREV2",
+     "libelle": "Autre consentement",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_DDIU",
+     "libelle": "Date de remise du dossier des droits et informations de l’usager",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_DIRECTIVES_ANTICIP",
+     "libelle": "Directives anticipées",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_GRIP",
+     "libelle": "Consentement pour la vaccination grippale",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_PERS_CONFI",
+     "libelle": "Personne de confiance désignée",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_PHOYO",
+     "libelle": "Consentement pour la diffusion de photo",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_PNEUMO",
+     "libelle": "Pneumo 23",
+     "comparee_a": []
+    },
+    {
+     "code": "CONSENTEMENT_TXTLIBRE",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_ATT_PROCHES",
+     "libelle": "Attentes des proches",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_ATT_USAGER",
+     "libelle": "Attentes de l’usager",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_HABVIE",
+     "libelle": "Habitudes de vie quotidienne (14 besoins de Virginia Anderson)",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_HIS",
+     "libelle": "Histoire de vie",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_PECANT",
+     "libelle": "Parcours des prises en charge antérieures et motif d’entrée",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_PRES",
+     "libelle": "Présentation de la personne",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_VIEFAM",
+     "libelle": "Vie familiale",
+     "comparee_a": []
+    },
+    {
+     "code": "CP_VIEPROF",
+     "libelle": "Vie professionnelle",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_ALBUMINE",
+     "libelle": "Albumine sérique",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_AUTRE",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_AUTREREG",
+     "libelle": "Autre régime",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_AUTRE_PRC",
+     "libelle": "Précisez",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_DETAILS",
+     "libelle": "Détail du régime",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_ESCARRE",
+     "libelle": "Escarre",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_ESC_COMM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_IMC",
+     "libelle": "IMC",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_NONGOUT",
+     "libelle": "Non Goûts",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_POIDS",
+     "libelle": "Poids",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_PREFALIM",
+     "libelle": "Préférences alimentaires / habitudes alimentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_REEVAL",
+     "libelle": "Réévaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_REGPROT",
+     "libelle": "Régime hyper-protéiné",
+     "comparee_a": []
+    },
+    {
+     "code": "DIET_TEXTURE",
+     "libelle": "Texture",
+     "comparee_a": []
+    },
+    {
+     "code": "ERGO_BILAN",
+     "libelle": "Bilan Ergo",
+     "comparee_a": []
+    },
+    {
+     "code": "ERGO_REEV",
+     "libelle": "Réévaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "KINE_BILAN",
+     "libelle": "Bilan Kiné",
+     "comparee_a": []
+    },
+    {
+     "code": "KINE_REEV",
+     "libelle": "Réévaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "MED_ETATLIEUX",
+     "libelle": "et pathologies actuelles / Diagnostics de prise en charge / Projet thérapeutique",
+     "comparee_a": []
+    },
+    {
+     "code": "PROPERSPASABILASG",
+     "libelle": "Bilan ASG à l’entrée",
+     "comparee_a": []
+    },
+    {
+     "code": "PROPERSPASACONTFAM",
+     "libelle": "Synthèse contact famille",
+     "comparee_a": []
+    },
+    {
+     "code": "PROPERSPASAEVAL1MOIS",
+     "libelle": "Evaluation à 1 mois",
+     "comparee_a": []
+    },
+    {
+     "code": "PROPERSPASASCONPIES",
+     "libelle": "Score NPIES à l’entrée",
+     "comparee_a": []
+    },
+    {
+     "code": "PROPERSPASASORTIE",
+     "libelle": "Synthèse sortie PASA",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_ACC_PERSCONF",
+     "libelle": "Personne de confiance",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_ACC_REPLEGAL",
+     "libelle": "Représentant légal",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_ACC_USAGER",
+     "libelle": "Usager",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_PRES_PERSONNECONF",
+     "libelle": "Personne de confiance",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_PRES_PROCHE",
+     "libelle": "Proche(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_PRES_REPLEGAL",
+     "libelle": "Représentant légal",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_PRES_USAGER",
+     "libelle": "Usager",
+     "comparee_a": []
+    },
+    {
+     "code": "PRO_RAPPORTSITU_V2",
+     "libelle": "Projet personnalisé",
+     "comparee_a": []
+    },
+    {
+     "code": "PRPPERSPASASUIVI",
+     "libelle": "Suivi de la prise en charge PASA",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA1",
+     "libelle": "La personne se déplace",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA10",
+     "libelle": "Raison de l’arrêt",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA102_",
+     "libelle": "Met la main derrière la tête/nuque",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA103_",
+     "libelle": "Tend le bras au-dessus de la tête",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA104_",
+     "libelle": "Tend le bras devant soi à hauteur d’épaule",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA105_",
+     "libelle": "Tend le bras sur le côté à haut d’épaule",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA106_",
+     "libelle": "Tend le bras dans l’espace arrière",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA107_",
+     "libelle": "Met la main derrière la tête/nuque",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA108_",
+     "libelle": "Tend le bras au-dessus de la tête",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA109_",
+     "libelle": "Tend le bras devant soi à hauteur d’épaule",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA110_",
+     "libelle": "Tend le bras sur le côté à haut d’épaule",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA111_",
+     "libelle": "Tend le bras dans l’espace arrière",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA13",
+     "libelle": "Flexion",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA14",
+     "libelle": "Extension",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA15",
+     "libelle": "Inclinaisons latérales",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA16",
+     "libelle": "Flexion",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA17",
+     "libelle": "Extension",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA18",
+     "libelle": "Inclinaisons latérales",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA19",
+     "libelle": "Flexion",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA2",
+     "libelle": "Attentes souhaits en termes d’activités physiques",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA20",
+     "libelle": "Flexion",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA21",
+     "libelle": "Extension",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA22",
+     "libelle": "Extension",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA25",
+     "libelle": "Flexion",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA26",
+     "libelle": "Extension",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA27",
+     "libelle": "Inclinaisons latérales",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA29",
+     "libelle": "La personne se souvient de l’activité, de mon intervention",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA3",
+     "libelle": "Temps tenu jambe gauche",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA30",
+     "libelle": "La personne se souvient de mon prénom (ou celui des autres personnes)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA31",
+     "libelle": "nne comprend et est capable de réaliser la tâche après mes explications verbales",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA32",
+     "libelle": "La personne comprend et est capable de réaliser la tâche après une démonstration",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA33",
+     "libelle": "La personne est capable de prendre des décisions, faire ses choix",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA35",
+     "libelle": "La personne participe aux discussions en prenant la parole",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA36",
+     "libelle": "La personne participe aux discussions en écoutant",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA37",
+     "libelle": "La personne est souriante, agréable et ouverte",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA38",
+     "libelle": "La personne est motivée pendant l’activité et prend du plaisir",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA39",
+     "libelle": "La personne a un manque de confiance en elle, une mauvaise estime d’elle-même",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA3_DUPLI",
+     "libelle": "Temps tenu",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA3_DUPLI_DUPLI",
+     "libelle": "Temps tenu jambe droite",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA4",
+     "libelle": "/20s aide",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA40",
+     "libelle": "Comportement de la personne par rapport au déplacement",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA4_DUPLI",
+     "libelle": "/20s aide",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA4_DUPLI_DUPLI",
+     "libelle": "/20s aide",
+     "comparee_a": []
+    },
+    {
+     "code": "RUAPA9",
+     "libelle": "La personne est capable de marcher sans interruption",
+     "comparee_a": []
+    },
+    {
+     "code": "SFCONTENTIONFAUTEUIL",
+     "libelle": "Fauteuil",
+     "comparee_a": []
+    },
+    {
+     "code": "SFCONTENTIONLIT",
+     "libelle": "Lit (barrières)",
+     "comparee_a": []
+    },
+    {
+     "code": "SFDIRECTANTICIPEES",
+     "libelle": "Si oui",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBADHESFAM",
+     "libelle": "Accord de la personne de confiance le cas échéant",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBADHESPAT",
+     "libelle": "Accord du résident",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBAIDEJOUR",
+     "libelle": "Aide jour",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBAIDENUIT",
+     "libelle": "Aide nuit",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBALPHA",
+     "libelle": "Suivi",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBALPHA_DUPLI",
+     "libelle": "Bilan final",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBALPHA_DUPLI_DUPLI",
+     "libelle": "Conclusion de la prise en charge",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBALPHA_DUPLI_DUPLI_DUPLI",
+     "libelle": "HABITUDE DE VIE",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBANTALGIQUES_DUPLI",
+     "libelle": "Autre",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBANTALGIQUES_DUPLI_DUPLI",
+     "libelle": "Plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBAPPAREILLAGEMALENTENDANT",
+     "libelle": "Appareillage",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBAPPAREILLAGEMALVOYANT",
+     "libelle": "Appareillage",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBASSSOCIALE1",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBASSSOCIALE2",
+     "libelle": "Vie relationnelle",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBASSSOCIALE3",
+     "libelle": "Date des événements marquants",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBASSSOCIALE4",
+     "libelle": "Environnements et mode de vie",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBAUTONOME",
+     "libelle": "Autonome",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBBILANFIN",
+     "libelle": "Bilan final",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBBMR",
+     "libelle": "BMR",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBBRULURES",
+     "libelle": "Brûlure",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBBULECTURE",
+     "libelle": "Lecture",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBBU_1",
+     "libelle": "Matériel en place",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCENTREINTERET",
+     "libelle": "Centres d’intérêts",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCENTREINTERET_DUPLI",
+     "libelle": "Souhaits de participation aux activités proposées par la structure",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCHAMBREFUNERAIRE",
+     "libelle": "Chambre funéraire souhaitée",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCOM",
+     "libelle": "Communication des infos sur sa santé aux personnes à prévenir",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCOMDIFF",
+     "libelle": "S’exprime sans difficulté",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCOMDOSSIER",
+     "libelle": "Opposition à la communication du dossier post mortem",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCOMFUGUE",
+     "libelle": "Risque de fugue",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCOMMENTAIRES",
+     "libelle": "Langue parlée",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCOMPORTRESIDENT",
+     "libelle": "Comportement",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCUTANE",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBCYANOSEES",
+     "libelle": "Extrémités cyanosées",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBDEBITL",
+     "libelle": "Débit/L",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBDIET",
+     "libelle": "Bilan initial",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBDIRECTIVES",
+     "libelle": "Directives de fin de vie",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBDONNEUR",
+     "libelle": "Donneur d’organes",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBDOUCHESOINS",
+     "libelle": "Douche",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBDOULEUR2",
+     "libelle": "Douleur",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBECHELLEDOUL",
+     "libelle": "Type échelle",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBEERGOCONSEIL",
+     "libelle": "Conseils d’hygiène de vie et de prévention",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBELIMINATIONFECALE",
+     "libelle": "Elimination fécale",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBERGOBILANINITIAL",
+     "libelle": "Bilan initial avec projet du résident",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBERGOCONSENT",
+     "libelle": "Consentement du résident",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBERGOCRDOM",
+     "libelle": "Evaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBERGOOBJ",
+     "libelle": "Objectifs – Traitements – Délais",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBERGOSUIVI",
+     "libelle": "Suivi du projet",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBERUPTION",
+     "libelle": "Eruption cutanée",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBESCARRES",
+     "libelle": "Escarre(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBETATNUTRIHYDRA2",
+     "libelle": "Dénutrition",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBETATNUTRIHYDRA3",
+     "libelle": "Perte de poids récente",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBETATNUTRIHYDRA5",
+     "libelle": "Régime en cours",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBEVALDIET",
+     "libelle": "Conseil de prise en charge",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBFINDEVIE1",
+     "libelle": "Exigences du patient par rapport aux vêtements/bijoux",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBFINDEVIE2",
+     "libelle": "Exigences des proches si différentes de celle du patient",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBGRATTAGE",
+     "libelle": "Lésions de grattage",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBHABILLAGE",
+     "libelle": "Habillage Haut",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBHABILLAGE_DUPLI",
+     "libelle": "Habillage Bas",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBHMATOMES",
+     "libelle": "Hématomes",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBINCINERATION",
+     "libelle": "Incinération du corps",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBINFECTUEUX",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBKINE1",
+     "libelle": "Bilan initial",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBKINE2",
+     "libelle": "Objectifs – Traitements – Délais",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBKINE3",
+     "libelle": "Conseil de prise en charge",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBKINE4",
+     "libelle": "Suivi de prise en charge",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBKINECONSENTEMENT",
+     "libelle": "Consentement du résident",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBKINECONSENTEMENT_DUPLI",
+     "libelle": "Consentement du résident",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLANGUE1",
+     "libelle": "Langue étrangère",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDO123",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDO123_54",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDO123_54_DUPLI",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDO123_566",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDO123_DUPLI",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR13",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR13_DUPLI_DUPLI",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR13_DUPLI_DUPLI_DUPLI",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR_DUPLI",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR_DUPLI12",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR_DUPLI33",
+     "libelle": "Description/Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOULEUR_DUPLI_DUPLI",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBLOCALDOV2",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALENTENDANT",
+     "libelle": "Malentendant",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT",
+     "libelle": "Malvoyant",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT25",
+     "libelle": "Mauvais état dentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT25_DUPLI",
+     "libelle": "Mycose buccale",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT25_DUPLI_DUPLI",
+     "libelle": "Prothèse dentaire – Haut",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT25_DUPLI_DUPLI_DUPLI",
+     "libelle": "Prothèse dentaire – Bas",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT2_DUPLI",
+     "libelle": "Troubles de l’équilibre",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT35",
+     "libelle": "ATCD Chute",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT35_DUPLI",
+     "libelle": "Faiblesse/Dénutrition",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT35_DUPLI_DUPLI",
+     "libelle": "Hypotension",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT35_DUPLI_DUPLI_DUPLI",
+     "libelle": "Hémiplégie",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT68",
+     "libelle": "Fausse route liquide",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMALVOYANT68_DUPLI",
+     "libelle": "Fausse route solide",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMATERIELAINSTALLER",
+     "libelle": "Matériel à installer",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMATERIELMOBILITE",
+     "libelle": "Aide matérielle",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMATERIELSOINS",
+     "libelle": "Matériels",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMATINFECTION",
+     "libelle": "Matériel en place",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBMATMOB",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBORIGINE",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBOXYGENOTHERAPIE",
+     "libelle": "Oxygénothérapie",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBPACEMAKER",
+     "libelle": "Pacemaker",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBPSYCHO1",
+     "libelle": "Bilan final",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBPSYCHO1_DUPLI",
+     "libelle": "Synthèse bilan psychologique",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBPSYCHO2",
+     "libelle": "Conseil de prise en charge",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRAISON4",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRAISON5",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRESPIRATOIRECOMM",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRESPIRATOIRECOMMV2",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRESPIRATOIRECOMM_DUPLI",
+     "libelle": "Commentaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRISQUECONDUITE",
+     "libelle": "Conduite à risque",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRISQUECONDUITEV2",
+     "libelle": "Conduite à risque",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRISQUECONTEN",
+     "libelle": "Si oui, nécessité de contention",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRISQUELUXATION",
+     "libelle": "Risque de luxation de prothèse",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRISQUETHERAP",
+     "libelle": "Risques liés à une thérapeutique",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRISQUETHERAPV2",
+     "libelle": "Risques liés à une thérapeutique",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBROUGEUR",
+     "libelle": "Rouge cutanée",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRSIQUECHUTE",
+     "libelle": "Risque de chute",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBRSIQUESUICIDE",
+     "libelle": "Risque de suicide",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBSCORE",
+     "libelle": "Score",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBSOINSCONSERV",
+     "libelle": "Soins de conservation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBSTRATDIET",
+     "libelle": "Diagnostic – Objectifs – Traitements",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBSUIVI",
+     "libelle": "Suivi de prise en charge",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBSYMPTOMECOMPORTEMENT",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBSYNTHEVAL",
+     "libelle": "Synthèse évaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBTOILBAS",
+     "libelle": "Toilette Bas",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBTOILHAUT",
+     "libelle": "Toilette Haut",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBTRACHEOTOMIE",
+     "libelle": "Trachéotomie",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBTRAITINFO",
+     "libelle": "Traitement informatique de ses données médicales",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBTRANSF",
+     "libelle": "Transfert",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBTYPDOUL",
+     "libelle": "Type douleur",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBURINAIRE",
+     "libelle": "Elimination urinaire",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBVNI",
+     "libelle": "VNI",
+     "comparee_a": []
+    },
+    {
+     "code": "SFRUBVNIPOSITIF",
+     "libelle": "Si oui",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMACTIVITEESC",
+     "libelle": "Activité",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMCOMMPERC",
+     "libelle": "Communication et perception sensorielle",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMFRICTCIS",
+     "libelle": "Frictions et Cisaillements",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMHUMIDITE",
+     "libelle": "Humidité",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMMOBILITESC",
+     "libelle": "Mobilité",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMNUTRITION",
+     "libelle": "Nutrition",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMPRESESC",
+     "libelle": "Présence d’escarre(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMTOTALESC",
+     "libelle": "Score Total Braden",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-ALTERCONTEN",
+   "libelle": "■ Nombre total de documents de contention saisis :",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "ALTERCONTEN",
+     "libelle": "Echec des alternatives à la contention",
+     "comparee_a": []
+    },
+    {
+     "code": "COMMALTERNATIVES",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCBEN",
+     "libelle": "Bénéfices",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCCOMCON",
+     "libelle": "Commentaire lié à l’information et au consentement",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCDATEP",
+     "libelle": "Date de prescription",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCDECI",
+     "libelle": "Décision de prescription de contention",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCDEV",
+     "libelle": "Date de l’évaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCDUP",
+     "libelle": "Durée prévisible",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCRECHCON",
+     "libelle": "Information et recherche du consentement de la personne",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCRECHCON_DUPLI",
+     "libelle": "Information de la famille et/ou de la personne de confiance",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCRIS",
+     "libelle": "Risques",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCTYPC",
+     "libelle": "Au lit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMPCTYPCFAU",
+     "libelle": "Au fauteuil",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-RUCVCOMMENT1",
+   "libelle": "Carnet de vaccination",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "RUCVCOMMENT1",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT10",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT11",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT12",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT13",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT14",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT15",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT16",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT17",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT18",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT19",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT2",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT3",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT4",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT5",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT6",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT7",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT8",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVCOMMENT9",
+     "libelle": "Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATDERINJ",
+     "libelle": "Date de la dernière injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ1",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ10",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ11",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ12",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ13",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ14",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ15",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ2",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ3",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ4",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ5",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ6",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ7",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ8",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATINJ9",
+     "libelle": "Date Injection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATRAP1",
+     "libelle": "Date de rappel",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATRAP2",
+     "libelle": "Date de rappel",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVDATRAP3",
+     "libelle": "Date de rappel",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNBOCCUR1",
+     "libelle": "Nombre d’occurrences",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNBOCCUR2",
+     "libelle": "Nombre d’occurrences",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNBOCCUR3",
+     "libelle": "Nombre d’occurrences",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT1",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT10",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT11",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT12",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT13",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT14",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT15",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT16",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT17",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT18",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT19",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT2",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT3",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT4",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT5",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT6",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT7",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT8",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOT9",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOTV21",
+     "libelle": "N°lot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOTV22",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOTV23",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOTV24",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVNLOTV25",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC1",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC10",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC11",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC12",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC13",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC14",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC15",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC16",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC17",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC18",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC19",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC2",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC3",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC4",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC5",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC6",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC7",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC8",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    },
+    {
+     "code": "RUCVSPEC9",
+     "libelle": "Spécialité",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "03-2371615284-contenu-p-aspose-foss.docx",
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-MCRUB5_V2",
+   "libelle": "Documents d’admission soignants",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "MCRUB5_V2",
+     "libelle": "MALADIE",
+     "comparee_a": []
+    },
+    {
+     "code": "MCRUB6_V2",
+     "libelle": "THERAPEUTIQUE",
+     "comparee_a": []
+    },
+    {
+     "code": "MCRUB7_V2",
+     "libelle": "VECU",
+     "comparee_a": []
+    },
+    {
+     "code": "MCRUB8_V2",
+     "libelle": "ENVIRONNEMENT",
+     "comparee_a": []
+    },
+    {
+     "code": "MCRUB9_V2",
+     "libelle": "DEVELOPPEMENT",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-SWMDEPISTAGEA",
+   "libelle": "■ Nombre total de documents de contention saisis :",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "SWMDEPISTAGEA",
+     "libelle": "e d’appétit, problèmes digestifs, difficultés de mastication ou de déglutition ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMDEPISTAGEB",
+     "libelle": "Perte récente de poids (<3mois)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMDEPISTAGEC",
+     "libelle": "Motricité",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMDEPISTAGED",
+     "libelle": "Maladie aigüe ou stress psychotique lors des 3 derniers mois ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMDEPISTAGEE",
+     "libelle": "Problèmes neuropsychologiques",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMDEPISTAGEF2",
+     "libelle": "Indice de masse corporelle (IMC = POIDS/(TAILLE)² en kg/m²)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBG",
+     "libelle": "Le patient vit-il de façon indépendante à domicile ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBH",
+     "libelle": "Prend-t-il plus de 3 médicaments ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBI",
+     "libelle": "Escarres ou plaies cutanés ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBJ",
+     "libelle": "Combien de véritable repas le patient prend-t-il par jour ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBK1",
+     "libelle": "Une fois par jour au moins des produits laitiers ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBK2",
+     "libelle": "Une ou deux fois par semaine des œufs ou des légumineuses ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBK3",
+     "libelle": "Chaque jour de la viande, du poisson ou de la volaille ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBL",
+     "libelle": "Deux fois par jour au moins des fruits ou des légumes ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBN",
+     "libelle": "Manière de se nourrir",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBO",
+     "libelle": "Le patient se considère-t-il bien nourri ? (Problèmes nutritionnels)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBP",
+     "libelle": "l en meilleure ou en moins bonne santé que la plupart des personnes de son âge ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBQ",
+     "libelle": "Circonférence brachiale (cb en cm)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOBR",
+     "libelle": "Circonférence du mollet (cm en cm)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALGLOGM",
+     "libelle": "Combien de verres de boisson consomme-t-il par jour ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMEVALUATIONGLOBALE",
+     "libelle": "EVALUATION GLOBALE",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMSCOREDEDEPISTAGE",
+     "libelle": "SCORE DE DEPISTAGE",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMSCORETOTAL",
+     "libelle": "SCORE TOTAL (max 30 points)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMSCROREDEPISTAGE",
+     "libelle": "SCORE DE DEPISTAGE",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-RUFRNBBCUI",
+   "libelle": "■ Nombre total de documents de contention saisis :",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "RUFRNBBCUI",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBBI",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBCONF",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBE",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBPA",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBSCRETT",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBSUCR",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRNBUR",
+     "libelle": "Nombre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUFRPDEJAUT",
+     "libelle": "Autre(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRALIM",
+     "libelle": "Aliment(s) (texture)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRAUT",
+     "libelle": "Autre(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRAVERS",
+     "libelle": "Aversion(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRBEU",
+     "libelle": "Beurre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRBI",
+     "libelle": "Biscotte(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRBIEC",
+     "libelle": "Biscotte(s) écrasée(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRBIS",
+     "libelle": "Biscuit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRBOISS",
+     "libelle": "Boisson(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRCONF",
+     "libelle": "Confiture",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRDIET",
+     "libelle": "Prise en charge par la diététicienne",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRLIEU",
+     "libelle": "Lieu Midi",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRLIEUAUT",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRLIEUAUTSOIR",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRLIEU_SOIR",
+     "libelle": "Lieu Soir",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRPAI",
+     "libelle": "Pain",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRPDEJBOI",
+     "libelle": "Petit déjeuner – Boisson(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRPORTPART",
+     "libelle": "Portion(s) particulière(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRPOT",
+     "libelle": "Pot",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRREGIME",
+     "libelle": "Régime",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRREP",
+     "libelle": "Repas",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRSUC",
+     "libelle": "Sucre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRSUCRE",
+     "libelle": "Sucrette",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPRTECH",
+     "libelle": "Aide(s) technique(s)",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-FSPC_BOU",
+   "libelle": "SUIVI PANSEMENT ESCARRE STOMIE PLAIE CHRONIQUE",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "FSPC_BOU",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_BOU_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_BOU_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_BOU_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_BOU_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DATE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DATE_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DATE_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DATE_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DATE_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DEGEXS",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DEGEXS_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DEGEXS_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DEGEXS_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_DEGEXS_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EPI",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EPI_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EPI_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EPI_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EPI_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EVA",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EVA_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EVA_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EVA_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_EVA_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_FIB",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_FIB_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_FIB_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_FIB_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_FIB_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INF",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INF_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INF_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INF_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INF_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INIT",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INIT_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INIT_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INIT_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_INIT_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_LOC",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_LOC_2",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_LOC_3",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_LOC_4",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_LOC_5",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_NEC",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_NEC_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_NEC_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_NEC_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_NEC_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PEAPER",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PEAPER_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PEAPER_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PEAPER_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PEAPER_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PLAIEXCA",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PLAIEXCA_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PLAIEXCA_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PLAIEXCA_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_PLAIEXCA_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TAILLE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TAILLE_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TAILLE_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TAILLE_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TAILLE_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPANS",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPANS_2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPANS_3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPANS_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPANS_5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPLA",
+     "libelle": "Type de plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPLA_2",
+     "libelle": "Type de plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPLA_3",
+     "libelle": "Type de plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPLA_4",
+     "libelle": "Type de plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "FSPC_TYPPLA_5",
+     "libelle": "Type de plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_EN1",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_EN2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_EN3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_EN4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_EN5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_TYPE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_TYPE2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_TYPE3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_TYPE4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESCARRE_TYPE5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESC_TAILLE1",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESC_TAILLE2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESC_TAILLE3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESC_TAILLE5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_ESC_TAILLE_4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_STADE_ESCARRE2OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_STADE_ESCARRE3OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_STADE_ESCARRE4OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_STADE_ESCARRE5OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HPA_STADE_ESCARREOK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ESC_DATE8OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE10OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE6OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE7OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_DATE9OK",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI10",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI6",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI7",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI8",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_INI9",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC10",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC2",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC3",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC4",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC5",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC6",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC7",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC8",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_LOC9",
+     "libelle": "Nature du pansement – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS10",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS6",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS7",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS8",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_OBS9",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_PROTO",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_PROTO2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_PROTO3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_PROTO4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_PST_PROTO5",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_OBSV",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_PEAU",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_PEAU2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_PEAU3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_PEAU4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_STOMIE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_STOMIE2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_STOMIE3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_ASPECT_STOMIE4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_DATE1",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_DATE2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_DATE3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_DATE4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_INITIALES1",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_INITIALES2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_INITIALES3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_INITIALES4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_LOC",
+     "libelle": "Nature de la stomie – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_LOC2",
+     "libelle": "Nature de la stomie – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_LOC3",
+     "libelle": "Nature de la stomie – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_LOC4",
+     "libelle": "Nature de la stomie – Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_MATERIEL",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_MATERIEL2",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_MATERIEL3",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_MATERIEL4",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_OBSV2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_OBSV3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_OBSV4",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_QT1",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_QT2",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_QT3",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "IDE_ST_QT4",
+     "libelle": null,
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "03-2371615284-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-RUPAASP",
+   "libelle": "SUIVI PANSEMENT",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "RUPAASP",
+     "libelle": "Aspect",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPAASPAUT",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPADESC",
+     "libelle": "Descriptif plaie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPAEXS",
+     "libelle": "Exsudat",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPAFREQ",
+     "libelle": "Fréquence réfection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPALOC",
+     "libelle": "Localisation",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPAMAT",
+     "libelle": "Matériel",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPAOBJ",
+     "libelle": "Objectif du pansement",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPASTADE",
+     "libelle": "Stade (en %)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUPASTADEAUT",
+     "libelle": "Si autre",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-DATESAISIE",
+   "libelle": "Actes thérapeutiques",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "DATESAISIE",
+     "libelle": "Date de saisie",
+     "comparee_a": []
+    },
+    {
+     "code": "DATESAISIEREEV",
+     "libelle": "Date de saisie réévaluation",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBBACTGERM",
+     "libelle": "Germe",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBDURBACT",
+     "libelle": "Durée preuve bactériologique",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBDURPROB",
+     "libelle": "Durée probabiliste",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBREV2",
+     "libelle": "Réévaluation après 48h ou 72h",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBREVDURE",
+     "libelle": "Durée de la poursuite du traitement",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBREVJUSTIF",
+     "libelle": "Justificatif clinique",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBREVOUI",
+     "libelle": "Si Oui",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBREV_DUPLI",
+     "libelle": "Réévaluation après 48h ou 72h",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBSTRAT",
+     "libelle": "Stratégie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBTYPINF",
+     "libelle": "Type d’infection",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBTYPINFAUTRE",
+     "libelle": "Si Autre, à préciser",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBURINIUH",
+     "libelle": "Infection urinaire haute",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBURINSAD",
+     "libelle": "SAD",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBURINTTBU",
+     "libelle": "Traitement après BU",
+     "comparee_a": []
+    },
+    {
+     "code": "RUATBURINTTECBU",
+     "libelle": "Traitement après ECBU et avec antibiogramme",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "02-2371079234-contenu-p-aspose-foss.docx",
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-ANESTHESIE_ANTERIEURE",
+   "libelle": "Antécédent(s) opératoire(s)",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "ANESTHESIE_ANTERIEURE",
+     "libelle": "Anesthésie(s) locale(s) ou locorégionale(s) antérieure(s) ?",
+     "comparee_a": []
+    },
+    {
+     "code": "ANESTHESIE_COMPLICATION_FAMILLE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "ASCENSION_ETAGE",
+     "libelle": "Nombre d’étages montés sans arrêt ?",
+     "comparee_a": []
+    },
+    {
+     "code": "BOIRE_APERITIFS",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BOIRE_BIERE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "BOIRE_VIN",
+     "libelle": "Des apéritifs",
+     "comparee_a": []
+    },
+    {
+     "code": "CSTE_POIDS",
+     "libelle": "Poids (KG)",
+     "comparee_a": []
+    },
+    {
+     "code": "CSTE_TAILLE",
+     "libelle": "Taille (CM)",
+     "comparee_a": []
+    },
+    {
+     "code": "DROGUE_STIMULANTS",
+     "libelle": "Prise de drogues ou de stimulants ?",
+     "comparee_a": []
+    },
+    {
+     "code": "ENDORMISSEMENT_JOURNEE",
+     "libelle": "Endormissement facile dans la journée ?",
+     "comparee_a": []
+    },
+    {
+     "code": "ESSOUFLEMENT_FACILE",
+     "libelle": "Essoufflement facile",
+     "comparee_a": []
+    },
+    {
+     "code": "ETAT_ASA",
+     "libelle": "ASA",
+     "comparee_a": []
+    },
+    {
+     "code": "FUMEUR",
+     "libelle": "Depuis combien de temps ?",
+     "comparee_a": []
+    },
+    {
+     "code": "FUMEUR_ANCIEN",
+     "libelle": "Arrêt depuis quand ?",
+     "comparee_a": []
+    },
+    {
+     "code": "FUMEUR_ANCIEN_ARRET",
+     "libelle": "Arrêt depuis quand ?",
+     "comparee_a": []
+    },
+    {
+     "code": "FUMEUR_DATE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "FUMEUR_NBE_CIGARETTES",
+     "libelle": "Depuis combien de temps ?",
+     "comparee_a": []
+    },
+    {
+     "code": "HEMATOMES_FACILES",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HEMORRAGIE_PB",
+     "libelle": "Membre(s) de la famille ayant eu des complications suite à une anesthésie ?",
+     "comparee_a": []
+    },
+    {
+     "code": "HOSPITALISATION_PRECEDENTE_ACCIDENT",
+     "libelle": "Hospitalisation(s) précédente(s) suite à un accident ?",
+     "comparee_a": []
+    },
+    {
+     "code": "HOSPITALISATION_PRECEDENTE_DATE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "HOSPITALISATION_PRECEDENTE_MOTIF",
+     "libelle": "Hospitalisation(s) précédente(s) pour un autre motif ?",
+     "comparee_a": []
+    },
+    {
+     "code": "HOSPITALISATION_PRECEDENTE_MOTIF_DESCRIP",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "MEDICAMENT_DATE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "MEDICAMENT_DOSE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "MEDICAMENT_NOM",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "OPERATIONS",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "OPERATION_ANTERIEURE",
+     "libelle": "Opération(s) antérieure(s) ?",
+     "comparee_a": []
+    },
+    {
+     "code": "OPERATION_ANTERIEURE_DATE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "OPERATION_ANTERIEURE_PB",
+     "libelle": "Problème(s) rencontré(s) durant ces opérations ?",
+     "comparee_a": []
+    },
+    {
+     "code": "OPERATION_ANTERIEURE_PB_DESCRIPTION",
+     "libelle": "Description des problèmes rencontrés",
+     "comparee_a": []
+    },
+    {
+     "code": "PERTE_POIDS",
+     "libelle": "Perte de poids récente ?",
+     "comparee_a": []
+    },
+    {
+     "code": "PERTE_POIDS_COMBIEN",
+     "libelle": "Combien (Kg) ?",
+     "comparee_a": []
+    },
+    {
+     "code": "PRISE_ASPIRINE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "PROTHESES_DENTAIRES",
+     "libelle": "Présence de prothèses dentaires ?",
+     "comparee_a": []
+    },
+    {
+     "code": "PROTHESES_DENTAIRES_TYPE",
+     "libelle": "Type de prothèses dentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "QUESTIONS_COMMENTAIRES",
+     "libelle": "Questions/Commentaires",
+     "comparee_a": []
+    },
+    {
+     "code": "REGIME_SUIVI",
+     "libelle": "Régime(s) particulier(s) ?",
+     "comparee_a": []
+    },
+    {
+     "code": "RES_IMC",
+     "libelle": "Résultat de l’IMC",
+     "comparee_a": []
+    },
+    {
+     "code": "REVEIL_MAUX_TETE",
+     "libelle": "Maux de tête au réveil ?",
+     "comparee_a": []
+    },
+    {
+     "code": "RONFLEMENT",
+     "libelle": "Ronflement ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENTS_ANORMAUX_PARENTS",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENT_COUPURE",
+     "libelle": "Transfusion sanguine précédente ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENT_EXTRACTION_DENTAIRE",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENT_GENCIVES",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENT_NEZ",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENT_PRISE_DE_SANG",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SAIGNEMENT_SIGNALEMENT",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SANG_URINES",
+     "libelle": null,
+     "comparee_a": []
+    },
+    {
+     "code": "SCORE_MALLAMPATI",
+     "libelle": null,
+     "comparee_a": [
+      "Classe 1",
+      "Classe 2",
+      "Classe 3",
+      "Classe 4"
+     ]
+    },
+    {
+     "code": "SEJOUR_OUTRE_MER",
+     "libelle": "Séjour(s) Outre-mer ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SOMMEIL_QUALITE",
+     "libelle": "Sommeil de bonne qualité ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SPORT_PRATIQUE",
+     "libelle": "Pratique un sport ?",
+     "comparee_a": []
+    },
+    {
+     "code": "SPORT_PRATIQUE_ACTIVITES",
+     "libelle": "Activité(s) sportive(s) pratiquée(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMALRG_10050",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_10423",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_11855",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_12307",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_1852",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_213",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_2661",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_289",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_30217",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_492",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5076",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5310",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5481",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5484",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5516",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5687",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_5748",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_7005",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_7324",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_7359",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_7833",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_9944",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_SWMLIBRE",
+     "libelle": "Autre(s) allergie(s) ou réaction(s)",
+     "comparee_a": []
+    },
+    {
+     "code": "SWMALRG_SWMRAS",
+     "libelle": null,
+     "comparee_a": [
+      "Non",
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_SWMRASALI",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMALRG_SWMRASMED",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_A159",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_A319",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_B179",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_E079",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_F349",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_G409",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_G439",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_H357",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_H409",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_H521",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I10",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I209",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I252",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I269",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I64",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I776",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I809",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_I868",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_J209",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_J459",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_J939",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_K259",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_K297",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_K449",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_M1090",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_M159",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_M543",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_N179",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_N23",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_N390",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_R002",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_R011",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_R252",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_R55",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_Z950",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "SWMDIAG_Z973",
+     "libelle": null,
+     "comparee_a": [
+      "Oui"
+     ]
+    },
+    {
+     "code": "TRANSFUSION",
+     "libelle": null,
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "05-2691-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-RUMIALIM",
+   "libelle": "MESURE DE L’INDEPENDANCE FONCTIONNELLE",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "RUMIALIM",
+     "libelle": "Alimentation",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIBAIG",
+     "libelle": "Baignoire, douche",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMICOMP",
+     "libelle": "Compréhension auditive",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMICOMPV",
+     "libelle": "Compréhension visuelle",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIESC",
+     "libelle": "Escalier",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIEXPNV",
+     "libelle": "Expression non verbale",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIEXPV",
+     "libelle": "Expression verbale",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIFAUT",
+     "libelle": "Fauteuil roulant",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIHABINF",
+     "libelle": "5 Habillage – Partie inférieure",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIHABSUP",
+     "libelle": "Habillage – Partie supérieure",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIINTER",
+     "libelle": "Interactions sociales",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIINTES",
+     "libelle": "Intestin",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMILIT",
+     "libelle": "Lit, chaise, fauteuil roulant",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIMARCHE",
+     "libelle": "Marche",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIMEMO",
+     "libelle": "Mémoire",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIMOMENT",
+     "libelle": "Moment",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIRESO",
+     "libelle": "Résolution des problèmes",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMISOIN",
+     "libelle": "Soin d’apparence",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMITOIL",
+     "libelle": "Toilette",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMITOTAL",
+     "libelle": "Score",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIUTIL",
+     "libelle": "Utilisation des toilettes",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIVESS",
+     "libelle": "Vessie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUMIWC",
+     "libelle": "WC",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  },
+  {
+   "modele": "CTX-DATSAI",
+   "libelle": "FICHE DE SURVEILLANCE ALIMENTAIRE ET HYDRIQUE",
+   "contexte": true,
+   "rubriques": [
+    {
+     "code": "DATSAI",
+     "libelle": "Date de saisie",
+     "comparee_a": []
+    },
+    {
+     "code": "DATSAI_2",
+     "libelle": "Date de saisie",
+     "comparee_a": []
+    },
+    {
+     "code": "DATSAI_3",
+     "libelle": "Date de saisie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABEURREPDEJ",
+     "libelle": "Beurre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABEURREPDEJ_2",
+     "libelle": "Beurre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABEURREPDEJ_3",
+     "libelle": "Beurre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSCOLLAP2",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSCOLLAP3",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSCOLLAPR1",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSCOLLMAT1",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSCOLLMAT2",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSCOLLMAT3",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSDEJ",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSDEJ_2",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSDEJ_3",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSDIN",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSDIN_2",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSDIN_3",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSPDEJ",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSPDEJ_2",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSABOISSPDEJ_3",
+     "libelle": "Boisson (en ml)",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACFPDEJ",
+     "libelle": "Comporte/fruit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACFPDEJ_2",
+     "libelle": "Comporte/fruit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACFPDEJ_3",
+     "libelle": "Comporte/fruit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACOLLAPREM",
+     "libelle": "COLLATION DE L’APRES-MIDI",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACOLLAPREM_2",
+     "libelle": "COLLATION DE L’APRES-MIDI",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACOLLAPREM_3",
+     "libelle": "COLLATION DE L’APRES-MIDI",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACOLLMAT",
+     "libelle": "COLLATION DU MATIN",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACOLLMAT_2",
+     "libelle": "COLLATION DU MATIN",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACOLLMAT_3",
+     "libelle": "COLLATION DU MATIN",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACONFPDEJ_2",
+     "libelle": "Confiture",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACONFPDEJ_3",
+     "libelle": "Confiture",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSACONFPDEJ_DUPLI",
+     "libelle": "Confiture",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSADESSDEJ",
+     "libelle": "Dessert",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSADESSDEJ_2",
+     "libelle": "Dessert",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSADESSDEJ_3",
+     "libelle": "Dessert",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSADESSDIN",
+     "libelle": "Dessert",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSADESSDIN_2",
+     "libelle": "Dessert",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSADESSDIN_3",
+     "libelle": "Dessert",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAENTDEJ",
+     "libelle": "Entrée",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAENTDEJ_2",
+     "libelle": "Entrée",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAENTDEJ_3",
+     "libelle": "Entrée",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAJFPDEJ",
+     "libelle": "Jus de fruit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAJFPDEJ_2",
+     "libelle": "Jus de fruit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAJFPDEJ_3",
+     "libelle": "Jus de fruit",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALAIDEJ",
+     "libelle": "Laitage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALAIDEJ_2",
+     "libelle": "Laitage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALAIDEJ_3",
+     "libelle": "Laitage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALAIDIN",
+     "libelle": "Laitage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALAIDIN_2",
+     "libelle": "Laitage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALAIDIN_3",
+     "libelle": "Laitage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALEGDEJ",
+     "libelle": "Légumes",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALEGDEJ_2",
+     "libelle": "Légumes",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSALEGDEJ_3",
+     "libelle": "Légumes",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMDEJ",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMDEJ_2",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMDEJ_3",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMDIN",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMDIN_2",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMDIN_3",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMPDEJ",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMPDEJ_2",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPBPMPDEJ_3",
+     "libelle": "Pain/biscotte/pain de mie",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPOTDIN",
+     "libelle": "Potage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPOTDIN_2",
+     "libelle": "Potage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPOTDIN_3",
+     "libelle": "Potage",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPRINCTDIN",
+     "libelle": "Plat principal",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPRINCTDIN_2",
+     "libelle": "Plat principal",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAPRINCTDIN_3",
+     "libelle": "Plat principal",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTCOLLAPREM",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTCOLLAPREM_2",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTCOLLAPREM_3",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTCOLLMAT",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTCOLLMAT_2",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTCOLLMAT_3",
+     "libelle": "Si autre",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTDIETAPP",
+     "libelle": "Apport en protéine en g",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTDIETAPP_2",
+     "libelle": "Apport en protéine en g",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTDIETAPP_3",
+     "libelle": "Apport en protéine en g",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTDIETKCAL",
+     "libelle": "KCAL/J",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTDIETKCAL_2",
+     "libelle": "KCAL/J",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATEXTDIETKCAL_3",
+     "libelle": "KCAL/J",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATOTBOISS1",
+     "libelle": "TOTAL QUANTITE DE BOISSON PRISE EN ML",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATOTBOISS2",
+     "libelle": "TOTAL QUANTITE DE BOISSON PRISE EN ML",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATOTBOISS3",
+     "libelle": "TOTAL QUANTITE DE BOISSON PRISE EN ML",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYBOISSCOLLAP1",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYBOISSCOLLAP2",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYBOISSCOLLAP3",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYBOISSCOLLMAT1",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYBOISSCOLLMAT2",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYBOISSCOLLMAT3",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSDEJ",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSDEJ_2D",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSDEJ_3D",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSDIN",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSDIN_2D",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSDIN_3D",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSPDEJ",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSPDEJ_2D",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSATYPEBOISSPDEJ_3D",
+     "libelle": "Type de boisson",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAVIADEJ",
+     "libelle": "Viande",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAVIADEJ_2",
+     "libelle": "Viande",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAVIADEJ_3",
+     "libelle": "Viande",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAYAPDEJ",
+     "libelle": "Yaourt",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAYAPDEJ_2",
+     "libelle": "Yaourt",
+     "comparee_a": []
+    },
+    {
+     "code": "RUSAYAPDEJ_3",
+     "libelle": "Yaourt",
+     "comparee_a": []
+    }
+   ],
+   "utilise_par": [
+    "07-2371086220-contenu-p-aspose-foss.docx"
+   ]
+  }
+ ],
+ "chapitres_observation": [
+  {
+   "chapitre": "Projet thérapeutique – Pour SSR",
+   "derniers": null
+  },
+  {
+   "chapitre": "Observations",
+   "derniers": null
+  },
+  {
+   "chapitre": "CR Bilan Fonctionnel",
+   "derniers": null
+  },
+  {
+   "chapitre": "Suivi Psychologique",
+   "derniers": null
+  },
+  {
+   "chapitre": "Suivi Social",
+   "derniers": null
+  },
+  {
+   "chapitre": "OBSERVATIONS",
+   "derniers": null
+  },
+  {
+   "chapitre": "MEDECINS",
+   "derniers": 5
+  },
+  {
+   "chapitre": "IDE",
+   "derniers": 5
+  },
+  {
+   "chapitre": "KINESITHERAPEUTE",
+   "derniers": 5
+  },
+  {
+   "chapitre": "ERGOTHERAPEUTE",
+   "derniers": 5
+  },
+  {
+   "chapitre": "EDUCATEUR APA",
+   "derniers": 5
+  },
+  {
+   "chapitre": "DIETETICIENNE",
+   "derniers": 5
+  },
+  {
+   "chapitre": "PSYCHOLOGUE",
+   "derniers": 5
+  },
+  {
+   "chapitre": "ORTHOPHONISTE",
+   "derniers": 5
+  },
+  {
+   "chapitre": "MEDECINS",
+   "derniers": null
+  },
+  {
+   "chapitre": "IDE",
+   "derniers": null
+  },
+  {
+   "chapitre": "KINESITHERAPEUTE",
+   "derniers": null
+  },
+  {
+   "chapitre": "ERGOTHERAPEUTE",
+   "derniers": null
+  },
+  {
+   "chapitre": "EDUCATEUR APA",
+   "derniers": null
+  },
+  {
+   "chapitre": "DIETETICIENNE",
+   "derniers": null
+  },
+  {
+   "chapitre": "PSYCHOLOGUE",
+   "derniers": null
+  },
+  {
+   "chapitre": "ORTHOPHONISTE",
+   "derniers": null
+  },
+  {
+   "chapitre": "ANIMATEUR",
+   "derniers": null
+  },
+  {
+   "chapitre": "ATELIER THERAPEUTIQUE ERGO / NEUROPSY (observations)",
+   "derniers": null
+  },
+  {
+   "chapitre": "CHUTE : SUIVI DE DECLARATION (observations)",
+   "derniers": null
+  },
+  {
+   "chapitre": "GROUPE PREVENTION DES CHUTES (observations)",
+   "derniers": null
+  },
+  {
+   "chapitre": "REUNION DE SYNTHESE (observations)",
+   "derniers": null
+  }
+ ]
+}

@@ -225,6 +225,19 @@ patient**.
 
 Un document qui a déjà un patient ne peut être dupliqué que pour ce même patient.
 
+### Gabarits repris de l'application d'origine
+
+Les 20 gabarits Velocity les plus utilisés ont été convertis (`docs/gabarits-convertis/`, détail dans
+`rapport.md`). Une fois le scénario de test joué (`outils/velocity/README.md`), la page hôte liste :
+
+- **GAB-01 … GAB-20** : les gabarits convertis, sans patient ;
+- **CR-NN-DUBOIS / ROUSSEL / BENALI** : chacun instancié pour son patient de scénario, avec signataires et
+  destinataires. Ouvrez-en un et cliquez sur **Rafraîchir les données**.
+
+Les fragments qui contenaient des boucles ou des conditions sont des contrôles « Composé : Pour chaque… /
+Si… ». Les champs que la conversion n'a pas pu reprendre restent surlignés en jaune :
+« [à reprendre : libellé] ».
+
 ---
 
 ## 6. Où sont les fichiers ?
@@ -347,4 +360,5 @@ docker compose up -d && (cd server && mvn spring-boot:run)
   nouvelle venue avant la validation, le compte rendu bascule sur ce nouveau séjour.
 - Un seul niveau d'objets est proposé dans l'onglet (pas de sous-objet de sous-objet).
 - Pas de création de document depuis un gabarit dans l'interface.
-- Le projet n'a pas encore été testé de bout en bout sur un Document Server réel (voir `CLAUDE.md`).
+- Gabarits convertis : le choix des éléments du multicontexte d'origine (quelle instance de formulaire,
+  quelles observations) n'existe pas ; le POC prend la plus récente. Images (signatures, logos) non reprises.

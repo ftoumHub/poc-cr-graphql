@@ -1,11 +1,13 @@
 package fr.ftoumhub.poccr.configuration;
 
 import fr.ftoumhub.poccr.application.ConsultationDocuments;
+import fr.ftoumhub.poccr.application.ConsultationDossierClinique;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
 import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.domaine.port.ArchiveValidations;
 import fr.ftoumhub.poccr.domaine.port.Documents;
+import fr.ftoumhub.poccr.domaine.port.DossierClinique;
 import fr.ftoumhub.poccr.domaine.port.Etablissements;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier;
 import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
@@ -35,6 +37,11 @@ public class ConfigurationDomaine {
     ConsultationDossierPatient consultationDossierPatient(Patients patients, Observations observations,
                                                           Traitements traitements, Sejours sejours, Clock horloge) {
         return new ConsultationDossierPatient(patients, observations, traitements, sejours, horloge);
+    }
+
+    @Bean
+    ConsultationDossierClinique consultationDossierClinique(DossierClinique dossier, Clock horloge) {
+        return new ConsultationDossierClinique(dossier, horloge);
     }
 
     @Bean

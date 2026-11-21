@@ -17,7 +17,8 @@ import java.util.UUID;
 
 public class PatientsJdbc implements Patients {
 
-    private static final String COLONNES = "id, ipp, nom, prenom, date_naissance, sexe";
+    private static final String COLONNES = "id, ipp, nom, prenom, date_naissance, sexe, nom_naissance, prenoms_naissance, "
+            + "lieu_naissance, date_naissance_amo, nir, email, nationalite, medecin_traitant_id";
 
     private static final RowMapper<Patient> LIGNE_VERS_PATIENT = (rs, i) -> Patient.builder()
             .id(rs.getObject("id", UUID.class))
@@ -26,6 +27,14 @@ public class PatientsJdbc implements Patients {
             .prenom(rs.getString("prenom"))
             .dateNaissance(rs.getDate("date_naissance").toLocalDate())
             .sexe(Sexe.valueOf(rs.getString("sexe")))
+            .nomNaissance(rs.getString("nom_naissance"))
+            .prenomsNaissance(rs.getString("prenoms_naissance"))
+            .lieuNaissance(rs.getString("lieu_naissance"))
+            .dateNaissanceAmo(rs.getString("date_naissance_amo"))
+            .nir(rs.getString("nir"))
+            .email(rs.getString("email"))
+            .nationalite(rs.getString("nationalite"))
+            .medecinTraitantId(rs.getObject("medecin_traitant_id", UUID.class))
             .construire();
 
     private final JdbcClient jdbc;

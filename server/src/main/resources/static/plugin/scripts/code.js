@@ -790,7 +790,7 @@
             liaisons.forEach(function (l) {
                 if (!data[l.r]) throw new Error((l.r === 'patient' ? 'Patient' : 'Document') + ' introuvable');
             });
-            return L.valeurs(liaisons, data);
+            return L.valeurs(liaisons, data, etat.modele);
         });
     }
 
@@ -931,7 +931,7 @@
                     })
                     .then(function (validation) {
                         // Les valeurs écrites sont exactement celles figées côté serveur.
-                        var valeurs = L.valeurs(instance.liaisons, JSON.parse(validation.donneesJson));
+                        var valeurs = L.valeurs(instance.liaisons, JSON.parse(validation.donneesJson), etat.modele);
                         return ecrireValeurs(instance, valeurs, VERROU_FIGE, true)
                             .then(function () { return methode('SetEditingRestrictions', ['readOnly']); })
                             .then(function () { afficherEtatValide(validation); });

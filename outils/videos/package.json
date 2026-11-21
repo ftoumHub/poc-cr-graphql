@@ -4,7 +4,8 @@
   "description": "Vidéos de prise en main du POC (Playwright, Chrome installé sur le poste)",
   "scripts": {
     "gabarit": "node scenario-gabarit.js --video",
-    "patient": "node scenario-patient.js --video"
+    "patient": "node scenario-patient.js --video",
+    "legacy": "node scenario-gabarit-converti.js --video"
   },
   "dependencies": { "playwright": "1.48.2" }
 }

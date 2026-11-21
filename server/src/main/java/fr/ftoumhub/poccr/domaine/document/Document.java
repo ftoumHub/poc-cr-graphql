@@ -34,6 +34,10 @@ public record Document(UUID id,
         return versBuilder().patientId(patient).construire();
     }
 
+    public Document avecAuteur(UUID auteur) {
+        return versBuilder().auteurId(auteur).construire();
+    }
+
     public Document renomme(NomDocument nouveau) {
         return versBuilder().nom(nouveau).construire();
     }

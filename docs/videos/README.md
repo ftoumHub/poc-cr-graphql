@@ -1,6 +1,6 @@
 # Vidéos de prise en main
 
-Deux vidéos commentées (légendes à l'écran), enregistrées avec Playwright sur l'application réelle :
+Trois vidéos commentées (légendes à l'écran), enregistrées avec Playwright sur l'application réelle :
 OnlyOffice Document Server, serveur Spring Boot et base PostgreSQL du POC (données fictives).
 Format WebM (lisible dans Chrome, Firefox, Edge, VLC).
 Les `.webm` sont stockés avec **Git LFS** : sans `git lfs install` avant le clone (ou `git lfs pull`
@@ -10,6 +10,7 @@ après), le dépôt ne contient que des pointeurs texte.
 |---|---|---|
 | [`1-creation-gabarit.webm`](1-creation-gabarit.webm) | ≈ 2 min | Créer un **gabarit** de compte rendu d'hospitalisation, sans patient : saisie du texte, choix des champs dans l'arborescence (clic = réglages et aperçu, double-clic = insertion), accord « né/née », sous-champs du séjour, tableau de biologie filtré (catégorie, « depuis P3M », colonnes), signataires du document (valeurs séparées par des virgules), puis désignation des acteurs du gabarit. |
 | [`2-compte-rendu-patient.webm`](2-compte-rendu-patient.webm) | ≈ 1 min 40 | **Instancier** le gabarit pour MARTIN Claire : les repères «…» sont remplacés par ses données (une seule requête GraphQL), aperçu d'un champ, **validation** (le serveur fige les données, le signataire principal valide), **scellement** à la fermeture, réouverture en lecture seule. |
+| [`3-gabarit-legacy-converti.webm`](3-gabarit-legacy-converti.webm) | ≈ 2 min 40 | Le **gabarit legacy le plus complexe** (07, dossier SSR, 780 content controls issus de 924 champs Velocity) : repères du gabarit, instanciation pour Jeanne DUBOIS (patiente de scénario V9), puis **basculement** repères → données sur les mêmes sections : personne à prévenir, allergies, antécédents, carnet de vaccination (formulaire), 5 dernières observations IDE (boucle composée), constantes en tableau, transmissions ciblées. Régénération : `node scenario-gabarit-converti.js --video` avec `POC_URL=http://localhost:8081/`, après `outils/velocity/scenario.py` (GAB-07 importé). |
 
 ## Régénérer
 

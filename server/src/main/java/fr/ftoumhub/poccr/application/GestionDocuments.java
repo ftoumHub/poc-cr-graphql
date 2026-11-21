@@ -85,6 +85,32 @@ public class GestionDocuments {
         return document;
     }
 
+    /**
+     * Importe un .docx comme gabarit (sans patient) : c'est ainsi qu'entrent les gabarits convertis depuis
+     * l'application d'origine. Le contenu doit être une archive OOXML (signature ZIP « PK »).
+     */
+    public Document importerGabarit(NomDocument nom, String titre, byte[] contenu) {
+        if (contenu == null || contenu.length < 4 || contenu[0] != 'P' || contenu[1] != 'K') {
+            throw new IllegalArgumentException("Le contenu importé n'est pas un fichier .docx : " + nom);
+        }
+        verifierLibre(nom);
+        Document document = Document.builder()
+                .id(identifiants.get())
+                .nom(nom)
+                .titre(titre)
+                .etablissementId(etablissements.parDefaut().id())
+                .creeLe(Instant.now(horloge))
+                .construire();
+        documents.enregistrer(document);
+        try {
+            fichiers.creer(nom, contenu);
+        } catch (RuntimeException e) {
+            documents.supprimer(document.id());
+            throw e;
+        }
+        return document;
+    }
+
     public Document renommer(NomDocument ancien, NomDocument nouveau) {
         Document document = existant(ancien);
         verifierModifiable(ancien, "le nom");
@@ -158,6 +184,10 @@ public class GestionDocuments {
             throw new ActeursInvalides("Professionnel de santé inconnu : " + inconnus);
         }
         documents.remplacerActeurs(document.id(), acteurs);
+        // POC sans identité d'utilisateur : l'auteur (psCreateur) est, à défaut, le signataire principal
+        if (document.auteurId() == null) {
+            acteurs.signatairePrincipal().ifPresent(s -> documents.enregistrer(document.avecAuteur(s.professionnelId())));
+        }
     }
 
     /**

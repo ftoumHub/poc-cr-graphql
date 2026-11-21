@@ -94,20 +94,37 @@ public class ControleurDocument {
         return heure(document.creeLe());
     }
 
+    /** Date clinique du document ; tant qu'elle n'est pas saisie, sa date de création (« Lyon, le … »). */
     @SchemaMapping(typeName = "Document")
     public String dateValeur(Document document) {
-        return date(document.dateValeur());
+        return date(document.dateValeur() != null ? document.dateValeur() : document.creeLe());
     }
 
     @SchemaMapping(typeName = "Document")
     public String heureValeur(Document document) {
-        return heure(document.dateValeur());
+        return heure(document.dateValeur() != null ? document.dateValeur() : document.creeLe());
     }
 
     @SchemaMapping(typeName = "Document")
     public CompletableFuture<ProfessionnelSante> psCreateur(Document document, DataFetchingEnvironment env) {
         return document.auteurId() == null ? CompletableFuture.completedFuture(null)
                 : professionnel(document.auteurId(), env);
+    }
+
+    @SchemaMapping(typeName = "Document")
+    public CompletableFuture<String> civilitePs(Document document, DataFetchingEnvironment env) {
+        return auteur(document, env, ProfessionnelSante::titre);
+    }
+
+    @SchemaMapping(typeName = "Document")
+    public CompletableFuture<String> nomPrenomPs(Document document, DataFetchingEnvironment env) {
+        return auteur(document, env, p -> p.prenom() == null ? p.nom() : p.nom() + " " + p.prenom());
+    }
+
+    /** Catégorie du professionnel auteur : sa qualité (« Praticien hospitalier », « Interne »…). */
+    @SchemaMapping(typeName = "Document")
+    public CompletableFuture<String> categoriePs(Document document, DataFetchingEnvironment env) {
+        return auteur(document, env, ProfessionnelSante::qualite);
     }
 
     @SchemaMapping(typeName = "Document")
@@ -193,10 +210,10 @@ public class ControleurDocument {
         return professionnel(signataire.professionnelId(), env);
     }
 
-    /** « Transcodé » : sémantique à préciser (champ du contrat CDF non alimenté). */
+    /** RPPS du signataire (11 chiffres), tel que l'impriment les gabarits de l'application d'origine. */
     @SchemaMapping(typeName = "Signataire", field = "rppsTranscode")
-    public String rppsTranscodeSignataire(Signataire signataire) {
-        return null;
+    public CompletableFuture<String> rppsTranscodeSignataire(Signataire signataire, DataFetchingEnvironment env) {
+        return professionnel(signataire.professionnelId(), env).thenApply(ProfessionnelSante::rpps);
     }
 
     @SchemaMapping(typeName = "Destinataire", field = "medecin")
@@ -284,15 +301,15 @@ public class ControleurDocument {
         return p.specialites();
     }
 
-    /** « Transcodé » : sémantique à préciser (champ du contrat CDF non alimenté). */
+    /** RPPS (11 chiffres) : l'identifiant national sans son préfixe « 8 ». */
     @SchemaMapping(typeName = "Medecin")
     public String rppsTranscode(ProfessionnelSante p) {
-        return null;
+        return p.rpps();
     }
 
     @SchemaMapping(typeName = "Medecin")
     public IdentifiantNationalVue identifiantNationalActif(ProfessionnelSante p) {
-        return p.identifiantNational() == null ? null : new IdentifiantNationalVue(p.identifiantNational(), null);
+        return p.identifiantNational() == null ? null : new IdentifiantNationalVue(p.identifiantNational(), p.rpps());
     }
 
     @SchemaMapping(typeName = "Medecin")
@@ -307,6 +324,12 @@ public class ControleurDocument {
     }
 
     // --- Etablissement / Adresse ----------------------------------------------------------------
+
+    /** FINESS tel qu'imprimé sur les documents : le POC n'a qu'un FINESS par établissement. */
+    @SchemaMapping(typeName = "Etablissement")
+    public String finessTranscode(Etablissement e) {
+        return e.finess();
+    }
 
     @SchemaMapping(typeName = "Etablissement", field = "adresse")
     public CompletableFuture<Adresse> adresseEtablissement(Etablissement e, DataFetchingEnvironment env) {
@@ -339,6 +362,12 @@ public class ControleurDocument {
         DataLoader<UUID, ActeursDocument> chargeur = env.getDataLoader(CHARGEUR_ACTEURS);
         return chargeur.load(document.id())
                 .thenApply(a -> extraction.apply(a == null ? ActeursDocument.AUCUN : a));
+    }
+
+    private static CompletableFuture<String> auteur(Document document, DataFetchingEnvironment env,
+                                                    Function<ProfessionnelSante, String> extraction) {
+        return document.auteurId() == null ? CompletableFuture.completedFuture(null)
+                : professionnel(document.auteurId(), env).thenApply(p -> p == null ? null : extraction.apply(p));
     }
 
     private static CompletableFuture<ProfessionnelSante> professionnel(UUID id, DataFetchingEnvironment env) {

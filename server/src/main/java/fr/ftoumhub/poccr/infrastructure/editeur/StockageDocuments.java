@@ -46,12 +46,16 @@ public class StockageDocuments {
     }
 
     public void creerVierge(String nom) {
+        creer(nom, DocumentVierge.octets());
+    }
+
+    public void creer(String nom, byte[] contenu) {
         Path fichier = chemin(nom);
         if (Files.exists(fichier)) {
             throw new IllegalStateException("Le document existe déjà : " + nom);
         }
         try {
-            Files.write(fichier, DocumentVierge.octets());
+            Files.write(fichier, contenu, java.nio.file.StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

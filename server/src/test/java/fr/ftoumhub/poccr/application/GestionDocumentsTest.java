@@ -87,6 +87,36 @@ class GestionDocumentsTest {
         assertThatThrownBy(() -> gestion.creer(CR, null, null)).hasMessageContaining("existe déjà");
     }
 
+    // --- import de gabarits ---------------------------------------------------------------------
+
+    @Test
+    void un_docx_importe_devient_un_gabarit_sans_patient() {
+        byte[] docx = {'P', 'K', 3, 4, 0};
+
+        Document importe = gestion.importerGabarit(CR, "Convocation", docx);
+
+        assertThat(importe.patientId()).isNull();
+        assertThat(importe.titre()).isEqualTo("Convocation");
+        assertThat(fichiers.contenus.get(CR)).isEqualTo(docx);
+    }
+
+    @Test
+    void un_import_qui_n_est_pas_un_docx_est_refuse_sans_creer_de_fiche() {
+        assertThatThrownBy(() -> gestion.importerGabarit(CR, null, "<html/>".getBytes()))
+                .hasMessageContaining("n'est pas un fichier .docx");
+        assertThat(gestion.document(CR)).isEmpty();
+    }
+
+    @Test
+    void sans_auteur_connu_le_signataire_principal_devient_l_auteur_du_document() {
+        gestion.creer(CR, null, null);
+
+        gestion.definirActeurs(CR, ACTEURS);
+
+        assertThat(gestion.document(CR).orElseThrow().auteurId())
+                .isEqualTo(ACTEURS.signatairePrincipal().orElseThrow().professionnelId());
+    }
+
     // --- renommage ------------------------------------------------------------------------------
 
     @Test
@@ -307,6 +337,7 @@ class GestionDocumentsTest {
         static final Instant DATE_FICHIER = Instant.parse("2026-11-01T08:00:00Z");
         final List<NomDocument> noms = new ArrayList<>();
         final Map<NomDocument, UUID> patients = new HashMap<>();
+        final Map<NomDocument, byte[]> contenus = new HashMap<>();
         boolean enPanne;
 
         private void verifierEnService() {
@@ -321,6 +352,13 @@ class GestionDocumentsTest {
         public void creerVierge(NomDocument nom) {
             verifierEnService();
             noms.add(nom);
+        }
+
+        @Override
+        public void creer(NomDocument nom, byte[] contenu) {
+            verifierEnService();
+            noms.add(nom);
+            contenus.put(nom, contenu);
         }
 
         @Override

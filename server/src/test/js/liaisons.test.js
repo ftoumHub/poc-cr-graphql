@@ -44,7 +44,7 @@ test('une liaison document ne porte jamais de patient', () => {
   assert.throws(() => L.analyser({ v: 2, r: 'document', p: 'p1', c: 'titre' }, modele), /ne porte pas de patient/);
 });
 
-test('les liaisons des deux racines tiennent dans une requête, un alias chacune', () => {
+test('les liaisons des deux racines tiennent dans une requête, les chemins communs fusionnés', () => {
   const requete = L.construireRequete([
     L.creer('patient', 'nom', { enLigne: true }),
     L.creer('document', 'signatairePrincipal.medecin.nom', { enLigne: true }),
@@ -54,9 +54,8 @@ test('les liaisons des deux racines tiennent dans une requête, un alias chacune
   ], modele);
   assert.equal(requete,
     'query DonneesDocument($id: ID!, $doc: ID!) { ' +
-    'patient(id: $id) { c0: nom c2: observations(categorie: BIOLOGIE, depuis: "P3M") { libelle valeur } } ' +
-    'document(id: $doc) { c1: signatairePrincipal { medecin { nom } } ' +
-    'c3: signatairePrincipal { medecin { adresse(type: PERSONNELLE) { telephone(type: FAX) { numero } } } } } }');
+    'patient(id: $id) { c0: nom c1: observations(categorie: BIOLOGIE, depuis: "P3M") { libelle valeur } } ' +
+    'document(id: $doc) { c0: signatairePrincipal { medecin { nom adresse(type: PERSONNELLE) { telephone(type: FAX) { numero } } } } } }');
 });
 
 test('seule la variable de la racine utilisée est déclarée', () => {
@@ -97,7 +96,19 @@ test('le patient du document est unique et détecté, les liaisons document sont
 
 test('les valeurs de la réponse sont rendues à chaque liaison selon sa racine', () => {
   const liaisons = [L.creer('patient', 'nom'), L.creer('document', 'titre')];
-  assert.deepEqual(L.valeurs(liaisons, { patient: { c0: 'MARTIN' }, document: { c1: 'CRH' } }), ['MARTIN', 'CRH']);
+  assert.deepEqual(L.valeurs(liaisons, { patient: { c0: 'MARTIN' }, document: { c0: 'CRH' } }, modele), ['MARTIN', 'CRH']);
+});
+
+test('deux liaisons qui partagent un chemin reçoivent chacune leur valeur, réduite à leur chaîne', () => {
+  const ville = L.creer('document', 'signatairePrincipal.medecin.adresse.ville', { args: { 2: { type: 'PROFESSIONNELLE' } } });
+  const domicile = L.creer('document', 'signatairePrincipal.medecin.adresse.ville', { args: { 2: { type: 'PERSONNELLE' } } });
+  const nom = L.creer('document', 'signatairePrincipal.medecin.nom');
+  const requete = L.construireRequete([ville, domicile, nom], modele);
+  assert.equal(requete, 'query DonneesDocument($doc: ID!) { document(id: $doc) { c0: signatairePrincipal { medecin { ' +
+    'a0: adresse(type: PROFESSIONNELLE) { ville } a1: adresse(type: PERSONNELLE) { ville } nom } } } }');
+  const data = { document: { c0: { medecin: { a0: { ville: 'Lyon' }, a1: { ville: 'Bron' }, nom: 'DURAND' } } } };
+  assert.deepEqual(L.valeurs([ville, domicile, nom], data, modele), [
+    { medecin: { adresse: { ville: 'Lyon' } } }, { medecin: { adresse: { ville: 'Bron' } } }, { medecin: { nom: 'DURAND' } }]);
 });
 
 test('les valeurs sont formatées pour un lecteur humain', () => {

@@ -1,5 +1,6 @@
 package fr.ftoumhub.poccr.infrastructure.persistance;
 
+import fr.ftoumhub.poccr.domaine.patient.Sexe;
 import fr.ftoumhub.poccr.domaine.port.ProfessionnelsSante;
 import fr.ftoumhub.poccr.domaine.professionnel.Adresse;
 import fr.ftoumhub.poccr.domaine.professionnel.Civilite;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class ProfessionnelsSanteJdbc implements ProfessionnelsSante {
 
     private static final String COLONNES =
-            "id, code, rpps, adeli, civilite, titre, nom, prenom, specialites, email, qualite, type_medecin";
+            "id, code, rpps, adeli, civilite, titre, nom, prenom, specialites, email, qualite, type_medecin, sexe";
 
     private static final RowMapper<ProfessionnelSante> LIGNE_VERS_PROFESSIONNEL = (rs, i) -> {
         String civilite = rs.getString("civilite");
@@ -38,6 +39,7 @@ public class ProfessionnelsSanteJdbc implements ProfessionnelsSante {
                 .email(rs.getString("email"))
                 .qualite(rs.getString("qualite"))
                 .type(TypeMedecin.valueOf(rs.getString("type_medecin")))
+                .sexe(Sexe.valueOf(rs.getString("sexe")))
                 .construire();
     };
 
@@ -93,10 +95,11 @@ public class ProfessionnelsSanteJdbc implements ProfessionnelsSante {
             return Map.of();
         }
         return jdbc.sql("""
-                        select id, coalesce(professionnel_id, etablissement_id) as proprietaire_id, type,
-                               ligne1, ligne2, ligne3, code_postal, ville, pays
+                        select id, coalesce(professionnel_id, etablissement_id, patient_id, personne_id) as proprietaire_id,
+                               type, ligne1, ligne2, ligne3, code_postal, ville, pays
                         from adresse
                         where professionnel_id in (:ids) or etablissement_id in (:ids)
+                           or patient_id in (:ids) or personne_id in (:ids)
                         order by type
                         """)
                 .param("ids", List.copyOf(proprietaireIds))

@@ -4,6 +4,7 @@ import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
 import fr.ftoumhub.poccr.domaine.observation.CategorieObservation;
 import fr.ftoumhub.poccr.domaine.observation.FiltreObservations;
 import fr.ftoumhub.poccr.domaine.observation.Observation;
+import fr.ftoumhub.poccr.domaine.patient.IdentiteNationaleSante;
 import fr.ftoumhub.poccr.domaine.patient.Patient;
 import fr.ftoumhub.poccr.domaine.sejour.Sejour;
 import fr.ftoumhub.poccr.domaine.traitement.Traitement;
@@ -66,6 +67,28 @@ public class ControleurDossierPatient {
     @SchemaMapping(typeName = "Patient")
     public int age(Patient patient) {
         return consultation.ageDe(patient);
+    }
+
+    @SchemaMapping(typeName = "Patient")
+    public String ageTexte(Patient patient) {
+        return consultation.ageEnTexteDe(patient);
+    }
+
+    /** Le nom d'usage quand le nom de naissance n'a pas été saisi. */
+    @SchemaMapping(typeName = "Patient")
+    public String nomNaissance(Patient patient) {
+        return patient.nomDeNaissance();
+    }
+
+    /** Date de la carte d'assurance maladie ; à défaut, la date de naissance. */
+    @SchemaMapping(typeName = "Patient")
+    public String dateNaissanceAmo(Patient patient) {
+        return patient.dateNaissanceAmo() != null ? patient.dateNaissanceAmo() : patient.dateNaissance().toString();
+    }
+
+    @SchemaMapping(typeName = "Patient")
+    public IdentiteNationaleSante insi(Patient patient) {
+        return patient.ins().orElse(null);
     }
 
     @SchemaMapping(typeName = "Patient")

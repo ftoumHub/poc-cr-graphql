@@ -67,7 +67,7 @@ function environnement({ patientFiche = PATIENT, tags } = {}) {
     else if (url.endsWith('/validation') && options.method === 'POST') {
       json = { valideLe: '2026-11-07T21:00:00Z', validePar: 'Pr Anne PETIT', empreinteDonnees: 'ab'.repeat(32),
         empreinteDocx: null, donneesJson: JSON.stringify({
-          patient: { c0: 'MARTIN-FIGÉ', c1: 'FEMININ' }, document: { c2: { medecin: { nom: 'PETIT-FIGÉ' } } } }) };
+          patient: { c0: 'MARTIN-FIGÉ', c1: 'FEMININ' }, document: { c0: { medecin: { nom: 'PETIT-FIGÉ' } } } }) };
     } else throw new Error('URL inattendue ' + url);
     return Promise.resolve({ ok: statut < 400, status: statut, json: () => Promise.resolve(json) });
   };
@@ -99,7 +99,7 @@ test('valider fige les valeurs renvoyées par le serveur sur les deux racines, v
   assert.equal(post.url, '/api/documents/cr-martin/validation');
   assert.equal(post.corps.patientId, PATIENT);
   assert.match(post.corps.requete, /^query DonneesDocument\(\$id: ID!, \$doc: ID!\)/);
-  assert.match(post.corps.requete, /document\(id: \$doc\) \{ c2: signatairePrincipal \{ medecin \{ nom \} \} \}/);
+  assert.match(post.corps.requete, /document\(id: \$doc\) \{ c0: signatairePrincipal \{ medecin \{ nom \} \} \}/);
 
   const ecriture = env.appels.filter(a => a.nom === 'InsertAndReplaceContentControls').pop();
   assert.equal(ecriture.params[0].length, 1); // seul le contrôle bloc passe par cette méthode

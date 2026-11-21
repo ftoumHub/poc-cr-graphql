@@ -18,6 +18,9 @@ import java.util.UUID;
  * @param diagnosticCim10Libelle libellé du diagnostic principal ; facultatif
  * @param acteCcamCode         acte principal, code CCAM ; facultatif
  * @param acteCcamLibelle      libellé de l'acte principal ; facultatif
+ * @param ufMedicale           unité fonctionnelle médicale courante ; facultative
+ * @param ufHebergement        unité fonctionnelle d'hébergement courante ; facultative
+ * @param medecinAdresseurId   professionnel qui a adressé le patient ; facultatif
  */
 public record Sejour(UUID id,
                      UUID patientId,
@@ -32,7 +35,10 @@ public record Sejour(UUID id,
                      String diagnosticCim10Code,
                      String diagnosticCim10Libelle,
                      String acteCcamCode,
-                     String acteCcamLibelle) {
+                     String acteCcamLibelle,
+                     UniteFonctionnelle ufMedicale,
+                     UniteFonctionnelle ufHebergement,
+                     UUID medecinAdresseurId) {
 
     public Sejour {
         Objects.requireNonNull(id, "id");
@@ -98,6 +104,9 @@ public record Sejour(UUID id,
         private String diagnosticCim10Libelle;
         private String acteCcamCode;
         private String acteCcamLibelle;
+        private UniteFonctionnelle ufMedicale;
+        private UniteFonctionnelle ufHebergement;
+        private UUID medecinAdresseurId;
 
         private Builder() {
         }
@@ -116,10 +125,14 @@ public record Sejour(UUID id,
         public Builder diagnosticCim10Libelle(String diagnosticCim10Libelle) { this.diagnosticCim10Libelle = diagnosticCim10Libelle; return this; }
         public Builder acteCcamCode(String acteCcamCode) { this.acteCcamCode = acteCcamCode; return this; }
         public Builder acteCcamLibelle(String acteCcamLibelle) { this.acteCcamLibelle = acteCcamLibelle; return this; }
+        public Builder ufMedicale(UniteFonctionnelle ufMedicale) { this.ufMedicale = ufMedicale; return this; }
+        public Builder ufHebergement(UniteFonctionnelle ufHebergement) { this.ufHebergement = ufHebergement; return this; }
+        public Builder medecinAdresseurId(UUID medecinAdresseurId) { this.medecinAdresseurId = medecinAdresseurId; return this; }
 
         public Sejour construire() {
             return new Sejour(id, patientId, numero, type, dateEntree, dateSortie, service, motif, medecinResponsable,
-                    typeDocument, diagnosticCim10Code, diagnosticCim10Libelle, acteCcamCode, acteCcamLibelle);
+                    typeDocument, diagnosticCim10Code, diagnosticCim10Libelle, acteCcamCode, acteCcamLibelle,
+                    ufMedicale, ufHebergement, medecinAdresseurId);
         }
     }
 }

@@ -4,10 +4,13 @@ import fr.ftoumhub.poccr.domaine.port.Sejours;
 import fr.ftoumhub.poccr.domaine.sejour.Sejour;
 import fr.ftoumhub.poccr.domaine.sejour.TypeDocument;
 import fr.ftoumhub.poccr.domaine.sejour.TypeSejour;
+import fr.ftoumhub.poccr.domaine.sejour.UniteFonctionnelle;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,8 +37,17 @@ public class SejoursJdbc implements Sejours {
                 .diagnosticCim10Libelle(rs.getString("diagnostic_cim10_libelle"))
                 .acteCcamCode(rs.getString("acte_ccam_code"))
                 .acteCcamLibelle(rs.getString("acte_ccam_libelle"))
+                .ufMedicale(uf(rs, "ufm"))
+                .ufHebergement(uf(rs, "ufh"))
+                .medecinAdresseurId(rs.getObject("medecin_adresseur_id", UUID.class))
                 .construire();
     };
+
+    private static UniteFonctionnelle uf(ResultSet rs, String prefixe) throws SQLException {
+        String code = rs.getString(prefixe + "_code");
+        return code == null ? null : new UniteFonctionnelle(code, rs.getString(prefixe + "_libelle"),
+                rs.getString(prefixe + "_telephone"), rs.getString(prefixe + "_fax"));
+    }
 
     private final JdbcClient jdbc;
 
@@ -49,11 +61,16 @@ public class SejoursJdbc implements Sejours {
             return Map.of();
         }
         return jdbc.sql("""
-                        select id, patient_id, numero, type, date_entree, date_sortie, service, motif, medecin_responsable,
-                               type_document, diagnostic_cim10_code, diagnostic_cim10_libelle, acte_ccam_code, acte_ccam_libelle
-                        from sejour
-                        where patient_id in (:ids)
-                        order by date_entree desc
+                        select s.id, s.patient_id, s.numero, s.type, s.date_entree, s.date_sortie, s.service, s.motif,
+                               s.medecin_responsable, s.type_document, s.diagnostic_cim10_code, s.diagnostic_cim10_libelle,
+                               s.acte_ccam_code, s.acte_ccam_libelle, s.medecin_adresseur_id,
+                               ufm.code as ufm_code, ufm.libelle as ufm_libelle, ufm.telephone as ufm_telephone, ufm.fax as ufm_fax,
+                               ufh.code as ufh_code, ufh.libelle as ufh_libelle, ufh.telephone as ufh_telephone, ufh.fax as ufh_fax
+                        from sejour s
+                        left join unite_fonctionnelle ufm on ufm.code = s.uf_medicale_code
+                        left join unite_fonctionnelle ufh on ufh.code = s.uf_hebergement_code
+                        where s.patient_id in (:ids)
+                        order by s.date_entree desc
                         """)
                 .param("ids", List.copyOf(patientIds))
                 .query(LIGNE_VERS_SEJOUR)

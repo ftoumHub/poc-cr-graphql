@@ -26,6 +26,9 @@ public class ObservationsJdbc implements Observations {
             .valeur(rs.getString("valeur"))
             .unite(rs.getString("unite"))
             .dateObservation(rs.getDate("date_observation").toLocalDate())
+            .commentaire(rs.getString("commentaire"))
+            .auteur(rs.getString("auteur"))
+            .normalite(rs.getString("normalite"))
             .construire();
 
     private final JdbcClient jdbc;
@@ -40,7 +43,7 @@ public class ObservationsJdbc implements Observations {
             return Map.of();
         }
         StringBuilder sql = new StringBuilder("""
-                select id, patient_id, categorie, code, libelle, valeur, unite, date_observation
+                select id, patient_id, categorie, code, libelle, valeur, unite, date_observation, commentaire, auteur, normalite
                 from observation
                 where patient_id in (:ids)
                 """);

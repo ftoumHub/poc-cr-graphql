@@ -11,7 +11,10 @@ public record Observation(UUID id,
                           String libelle,
                           String valeur,
                           String unite,
-                          LocalDate dateObservation) {
+                          LocalDate dateObservation,
+                          String commentaire,
+                          String auteur,
+                          String normalite) {
 
     public Observation {
         Objects.requireNonNull(id, "id");
@@ -34,6 +37,9 @@ public record Observation(UUID id,
         private String valeur;
         private String unite;
         private LocalDate dateObservation;
+        private String commentaire;
+        private String auteur;
+        private String normalite;
 
         private Builder() {
         }
@@ -46,9 +52,14 @@ public record Observation(UUID id,
         public Builder valeur(String valeur) { this.valeur = valeur; return this; }
         public Builder unite(String unite) { this.unite = unite; return this; }
         public Builder dateObservation(LocalDate dateObservation) { this.dateObservation = dateObservation; return this; }
+        public Builder commentaire(String commentaire) { this.commentaire = commentaire; return this; }
+        public Builder auteur(String auteur) { this.auteur = auteur; return this; }
+        /** Normalité HPRIM : N, L, H, LL, HH. */
+        public Builder normalite(String normalite) { this.normalite = normalite; return this; }
 
         public Observation construire() {
-            return new Observation(id, patientId, categorie, code, libelle, valeur, unite, dateObservation);
+            return new Observation(id, patientId, categorie, code, libelle, valeur, unite, dateObservation, commentaire,
+                    auteur, normalite);
         }
     }
 }

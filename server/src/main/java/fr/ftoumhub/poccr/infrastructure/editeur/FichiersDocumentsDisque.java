@@ -28,6 +28,11 @@ public class FichiersDocumentsDisque implements FichiersDocuments {
     }
 
     @Override
+    public void creer(NomDocument nom, byte[] contenu) {
+        stockage.creer(nom.valeur(), contenu);
+    }
+
+    @Override
     public void renommer(NomDocument ancien, NomDocument nouveau) {
         stockage.renommer(ancien.valeur(), nouveau.valeur());
     }
