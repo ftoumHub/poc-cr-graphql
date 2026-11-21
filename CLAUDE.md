@@ -15,12 +15,16 @@ des filtres différents.
 Fonctionnalités en place :
 - champs simples et sous-champs d'objets insérés **en ligne** (dans une phrase) ; collections en **tableaux** ;
 - **mode gabarit** (liaisons sans patient, repères `«Libellé»`), instancié au rafraîchissement ;
-- **rafraîchissement** manuel ou auto (30 s), seuls les contrôles modifiés sont réécrits ;
+- **rafraîchissement** manuel ou auto (30 s), seuls les contrôles modifiés sont réécrits ; **« Afficher les
+  repères »** remet les repères «Libellé» du gabarit sans toucher aux liaisons (arrête l'auto), « Rafraîchir » remet tout ;
 - **accords** en genre (selon `sexe`) et en nombre (selon la taille d'une collection filtrée) ;
 - **validation** : le serveur réexécute la requête, fige la réponse (JSON canonique + SHA-256),
   le plugin réécrit les contrôles avec ces valeurs et les verrouille ; la sauvegarde suivante
   **scelle** le docx ; réouverture en lecture seule ;
 - **séjour** : `sejourCourant` (séjour de référence) et `sejours(enCoursSeulement)` ;
+- **clé de contexte** : la page hôte navigue dans Établissement › Service › UF │ Patient › Séjour avec un
+  professionnel connecté simulé ; un compte rendu créé fige son séjour, son UF et son auteur, et
+  `sejourCourant` renvoie le séjour figé (`docs/conception/2026-11-21-contexte-navigation-document.md`) ;
 - **gabarits legacy convertis** : les 20 gabarits Velocity de l'application d'origine (`docs/top20-docx.zip`)
   convertis par `outils/velocity` en content controls (liaisons composées v3 pour les `#foreach` / `#if`),
   dossier clinique et formulaires dynamiques en GraphQL, trois patients de scénario (V9).
@@ -91,11 +95,13 @@ server/
     configuration/    @Configuration explicites (pas de component scan)
   src/main/resources/
     graphql/schema.graphqls      source de vérité des champs insérables (descriptions = libellés)
-    db/migration/V1..V9          schéma + données fictives (dates relatives à current_date) ;
+    db/migration/V1..V10         schéma + données fictives (dates relatives à current_date) ;
                                  V4 : sexes inconnu/indéterminé, patient volumineux, 20 patients TEST ;
                                  V8 : dossier clinique, formulaires ; V9 (générée) : patients de scénario
-                                 DUBOIS / ROUSSEL / BENALI des gabarits convertis
-    static/index.html            page hôte (liste, création, ouverture des documents)
+                                 DUBOIS / ROUSSEL / BENALI des gabarits convertis ; V10 : services, UF,
+                                 second établissement, contexte du document (sejour_id, uf_code)
+    static/index.html            page hôte : fil d'Ariane du contexte, professionnel connecté simulé,
+                                 patients, séjours, comptes rendus, gabarits, éditeur
     static/plugin/               plugin OnlyOffice (servi par Spring : même origine que /graphql)
       scripts/liaisons.js        format des tags, compilation en requête (arbre fusionné), validation
       scripts/composes.js        liaisons composées v3 (texte, valeurs, boucles, conditions)
@@ -158,8 +164,11 @@ graphql-java est conservée : la fusion suffit (786 contrôles = 29 000 caractè
   de la racine `document` ne portent jamais d'identifiant (c'est toujours le document courant).
 - **Prérequis de validation** : un signataire principal (il devient le valideur) et un patient.
   La date et le valideur sont fixés avant l'exécution et visibles dans `document.validation`.
-- **Compte rendu validé = figé** : nom, patient, signataires et destinataires ne changent plus
+- **Compte rendu validé = figé** : nom, patient, contexte, signataires et destinataires ne changent plus
   (`DocumentFige`, 409).
+- **Clé de contexte** : le séjour d'un document appartient à son patient (refus sinon) ; un gabarit n'a pas de
+  séjour ; `Patient.sejourCourant` renvoie le séjour figé du document désigné par la variable `doc`
+  (`ContexteDocumentInstrumentation`), sinon le séjour de référence. Le contexte n'est pas une autorisation.
 - **JSON canonique** (clés triées) pour une empreinte reproductible.
 - **Scellement** : première sauvegarde après validation = docx scellé ; suivantes ignorées ; le
   callback répond toujours `{"error":0}` (sinon OnlyOffice réessaie en boucle).
@@ -209,6 +218,7 @@ graphql-java est conservée : la fusion suffit (786 contrôles = 29 000 caractè
 - JWT OnlyOffice désactivé, pas d'authentification ; le valideur est le signataire principal du
   document (l'éditeur affiche toujours l'utilisateur « Dr POC »).
 - Le plugin lit le document courant via `window.top.PocCr.documentCourant` (page hôte même origine).
+- Professionnel connecté choisi dans la page hôte (mémorisé dans le navigateur), sans authentification.
 - Introspection active en permanence ; tout le schéma `Patient` est proposé.
 - Archive des validations en fichiers JSON à côté du docx.
 
@@ -217,9 +227,8 @@ graphql-java est conservée : la fusion suffit (786 contrôles = 29 000 caractè
 1. **Contrat CDF** (branche `feature/contrat-champs-fusion`) : `docs/hm/CDF.xlsx` complété par
    `outils/cdf/generer.py`, feuille de route dans `docs/hm/migration-contrat-cdf.html` ; lot en cours :
    document, signataires, destinataires (`docs/conception/2026-11-11-document-signataires-destinataires.md`).
-2. **Rattacher le document à un séjour** (question ouverte) : verrouiller le numéro de venue dans
-   les liaisons comme le patient (`"sv":"V2026000101"`), exposer `Patient.sejour(numero:)`, sinon
-   `sejourCourant` peut basculer sur une nouvelle venue avant validation.
+2. ~~Rattacher le document à un séjour~~ : fait par la clé de contexte (2026-11-21), côté serveur, sans
+   changer le format des liaisons. Suites : afficher le contexte dans le plugin, épisode de soins, séjours multi-UF.
 3. Gabarits convertis (`docs/conception/2026-11-21-conversion-gabarits-velocity.md` §9) : choix des
    éléments du multicontexte à l'instanciation (instance de formulaire, observations), images (signatures,
    logos, datamatrix INS), mise en forme fine des blocs composés.

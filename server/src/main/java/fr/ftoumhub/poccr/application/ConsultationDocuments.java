@@ -76,6 +76,11 @@ public class ConsultationDocuments {
         return validations.deDocument(document.nom());
     }
 
+    /** Tous les professionnels (au plus 200), pour le choix du professionnel connecté simulé. */
+    public List<ProfessionnelSante> professionnels() {
+        return professionnels.rechercher("", 200);
+    }
+
     public List<ProfessionnelSante> rechercherProfessionnels(String texte) {
         if (texte == null || texte.trim().length() < 2) {
             return List.of();

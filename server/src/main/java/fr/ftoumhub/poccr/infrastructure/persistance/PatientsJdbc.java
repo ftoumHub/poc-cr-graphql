@@ -76,6 +76,7 @@ public class PatientsJdbc implements Patients {
         ajouterFiltreTexte(ou, parametres, "nom", filtre.nom());
         ajouterFiltreTexte(ou, parametres, "prenom", filtre.prenom());
         ajouterFiltreTexte(ou, parametres, "sexe", filtre.sexe());
+        ajouterFiltreContexte(ou, parametres, filtre);
         if (filtre.dateNaissance() != null && !filtre.dateNaissance().isBlank()) {
             ou.append(" and to_char(date_naissance, 'YYYY-MM-DD') like :dateNaissance");
             parametres.put("dateNaissance", "%" + filtre.dateNaissance() + "%");
@@ -93,6 +94,26 @@ public class PatientsJdbc implements Patients {
                 .query(LIGNE_VERS_PATIENT)
                 .list();
         return new ResultatPage<>(elements, total);
+    }
+
+    /** Patients ayant au moins un séjour dans l'UF, le service ou l'établissement du contexte. */
+    private static void ajouterFiltreContexte(StringBuilder ou, Map<String, Object> parametres, FiltrePatients filtre) {
+        String sejours = " and exists (select 1 from sejour s join unite_fonctionnelle u on u.code = s.uf_medicale_code"
+                + " join service sv on sv.code = u.service_code where s.patient_id = patient.id and ";
+        if (renseigne(filtre.uf())) {
+            ou.append(sejours).append("u.code = :uf)");
+            parametres.put("uf", filtre.uf());
+        } else if (renseigne(filtre.service())) {
+            ou.append(sejours).append("sv.code = :service)");
+            parametres.put("service", filtre.service());
+        } else if (renseigne(filtre.etablissement())) {
+            ou.append(sejours).append("sv.etablissement_id = cast(:etablissement as uuid))");
+            parametres.put("etablissement", filtre.etablissement());
+        }
+    }
+
+    private static boolean renseigne(String valeur) {
+        return valeur != null && !valeur.isBlank();
     }
 
     private static void ajouterFiltreTexte(StringBuilder ou, Map<String, Object> parametres, String colonne, String valeur) {

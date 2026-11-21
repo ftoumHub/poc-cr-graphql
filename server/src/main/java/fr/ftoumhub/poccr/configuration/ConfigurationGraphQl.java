@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.ftoumhub.poccr.application.ConsultationDocuments;
 import fr.ftoumhub.poccr.application.ConsultationDossierClinique;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
+import fr.ftoumhub.poccr.application.ConsultationOrganisation;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier;
+import fr.ftoumhub.poccr.infrastructure.graphql.ContexteDocumentInstrumentation;
+import fr.ftoumhub.poccr.infrastructure.graphql.ControleurContexteDocument;
 import fr.ftoumhub.poccr.infrastructure.graphql.ControleurDocument;
 import fr.ftoumhub.poccr.infrastructure.graphql.ControleurDossierClinique;
 import fr.ftoumhub.poccr.infrastructure.graphql.ControleurDossierPatient;
@@ -33,6 +36,16 @@ public class ConfigurationGraphQl {
     ControleurDossierClinique controleurDossierClinique(ConsultationDossierClinique consultation,
                                                         BatchLoaderRegistry registre) {
         return new ControleurDossierClinique(consultation, registre);
+    }
+
+    @Bean
+    ControleurContexteDocument controleurContexteDocument(ConsultationOrganisation organisation) {
+        return new ControleurContexteDocument(organisation);
+    }
+
+    @Bean
+    ContexteDocumentInstrumentation contexteDocumentInstrumentation(ConsultationDocuments consultation) {
+        return new ContexteDocumentInstrumentation(id -> consultation.document(id).map(d -> d.sejourId()));
     }
 
     @Bean

@@ -46,7 +46,8 @@ public class SejoursJdbc implements Sejours {
     private static UniteFonctionnelle uf(ResultSet rs, String prefixe) throws SQLException {
         String code = rs.getString(prefixe + "_code");
         return code == null ? null : new UniteFonctionnelle(code, rs.getString(prefixe + "_libelle"),
-                rs.getString(prefixe + "_telephone"), rs.getString(prefixe + "_fax"));
+                rs.getString(prefixe + "_telephone"), rs.getString(prefixe + "_fax"),
+                rs.getString(prefixe + "_service_code"), rs.getString(prefixe + "_service"));
     }
 
     private final JdbcClient jdbc;
@@ -65,10 +66,14 @@ public class SejoursJdbc implements Sejours {
                                s.medecin_responsable, s.type_document, s.diagnostic_cim10_code, s.diagnostic_cim10_libelle,
                                s.acte_ccam_code, s.acte_ccam_libelle, s.medecin_adresseur_id,
                                ufm.code as ufm_code, ufm.libelle as ufm_libelle, ufm.telephone as ufm_telephone, ufm.fax as ufm_fax,
-                               ufh.code as ufh_code, ufh.libelle as ufh_libelle, ufh.telephone as ufh_telephone, ufh.fax as ufh_fax
+                               ufm.service_code as ufm_service_code, sm.libelle as ufm_service,
+                               ufh.code as ufh_code, ufh.libelle as ufh_libelle, ufh.telephone as ufh_telephone, ufh.fax as ufh_fax,
+                               ufh.service_code as ufh_service_code, sh.libelle as ufh_service
                         from sejour s
                         left join unite_fonctionnelle ufm on ufm.code = s.uf_medicale_code
+                        left join service sm on sm.code = ufm.service_code
                         left join unite_fonctionnelle ufh on ufh.code = s.uf_hebergement_code
+                        left join service sh on sh.code = ufh.service_code
                         where s.patient_id in (:ids)
                         order by s.date_entree desc
                         """)

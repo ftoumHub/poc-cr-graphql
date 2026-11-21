@@ -108,6 +108,15 @@ public class ConsultationDossierPatient {
         return Sejour.deReference(sejoursDuPatient, aujourdhui());
     }
 
+    /** Séjour de référence, ou le séjour figé sur le document en cours d'édition s'il appartient au patient. */
+    public Optional<Sejour> sejourDeReference(List<Sejour> sejoursDuPatient, UUID sejourDuDocument) {
+        return Sejour.deReference(sejoursDuPatient, aujourdhui(), sejourDuDocument);
+    }
+
+    public boolean estEnCours(Sejour sejour) {
+        return sejour.estEnCoursLe(aujourdhui());
+    }
+
     public long dureeEnJours(Sejour sejour) {
         return sejour.dureeEnJoursLe(aujourdhui());
     }

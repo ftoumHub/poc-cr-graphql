@@ -122,10 +122,12 @@ public class ControleurDossierPatient {
                 .thenApply(s -> consultation.filtrerSejours(s, Boolean.TRUE.equals(enCoursSeulement)));
     }
 
+    /** Le séjour du document courant (clé de contexte, voir ContexteDocumentInstrumentation) prime. */
     @SchemaMapping(typeName = "Patient")
     public CompletableFuture<Sejour> sejourCourant(Patient patient, DataFetchingEnvironment env) {
+        UUID sejourDuDocument = env.getGraphQlContext().get(ContexteDocumentInstrumentation.CLE_SEJOUR_DU_DOCUMENT);
         return chargerSejours(patient, env)
-                .thenApply(s -> consultation.sejourDeReference(s).orElse(null));
+                .thenApply(s -> consultation.sejourDeReference(s, sejourDuDocument).orElse(null));
     }
 
     @SchemaMapping(typeName = "Sejour")

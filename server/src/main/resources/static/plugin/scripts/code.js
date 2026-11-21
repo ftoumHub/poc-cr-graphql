@@ -862,10 +862,63 @@
             .catch(afficherErreur);
     }
 
+    /**
+     * Revient à l'affichage du gabarit : chaque contrôle reprend son repère («Libellé», «né/née», «pour chaque…»),
+     * sans toucher aux liaisons (tags inchangés, patient compris). « Rafraîchir les données » remet ensuite toutes
+     * les valeurs : les empreintes sont oubliées. L'actualisation automatique est arrêtée, sinon elle
+     * remettrait aussitôt les données.
+     */
+    function afficherReperes() {
+        if (etat.valide || etat.bloque) return;
+        lireLiaisonsDuDocument()
+            .then(function (entrees) {
+                if (!entrees.length) {
+                    message('Aucune liaison dans le document.');
+                    return;
+                }
+                arreterAuto();
+                etat.empreintes = {};
+                var blocs = [];
+                var lignes = [];
+                entrees.forEach(function (e) {
+                    var liaison = e.liaison;
+                    try {
+                        L.analyser(liaison, etat.modele);
+                    } catch (erreur) {
+                        return; // liaison invalide pour le schéma : laissée telle quelle
+                    }
+                    var alias = R.alias(liaison, etat.modele);
+                    var id = e.controle.InternalId;
+                    if (L.estEnLigne(liaison)) {
+                        lignes.push({ id: id, tag: e.controle.Tag, alias: alias,
+                            texte: R.texteGabaritEnLigne(liaison, etat.modele), lock: VERROU_EDITION.ligne });
+                    } else {
+                        blocs.push({
+                            Props: { Tag: e.controle.Tag, Alias: alias, Lock: VERROU_EDITION.bloc, InternalId: id },
+                            Script: R.scriptGabarit(liaison, etat.modele)
+                        });
+                    }
+                });
+                return ecrireControles(blocs)
+                    .then(function () { return majEnLigne(lignes); })
+                    .then(function () {
+                        message((blocs.length + lignes.length) + ' repère(s) affiché(s) — « Rafraîchir les données » remet les valeurs.');
+                    });
+            })
+            .catch(afficherErreur);
+    }
+
+    function arreterAuto() {
+        clearInterval(etat.minuterie);
+        etat.minuterie = null;
+        $('auto').checked = false;
+    }
+
     // --- Interface -------------------------------------------------------------------------
 
     function brancherInterface() {
         $('rafraichir').addEventListener('click', function () { rafraichir(true); });
+        $('reperes').addEventListener('click', afficherReperes);
         $('valider').addEventListener('click', demanderValidation);
         $('valider-confirmation').addEventListener('click', valider);
         $('valider-annulation').addEventListener('click', annulerValidation);

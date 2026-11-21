@@ -71,6 +71,21 @@ public record Sejour(UUID id,
      * le séjour en cours (le plus récemment entré s'il y en a plusieurs),
      * sinon le dernier séjour terminé. Les séjours programmés sont ignorés.
      */
+    /**
+     * Séjour de référence d'un compte rendu rattaché à un séjour (clé de contexte) : ce séjour, s'il fait
+     * partie des séjours du patient ; sinon la règle générale. Le compte rendu ne bascule donc pas sur une
+     * nouvelle venue avant sa validation.
+     */
+    public static Optional<Sejour> deReference(Collection<Sejour> sejours, LocalDate date, UUID sejourDuDocument) {
+        if (sejourDuDocument != null) {
+            Optional<Sejour> fige = sejours.stream().filter(s -> s.id().equals(sejourDuDocument)).findFirst();
+            if (fige.isPresent()) {
+                return fige;
+            }
+        }
+        return deReference(sejours, date);
+    }
+
     public static Optional<Sejour> deReference(Collection<Sejour> sejours, LocalDate date) {
         Comparator<Sejour> parEntree = Comparator.comparing(Sejour::dateEntree);
         Optional<Sejour> enCours = sejours.stream()
