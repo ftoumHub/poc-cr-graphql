@@ -1,6 +1,8 @@
 package fr.ftoumhub.poccr.configuration;
 
 import fr.ftoumhub.poccr.domaine.port.Documents;
+import fr.ftoumhub.poccr.domaine.port.DossierClinique;
+import fr.ftoumhub.poccr.domaine.port.Organisation;
 import fr.ftoumhub.poccr.domaine.port.Etablissements;
 import fr.ftoumhub.poccr.domaine.port.Observations;
 import fr.ftoumhub.poccr.domaine.port.Patients;
@@ -8,6 +10,8 @@ import fr.ftoumhub.poccr.domaine.port.ProfessionnelsSante;
 import fr.ftoumhub.poccr.domaine.port.Sejours;
 import fr.ftoumhub.poccr.domaine.port.Traitements;
 import fr.ftoumhub.poccr.infrastructure.persistance.DocumentsJdbc;
+import fr.ftoumhub.poccr.infrastructure.persistance.DossierCliniqueJdbc;
+import fr.ftoumhub.poccr.infrastructure.persistance.OrganisationJdbc;
 import fr.ftoumhub.poccr.infrastructure.persistance.EtablissementsJdbc;
 import fr.ftoumhub.poccr.infrastructure.persistance.ObservationsJdbc;
 import fr.ftoumhub.poccr.infrastructure.persistance.PatientsJdbc;
@@ -51,6 +55,16 @@ public class ConfigurationPersistance {
     @Bean
     ProfessionnelsSante professionnelsSante(JdbcClient jdbc) {
         return new ProfessionnelsSanteJdbc(jdbc);
+    }
+
+    @Bean
+    DossierClinique dossierClinique(JdbcClient jdbc) {
+        return new DossierCliniqueJdbc(jdbc);
+    }
+
+    @Bean
+    Organisation organisation(JdbcClient jdbc) {
+        return new OrganisationJdbc(jdbc);
     }
 
     @Bean

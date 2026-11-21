@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class DocumentsJdbc implements Documents {
 
     private static final String COLONNES =
-            "id, nom, titre, patient_id, etablissement_id, auteur_id, cree_le, date_valeur";
+            "id, nom, titre, patient_id, etablissement_id, auteur_id, cree_le, date_valeur, sejour_id, uf_code";
 
     private static final RowMapper<Document> LIGNE_VERS_DOCUMENT = (rs, i) -> Document.builder()
             .id(rs.getObject("id", UUID.class))
@@ -38,6 +38,8 @@ public class DocumentsJdbc implements Documents {
             .auteurId(rs.getObject("auteur_id", UUID.class))
             .creeLe(instant(rs.getTimestamp("cree_le")))
             .dateValeur(instant(rs.getTimestamp("date_valeur")))
+            .sejourId(rs.getObject("sejour_id", UUID.class))
+            .ufCode(rs.getString("uf_code"))
             .construire();
 
     private record LigneSignataire(UUID documentId, Signataire signataire) {
@@ -83,12 +85,14 @@ public class DocumentsJdbc implements Documents {
     @Override
     public void enregistrer(Document d) {
         jdbc.sql("""
-                        insert into document (id, nom, titre, patient_id, etablissement_id, auteur_id, cree_le, date_valeur)
-                        values (:id, :nom, :titre, :patient, :etablissement, :auteur, :creeLe, :dateValeur)
+                        insert into document (id, nom, titre, patient_id, etablissement_id, auteur_id, cree_le, date_valeur,
+                                              sejour_id, uf_code)
+                        values (:id, :nom, :titre, :patient, :etablissement, :auteur, :creeLe, :dateValeur, :sejour, :uf)
                         on conflict (id) do update set
                             nom = excluded.nom, titre = excluded.titre, patient_id = excluded.patient_id,
                             etablissement_id = excluded.etablissement_id, auteur_id = excluded.auteur_id,
-                            cree_le = excluded.cree_le, date_valeur = excluded.date_valeur
+                            cree_le = excluded.cree_le, date_valeur = excluded.date_valeur,
+                            sejour_id = excluded.sejour_id, uf_code = excluded.uf_code
                         """)
                 .param("id", d.id())
                 .param("nom", d.nom().valeur())
@@ -98,6 +102,8 @@ public class DocumentsJdbc implements Documents {
                 .param("auteur", d.auteurId())
                 .param("creeLe", Timestamp.from(d.creeLe()))
                 .param("dateValeur", d.dateValeur() == null ? null : Timestamp.from(d.dateValeur()))
+                .param("sejour", d.sejourId())
+                .param("uf", d.ufCode())
                 .update();
     }
 

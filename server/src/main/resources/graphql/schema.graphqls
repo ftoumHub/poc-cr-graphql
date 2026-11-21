@@ -11,16 +11,75 @@ type Patient {
     id: ID!
     "IPP"
     ipp: String!
-    "Nom de naissance"
+    "Nom d'usage"
     nom: String!
+    "Nom de naissance"
+    nomNaissance: String!
     "Prénom"
     prenom: String
+    "Titre (Madame, Monsieur)"
+    titre: String!
     "Date de naissance"
     dateNaissance: String!
+    "Date de naissance AMO"
+    dateNaissanceAmo: String
     "Âge (années révolues)"
     age: Int!
+    "Âge (jours, mois ou années)"
+    ageTexte: String!
     "Sexe"
     sexe: Sexe!
+    "Courriel"
+    email: String
+    "Nationalité"
+    nationalite: String
+    "NIR"
+    nir: String
+    "Identité nationale de santé (INS)"
+    insi: IdentiteNationaleSante
+    "Adresse"
+    adresse("Type d'adresse" type: TypeAdresse = PERSONNELLE): Adresse
+    "Médecin traitant"
+    medecinTraitant: Medecin
+    "Personne à prévenir"
+    personneAPrevenir: PersonneEntourage
+    "Personne de confiance"
+    personneDeConfiance: PersonneEntourage
+    "Allergies"
+    allergies(
+        "Non levées uniquement"
+        activesSeulement: Boolean = true
+    ): [Allergie!]!
+    "Antécédents"
+    antecedents: [Antecedent!]!
+    "Prescriptions (lignes)"
+    prescriptions(
+        "Nature de la prescription"
+        nature: NaturePrescription,
+        "Statut de la prescription"
+        statut: StatutPrescription
+    ): [LignePrescription!]!
+    "Observations du dossier (fiches d'observation)"
+    observationsMedicales(
+        "Chapitre (MEDECINS, IDE, KINESITHERAPEUTE…)"
+        chapitre: String,
+        "Les N plus récentes"
+        derniers: Int
+    ): [ObservationMedicale!]!
+    "Transmissions ciblées"
+    transmissionsCiblees(
+        "Les N plus récentes"
+        derniers: Int
+    ): [TransmissionCiblee!]!
+    "Formulaires"
+    formulaires(
+        "Modèle de formulaire (identifiant)"
+        modele: String,
+        "Modèle contenant la rubrique (code)"
+        contenant: String,
+        "Les N plus récents"
+        derniers: Int
+    ): [Formulaire!]!
     "Observations (biologie, constantes)"
     observations(
         "Catégorie d'observation"
@@ -102,6 +161,25 @@ type Sejour {
     acteCcamCode: String
     "Acte principal (libellé)"
     acteCcamLibelle: String
+    "UF médicale courante"
+    ufMedicaleCourante: UniteFonctionnelle
+    "UF d'hébergement courante"
+    ufHebergementCourante: UniteFonctionnelle
+    "Médecin adresseur"
+    medecinAdresseur: Medecin
+}
+
+type UniteFonctionnelle {
+    "Code UF"
+    code: String!
+    "Libellé UF"
+    libelle: String!
+    "Service"
+    service: String
+    "Téléphone UF"
+    telephone: String
+    "Télécopie UF"
+    fax: String
 }
 
 type Observation {
@@ -117,6 +195,12 @@ type Observation {
     unite: String
     "Date"
     dateObservation: String!
+    "Commentaire"
+    commentaire: String
+    "Auteur"
+    auteur: String
+    "Normalité (HPRIM)"
+    normalite: String
 }
 
 type Traitement {
@@ -149,14 +233,24 @@ type Document {
     dateCreation: String!
     "Heure de création"
     heureCreation: String!
-    "Date de valeur"
+    "Date du document (à défaut, de création)"
     dateValeur: String
-    "Heure de valeur"
+    "Heure du document (à défaut, de création)"
     heureValeur: String
     "Auteur du document"
     psCreateur: Medecin
+    "Civilité de l'auteur"
+    civilitePs: String
+    "Nom prénom de l'auteur"
+    nomPrenomPs: String
+    "Catégorie de l'auteur"
+    categoriePs: String
     "Établissement émetteur"
     etablissement: Etablissement
+    "Séjour du compte rendu (figé à la création)"
+    sejour: Sejour
+    "Unité fonctionnelle émettrice"
+    uniteFonctionnelle: UniteFonctionnelle
     "Signataire principal"
     signatairePrincipal: Signataire
     "Signataires secondaires"
@@ -235,6 +329,8 @@ type Medecin {
     email: String
     "Qualité du P.S."
     qualite: String
+    "Sexe (accords des courriers)"
+    sexe: Sexe!
     "Type de médecin"
     typeMedecin: String!
     "Spécialités"
@@ -266,6 +362,8 @@ type Etablissement {
     libelle: String!
     "FINESS"
     finess: String!
+    "FINESS transcodé"
+    finessTranscode: String
     "SIRET"
     siret: String
     "Courriel"
@@ -323,4 +421,147 @@ enum TypeTelephone {
     "Principal" PRINCIPAL
     "Télécopie" FAX
     "Autre" AUTRE
+}
+
+# ---------------------------------------------------------------------------------------------
+# Dossier clinique et formulaires : champs repris des gabarits legacy (Velocity) convertis en
+# content controls. Correspondance : docs/conception/2026-11-21-conversion-gabarits-velocity.md
+# ---------------------------------------------------------------------------------------------
+
+type IdentiteNationaleSante {
+    "Matricule INS"
+    matricule: String!
+    "Nature du matricule (NIR, NIA)"
+    natureMatricule: String!
+    "OID"
+    oid: String!
+    "Nom de naissance"
+    nom: String!
+    "Premier prénom de naissance"
+    prenom: String
+    "Prénoms de naissance"
+    autresPrenoms: String
+    "Prénom usuel"
+    prenomUsuel: String
+    "Date de naissance"
+    dateNaissance: String!
+    "Lieu de naissance (code INSEE)"
+    lieuNaissance: String
+    "Sexe"
+    sexe: Sexe!
+}
+
+type PersonneEntourage {
+    "Titre"
+    titre: String
+    "Nom"
+    nom: String!
+    "Prénom"
+    prenom: String
+    "Lien avec le patient"
+    lienParente: String
+    "Adresse"
+    adresse("Type d'adresse" type: TypeAdresse = PERSONNELLE): Adresse
+}
+
+type Allergie {
+    "Catégorie"
+    categorie: String
+    "Produit / molécule"
+    libelle: String!
+    "Texte libre"
+    texte: String
+    "Commentaire"
+    commentaire: String
+    "Début"
+    dateDebut: String
+    "Fin (allergie levée)"
+    dateFin: String
+}
+
+type Antecedent {
+    "Catégorie d'antécédent"
+    libelleCategorie: String!
+    "Libellé du diagnostic"
+    libelle: String!
+    "Statut de l'antécédent"
+    statut: String
+    "Date"
+    dateDebut: String
+}
+
+enum NaturePrescription {
+    "Médicaments" MEDICAMENTS
+    "Biologie" BIOLOGIE
+    "Actes" ACTES
+    "Soins infirmiers" SOINS_INFIRMIERS
+    "Plan de soins" PLAN_SOINS
+    "Traitement habituel" TRAITEMENT_HABITUEL
+}
+
+enum StatutPrescription {
+    "Validée" VALIDEE
+    "En cours" EN_COURS
+}
+
+type LignePrescription {
+    "Nature"
+    nature: NaturePrescription!
+    "Statut"
+    statut: StatutPrescription!
+    "Libellé de la ligne de prescription"
+    libelle: String!
+    "Posologie"
+    posologie: String
+    "Commentaire"
+    commentaire: String
+    "Début"
+    dateDebut: String!
+    "Fin"
+    dateFin: String
+}
+
+type ObservationMedicale {
+    "Chapitre"
+    chapitre: String!
+    "Date"
+    date: String!
+    "Heure"
+    heure: String!
+    "Observation"
+    texte: String!
+    "Auteur"
+    auteur: Medecin
+}
+
+type TransmissionCiblee {
+    "Cible"
+    cible: String!
+    "Date et heure"
+    dateHeure: String!
+    "Auteur"
+    auteur: String
+    "Données"
+    donnees: String
+    "Actions"
+    actions: String
+    "Résultats"
+    resultats: String
+    "État"
+    etat: String
+}
+
+type Formulaire {
+    "Modèle (identifiant)"
+    modele: String!
+    "Titre du formulaire"
+    libelle: String
+    "Date de création"
+    dateCreation: String!
+    "Date de modification"
+    dateModification: String
+    "Créé par"
+    auteur: String
+    "Valeur d'une rubrique"
+    rubrique("Code de la rubrique" code: String!): String
 }

@@ -14,6 +14,13 @@ spring:
     schema:
       introspection:
         enabled: true # indispensable : le plugin construit son arbre de champs par introspection
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          # page hôte et plugin (static/) : le navigateur revalide à chaque chargement (Last-Modified),
+          # pour ne jamais exécuter une version périmée après une modification
+          no-cache: true
 
 poc:
   editeur:

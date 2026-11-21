@@ -1,6 +1,7 @@
 package fr.ftoumhub.poccr.application;
 
 import fr.ftoumhub.poccr.domaine.document.ActeursDocument;
+import fr.ftoumhub.poccr.domaine.document.ContexteDocument;
 import fr.ftoumhub.poccr.domaine.document.Document;
 import fr.ftoumhub.poccr.domaine.document.DocumentFige;
 import fr.ftoumhub.poccr.domaine.document.DocumentIntrouvable;
@@ -8,13 +9,20 @@ import fr.ftoumhub.poccr.domaine.etablissement.Etablissement;
 import fr.ftoumhub.poccr.domaine.port.ArchiveValidations;
 import fr.ftoumhub.poccr.domaine.port.Documents;
 import fr.ftoumhub.poccr.domaine.port.Etablissements;
+import fr.ftoumhub.poccr.domaine.organisation.Service;
 import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
+import fr.ftoumhub.poccr.domaine.port.Organisation;
+import fr.ftoumhub.poccr.domaine.port.Sejours;
+import fr.ftoumhub.poccr.domaine.sejour.Sejour;
+import fr.ftoumhub.poccr.domaine.sejour.TypeSejour;
+import fr.ftoumhub.poccr.domaine.sejour.UniteFonctionnelle;
 import fr.ftoumhub.poccr.domaine.validation.NomDocument;
 import fr.ftoumhub.poccr.domaine.validation.Validation;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,8 +58,29 @@ class GestionDocumentsTest {
         @Override public Map<UUID, Etablissement> parIds(Set<UUID> ids) { return Map.of(CH_POC.id(), CH_POC); }
         @Override public Etablissement parDefaut() { return CH_POC; }
     };
+    // Organisation : le CH POC (service Cardiologie, UF 2101) et un centre de réadaptation (service SSR, UF 3000)
+    private static final UUID READAPTATION = UUID.randomUUID();
+    private static final UniteFonctionnelle UF_CARDIO =
+            new UniteFonctionnelle("2101", "Cardiologie – hospitalisation", null, null, "CARDIO", "Cardiologie");
+    private static final UniteFonctionnelle UF_SSR =
+            new UniteFonctionnelle("3000", "SSR gériatrique", null, null, "SSR", "Soins de réadaptation");
+    private static final Sejour SEJOUR_MARTIN = Sejour.builder().id(UUID.randomUUID()).patientId(MARTIN)
+            .numero("V2026000101").type(TypeSejour.HOSPITALISATION_COMPLETE).dateEntree(LocalDate.of(2026, 11, 8))
+            .service("Cardiologie").ufMedicale(UF_CARDIO).construire();
+    private static final Sejour SEJOUR_MARTINEZ = Sejour.builder().id(UUID.randomUUID()).patientId(MARTINEZ)
+            .numero("V2026000077").type(TypeSejour.HOSPITALISATION_COMPLETE).dateEntree(LocalDate.of(2026, 11, 1))
+            .service("SSR").ufMedicale(UF_SSR).construire();
+    private final Sejours sejours = ids -> List.of(SEJOUR_MARTIN, SEJOUR_MARTINEZ).stream()
+            .filter(s -> ids.contains(s.patientId())).collect(Collectors.groupingBy(Sejour::patientId));
+    private final Organisation organisation = new Organisation() {
+        @Override public List<Etablissement> etablissements() { return List.of(CH_POC); }
+        @Override public List<Service> services() {
+            return List.of(new Service("CARDIO", CH_POC.id(), "Cardiologie"), new Service("SSR", READAPTATION, "SSR"));
+        }
+        @Override public List<UniteFonctionnelle> unitesFonctionnelles() { return List.of(UF_CARDIO, UF_SSR); }
+    };
     private final GestionDocuments gestion = new GestionDocuments(documents, fichiers, validations, etablissements,
-            new ValidationCompteRenduTest.ProfessionnelsEnMemoire(ps(DURAND), ps(GIRARD)),
+            new ValidationCompteRenduTest.ProfessionnelsEnMemoire(ps(DURAND), ps(GIRARD)), sejours, organisation,
             Clock.fixed(MAINTENANT, ZoneOffset.UTC), UUID::randomUUID);
 
     private static fr.ftoumhub.poccr.domaine.professionnel.ProfessionnelSante ps(UUID id) {
@@ -85,6 +114,103 @@ class GestionDocumentsTest {
         gestion.creer(CR, null, null);
 
         assertThatThrownBy(() -> gestion.creer(CR, null, null)).hasMessageContaining("existe déjà");
+    }
+
+    // --- import de gabarits ---------------------------------------------------------------------
+
+    @Test
+    void un_docx_importe_devient_un_gabarit_sans_patient() {
+        byte[] docx = {'P', 'K', 3, 4, 0};
+
+        Document importe = gestion.importerGabarit(CR, "Convocation", docx);
+
+        assertThat(importe.patientId()).isNull();
+        assertThat(importe.titre()).isEqualTo("Convocation");
+        assertThat(fichiers.contenus.get(CR)).isEqualTo(docx);
+    }
+
+    @Test
+    void un_import_qui_n_est_pas_un_docx_est_refuse_sans_creer_de_fiche() {
+        assertThatThrownBy(() -> gestion.importerGabarit(CR, null, "<html/>".getBytes()))
+                .hasMessageContaining("n'est pas un fichier .docx");
+        assertThat(gestion.document(CR)).isEmpty();
+    }
+
+    @Test
+    void sans_auteur_connu_le_signataire_principal_devient_l_auteur_du_document() {
+        gestion.creer(CR, null, null);
+
+        gestion.definirActeurs(CR, ACTEURS);
+
+        assertThat(gestion.document(CR).orElseThrow().auteurId())
+                .isEqualTo(ACTEURS.signatairePrincipal().orElseThrow().professionnelId());
+    }
+
+    // --- clé de contexte -------------------------------------------------------------------------
+
+    @Test
+    void un_compte_rendu_cree_dans_un_contexte_fige_le_sejour_son_uf_et_l_auteur() {
+        Document cree = gestion.creer(CR, null, MARTIN, new ContexteDocument(SEJOUR_MARTIN.id(), null, DURAND));
+
+        assertThat(cree.sejourId()).isEqualTo(SEJOUR_MARTIN.id());
+        assertThat(cree.ufCode()).isEqualTo("2101");                 // l'UF médicale du séjour, à défaut d'UF demandée
+        assertThat(cree.etablissementId()).isEqualTo(CH_POC.id());
+        assertThat(cree.auteurId()).isEqualTo(DURAND);
+    }
+
+    @Test
+    void l_uf_du_contexte_donne_l_etablissement_du_document() {
+        Document cree = gestion.creer(CR, null, MARTINEZ, new ContexteDocument(null, "3000", null));
+
+        assertThat(cree.etablissementId()).isEqualTo(READAPTATION);
+        assertThat(cree.sejourId()).isNull();
+    }
+
+    @Test
+    void le_sejour_d_un_autre_patient_est_refuse_identitovigilance() {
+        assertThatThrownBy(() -> gestion.creer(CR, null, MARTIN, new ContexteDocument(SEJOUR_MARTINEZ.id(), null, null)))
+                .hasMessageContaining("n'appartient pas au patient");
+        assertThat(gestion.document(CR)).isEmpty();
+    }
+
+    @Test
+    void un_gabarit_n_est_rattache_a_aucun_sejour() {
+        assertThatThrownBy(() -> gestion.creer(CR, null, null, new ContexteDocument(SEJOUR_MARTIN.id(), null, null)))
+                .hasMessageContaining("gabarit");
+    }
+
+    @Test
+    void un_gabarit_instancie_pour_un_patient_recoit_le_contexte_courant() {
+        gestion.creer(CR, null, null);
+
+        Document instance = gestion.dupliquer(CR, COPIE, MARTIN, new ContexteDocument(SEJOUR_MARTIN.id(), null, GIRARD));
+
+        assertThat(instance.sejourId()).isEqualTo(SEJOUR_MARTIN.id());
+        assertThat(instance.auteurId()).isEqualTo(GIRARD);
+    }
+
+    @Test
+    void un_brouillon_se_rattache_a_un_sejour_mais_plus_apres_validation() {
+        gestion.creer(CR, null, MARTIN);
+
+        assertThat(gestion.definirContexte(CR, new ContexteDocument(SEJOUR_MARTIN.id(), null, null)).sejourId())
+                .isEqualTo(SEJOUR_MARTIN.id());
+
+        validations.valider(CR);
+        assertThatThrownBy(() -> gestion.definirContexte(CR, ContexteDocument.AUCUN)).isInstanceOf(DocumentFige.class);
+    }
+
+    @Test
+    void changer_de_patient_detache_le_sejour_de_l_ancien_patient() {
+        gestion.creer(CR, null, MARTIN, new ContexteDocument(SEJOUR_MARTIN.id(), null, null));
+
+        assertThat(gestion.rattacherPatient(CR, MARTINEZ).sejourId()).isNull();
+    }
+
+    @Test
+    void une_uf_inconnue_est_refusee() {
+        assertThatThrownBy(() -> gestion.creer(CR, null, MARTIN, new ContexteDocument(null, "9999", null)))
+                .hasMessageContaining("Unité fonctionnelle inconnue");
     }
 
     // --- renommage ------------------------------------------------------------------------------
@@ -307,6 +433,7 @@ class GestionDocumentsTest {
         static final Instant DATE_FICHIER = Instant.parse("2026-11-01T08:00:00Z");
         final List<NomDocument> noms = new ArrayList<>();
         final Map<NomDocument, UUID> patients = new HashMap<>();
+        final Map<NomDocument, byte[]> contenus = new HashMap<>();
         boolean enPanne;
 
         private void verifierEnService() {
@@ -321,6 +448,13 @@ class GestionDocumentsTest {
         public void creerVierge(NomDocument nom) {
             verifierEnService();
             noms.add(nom);
+        }
+
+        @Override
+        public void creer(NomDocument nom, byte[] contenu) {
+            verifierEnService();
+            noms.add(nom);
+            contenus.put(nom, contenu);
         }
 
         @Override

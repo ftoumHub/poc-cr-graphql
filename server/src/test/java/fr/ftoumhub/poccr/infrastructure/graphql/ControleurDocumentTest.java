@@ -172,7 +172,8 @@ class ControleurDocumentTest {
                 .execute()
                 .path("document.dateCreation").entity(String.class).isEqualTo("2026-11-12")
                 .path("document.heureCreation").entity(String.class).isEqualTo("00:30")
-                .path("document.dateValeur").valueIsNull()
+                // date clinique non saisie : celle de la création
+                .path("document.dateValeur").entity(String.class).isEqualTo("2026-11-12")
                 .path("document.validation.dateValidation").entity(String.class).isEqualTo("2026-11-12")
                 .path("document.validation.heureValidation").entity(String.class).isEqualTo("10:15");
     }

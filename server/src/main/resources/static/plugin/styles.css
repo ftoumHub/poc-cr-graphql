@@ -47,3 +47,5 @@ button { padding: 4px 8px; cursor: pointer; }
 .reglages fieldset.colonnes legend { color: #555; padding: 0; }
 .reglages fieldset.colonnes label { display: block; }
 .reglages .apercu { margin-top: 4px; color: #333; font-style: italic; white-space: pre-line; }
+
+.boutons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }

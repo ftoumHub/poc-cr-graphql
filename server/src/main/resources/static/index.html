@@ -2,60 +2,126 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>POC compte rendu médical</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%231e3a8a'/%3E%3Cpath d='M11 6h2v5h5v2h-5v5h-2v-5H6v-2h5z' fill='white'/%3E%3C/svg%3E">
     <style>
-        html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; color: #222; }
+        :root {
+            --primaire: #1d4ed8; --primaire-fonce: #1e3a8a; --primaire-clair: #e8efff;
+            --fond: #f4f6fb; --surface: #fff; --bord: #e3e7ef; --texte: #1f2937; --texte-doux: #6b7280;
+            --ok: #15803d; --ok-clair: #e3f6e6; --alerte: #b45309; --alerte-clair: #fff4e0; --erreur: #b3261e;
+            --rayon: 10px; --ombre: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+                     color: var(--texte); background: var(--fond); }
         body { display: flex; flex-direction: column; }
 
-        header { display: flex; align-items: center; justify-content: space-between;
-                 padding: 12px 20px; border-bottom: 1px solid #ddd; }
-        header h1 { font-size: 16px; margin: 0; }
+        /* --- Barre d'application --- */
+        header.appli { display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+                       background: var(--primaire-fonce); color: #fff; }
+        header.appli h1 { font-size: 16px; font-weight: 600; margin: 0; flex: 1; letter-spacing: .2px; }
+        header.appli h1 small { font-weight: 400; opacity: .75; margin-left: 6px; }
+        header.appli a { color: #dbe6ff; font-size: 13px; }
+        .utilisateur { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .utilisateur select { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.35);
+                              border-radius: 6px; padding: 5px 8px; font-size: 13px; max-width: 280px; }
+        .utilisateur select option { color: var(--texte); }
+        .pastille-simulation { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; background: #fbbf24;
+                               color: #3b2a00; padding: 2px 6px; border-radius: 8px; font-weight: 700; }
+        header.appli button#retour { background: #fff; color: var(--primaire-fonce); border: none; border-radius: 6px;
+                                     padding: 6px 12px; font-weight: 600; cursor: pointer; }
+
+        /* --- Fil d'Ariane du contexte --- */
+        nav.contexte { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; padding: 8px 20px;
+                       background: var(--surface); border-bottom: 1px solid var(--bord); box-shadow: var(--ombre); }
+        nav.contexte .segment { display: flex; flex-direction: column; padding: 4px 10px; border-radius: 8px;
+                                min-width: 120px; }
+        nav.contexte .segment:hover { background: var(--fond); }
+        nav.contexte .segment label { font-size: 10px; text-transform: uppercase; letter-spacing: .6px;
+                                      color: var(--texte-doux); font-weight: 600; }
+        nav.contexte select { border: none; background: transparent; font-size: 14px; font-weight: 600;
+                              color: var(--texte); padding: 2px 0; cursor: pointer; max-width: 220px; }
+        nav.contexte select:disabled { cursor: default; color: var(--texte-doux); font-weight: 400;
+                                       appearance: none; -webkit-appearance: none; }
+        nav.contexte.fige-document select:disabled { color: var(--texte); font-weight: 600; max-width: 320px; }
+        nav.contexte .valeur { font-size: 14px; font-weight: 600; padding: 2px 0; }
+        nav.contexte .valeur.vide { color: var(--texte-doux); font-weight: 400; font-style: italic; }
+        nav.contexte .sep { color: #b6bdc9; font-size: 18px; }
+        nav.contexte .groupe { display: flex; align-items: center; gap: 4px; }
+        nav.contexte .groupe + .groupe { margin-left: 10px; padding-left: 10px; border-left: 2px solid var(--bord); }
+        nav.contexte .fige { margin-left: auto; font-size: 12px; color: var(--alerte); background: var(--alerte-clair);
+                             padding: 4px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; }
+        nav.contexte .fige[hidden] { display: none; }
+        nav.contexte .fige svg { width: 14px; height: 14px; }
+        nav.contexte .reinit { margin-left: auto; }
 
         main { flex: 1; display: flex; min-width: 0; overflow: hidden; }
-
-        #vue-liste { flex: 1; overflow-y: auto; padding: 16px 20px; box-sizing: border-box; }
+        #vue-liste { flex: 1; overflow-y: auto; padding: 18px 20px 40px; }
         #vue-editeur { flex: 1; display: none; flex-direction: column; }
         #vue-editeur.actif { display: flex; }
         #vue-liste.cache { display: none; }
-
         #cible { flex: 1; }
 
-        section.bloc { margin-bottom: 28px; }
-        section.bloc h2 { font-size: 13px; text-transform: uppercase; color: #666; margin: 0 0 8px; }
+        .grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+        @media (max-width: 1100px) { .grille { grid-template-columns: 1fr; } }
+        .pleine { grid-column: 1 / -1; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #eee; }
-        th { color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600; }
-        tbody tr:hover { background: #fafbff; }
+        section.carte { background: var(--surface); border: 1px solid var(--bord); border-radius: var(--rayon);
+                        box-shadow: var(--ombre); padding: 14px 16px; }
+        section.carte > .titre { display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+                                 margin-bottom: 10px; }
+        section.carte h2 { font-size: 15px; margin: 0; }
+        section.carte .sous-titre { font-size: 12px; color: var(--texte-doux); }
 
-        #patients-corps tr { cursor: pointer; }
-        #patients-corps tr.selectionne { background: #e8f0ff; }
-        tr.filtres th { padding: 4px 10px 8px; background: #fff; }
-        tr.filtres input { width: 100%; box-sizing: border-box; padding: 3px 5px; font-size: 12px;
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #eef0f4; vertical-align: middle; }
+        th { color: var(--texte-doux); font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: .4px; }
+        tbody tr:hover { background: #f8faff; }
+        #patients-corps tr, #sejours-corps tr { cursor: pointer; }
+        tr.selectionne, tr.selectionne:hover { background: var(--primaire-clair); }
+        tr.filtres th { padding: 2px 8px 8px; }
+        tr.filtres input { width: 100%; padding: 4px 6px; font-size: 12px; border: 1px solid var(--bord); border-radius: 6px;
                             font-weight: normal; text-transform: none; }
+        td.discret, span.discret { color: var(--texte-doux); font-size: 12px; }
 
         .pagination { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 13px; color: #555; }
         .pagination button:disabled { opacity: 0.4; cursor: default; }
 
-        .statut { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
-        .statut-brouillon { background: #eee; color: #555; }
+        .statut, .puce { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
+        .statut-brouillon { background: #eef0f4; color: #555; }
         .statut-valide { background: #dff0ff; color: #1557b0; }
-        .statut-scelle { background: #e3f6e6; color: #1e7a34; }
+        .statut-scelle { background: var(--ok-clair); color: var(--ok); }
+        .puce-encours { background: var(--ok-clair); color: var(--ok); }
+        .puce-reference { background: var(--primaire-clair); color: var(--primaire); }
+        .puce-autre { background: var(--alerte-clair); color: var(--alerte); }
 
-        button { padding: 4px 10px; cursor: pointer; }
-        button.lien { background: none; border: none; color: #1557b0; cursor: pointer; padding: 2px 4px; }
+        button { padding: 5px 10px; cursor: pointer; border-radius: 6px; border: 1px solid var(--bord); background: #fff;
+                 font: inherit; font-size: 13px; }
+        button.principal { background: var(--primaire); color: #fff; border-color: var(--primaire); }
+        button.principal:disabled { background: #9fb5ea; border-color: #9fb5ea; cursor: default; }
+        button.lien { background: none; border: none; color: var(--primaire); cursor: pointer; padding: 2px 4px; }
         button.lien:hover { text-decoration: underline; }
-        button.icone { background: none; border: 1px solid transparent; border-radius: 4px; color: #1557b0;
+        button.icone { background: none; border: 1px solid transparent; border-radius: 6px; color: var(--primaire);
                        cursor: pointer; padding: 3px; line-height: 0; vertical-align: middle; }
-        button.icone:hover { background: #e8f0fe; border-color: #c6dafc; }
-        button.icone:focus-visible { outline: 2px solid #1557b0; outline-offset: 1px; }
+        button.icone:hover { background: var(--primaire-clair); border-color: #c6dafc; }
+        button.icone:focus-visible { outline: 2px solid var(--primaire); outline-offset: 1px; }
         button.icone svg { width: 18px; height: 18px; }
-        td.actions { white-space: nowrap; }
+        td.actions { white-space: nowrap; text-align: right; }
 
-        #creation { display: flex; gap: 8px; margin-bottom: 20px; }
-        #creation input { padding: 6px; flex: 0 0 260px; }
-
+        form.creation { display: flex; gap: 8px; margin: 4px 0 10px; flex-wrap: wrap; }
+        form.creation input { padding: 6px 8px; flex: 1 1 220px; border: 1px solid var(--bord); border-radius: 6px; }
         .renommage input { padding: 2px 4px; width: 160px; }
+
+        .vide { padding: 10px 0; color: #888; font-style: italic; }
+        .aide-contexte { font-size: 12px; color: var(--texte-doux); margin: 0 0 8px; }
+        .aide-contexte strong { color: var(--texte); }
+
+        #notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1f2937; color: #fff;
+                        padding: 10px 16px; border-radius: 8px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.2);
+                        opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 10; max-width: 80vw; }
+        #notification.visible { opacity: 1; }
+        #notification.erreur { background: var(--erreur); }
 
         dialog#acteurs { width: 640px; max-width: calc(100vw - 32px); border: 1px solid #ccc; border-radius: 8px;
                          padding: 0; box-shadow: 0 8px 32px rgba(0,0,0,.18); }
@@ -89,69 +155,108 @@
         #acteurs .message.ok { color: #1e7a34; }
         #acteurs .fige { background: #fff7e0; color: #7a5a00; padding: 6px 8px; border-radius: 4px;
                          font-size: 13px; margin: 6px 0 12px; }
-        .vide { padding: 10px 0; color: #888; font-style: italic; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>POC compte rendu médical — GraphQL dans OnlyOffice</h1>
-    <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="/admin.html" target="_blank" id="lien-admin">Données de test</a>
-        <button id="retour" hidden>← Retour à la liste</button>
+<header class="appli">
+    <h1>Comptes rendus médicaux <small>POC GraphQL × OnlyOffice</small></h1>
+    <div class="utilisateur">
+        <span class="pastille-simulation" title="Pas d'authentification dans le POC : le professionnel est choisi ici">Simulation</span>
+        <label for="professionnel-connecte">Professionnel connecté</label>
+        <select id="professionnel-connecte"></select>
     </div>
+    <a href="/admin.html" target="_blank" id="lien-admin">Données de test</a>
+    <button id="retour" hidden>← Retour à la liste</button>
 </header>
+
+<nav class="contexte" id="contexte" aria-label="Contexte de travail">
+    <div class="groupe" title="Contexte organisationnel">
+        <div class="segment"><label for="ctx-etablissement">Établissement</label><select id="ctx-etablissement"></select></div>
+        <span class="sep">›</span>
+        <div class="segment"><label for="ctx-service">Service</label><select id="ctx-service"></select></div>
+        <span class="sep">›</span>
+        <div class="segment"><label for="ctx-uf">Unité fonctionnelle</label><select id="ctx-uf"></select></div>
+    </div>
+    <div class="groupe" title="Contexte médical">
+        <div class="segment"><label>Patient</label><span class="valeur vide" id="ctx-patient">aucun</span></div>
+        <span class="sep">›</span>
+        <div class="segment"><label for="ctx-sejour">Séjour</label><select id="ctx-sejour" disabled></select></div>
+    </div>
+    <button type="button" class="lien reinit" id="ctx-reinitialiser">Réinitialiser le contexte</button>
+    <span class="fige" id="ctx-fige" hidden><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect
+        width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span
+        id="ctx-fige-texte">Contexte figé sur le document</span></span>
+</nav>
 
 <main>
     <div id="vue-liste">
-        <form id="creation">
-            <input id="nom" placeholder="nom du nouveau document (a-z, 0-9, -, _)" pattern="[A-Za-z0-9_\-]{1,64}"
-                   aria-label="Nom du nouveau document" required>
-            <button id="creer-patient" disabled>Créer pour le patient sélectionné</button>
-            <button type="button" id="creer-gabarit">Créer un gabarit</button>
-        </form>
+        <div class="grille">
+            <section class="carte">
+                <div class="titre"><h2>Patients</h2><span class="sous-titre" id="patients-perimetre"></span></div>
+                <table>
+                    <thead>
+                        <tr><th>IPP</th><th>Nom</th><th>Prénom</th><th>Naissance</th><th>Sexe</th></tr>
+                        <tr class="filtres">
+                            <th><input data-col="ipp" placeholder="filtrer…"></th>
+                            <th><input data-col="nom" placeholder="filtrer…"></th>
+                            <th><input data-col="prenom" placeholder="filtrer…"></th>
+                            <th><input data-col="dateNaissance" placeholder="aaaa-mm-jj…"></th>
+                            <th><input data-col="sexe" placeholder="FEMININ…"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="patients-corps"></tbody>
+                </table>
+                <div class="pagination" id="pagination-patients"></div>
+            </section>
 
-        <section class="bloc">
-            <h2>Patients</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>IPP</th><th>Nom</th><th>Prénom</th><th>Date de naissance</th><th>Sexe</th>
-                    </tr>
-                    <tr class="filtres">
-                        <th><input data-col="ipp" placeholder="filtrer…"></th>
-                        <th><input data-col="nom" placeholder="filtrer…"></th>
-                        <th><input data-col="prenom" placeholder="filtrer…"></th>
-                        <th><input data-col="dateNaissance" placeholder="aaaa-mm-jj…"></th>
-                        <th><input data-col="sexe" placeholder="FEMININ…"></th>
-                    </tr>
-                </thead>
-                <tbody id="patients-corps"></tbody>
-            </table>
-            <div class="pagination" id="pagination-patients"></div>
-        </section>
+            <section class="carte" id="section-sejours">
+                <div class="titre"><h2>Séjours <span id="sejours-patient"></span></h2>
+                    <span class="sous-titre">Le séjour choisi est figé sur les comptes rendus créés</span></div>
+                <table>
+                    <thead><tr><th>N° de séjour</th><th>Entrée</th><th>Sortie</th><th>Unité fonctionnelle</th><th></th></tr></thead>
+                    <tbody id="sejours-corps"><tr><td colspan="5" class="vide">Choisissez un patient.</td></tr></tbody>
+                </table>
+            </section>
 
-        <section class="bloc" id="section-documents-patient" hidden>
-            <h2>Documents de <span id="nom-patient-selectionne"></span></h2>
-            <table>
-                <thead><tr><th>Document</th><th>Statut</th><th>Signataire</th><th>Validé le</th><th></th></tr></thead>
-                <tbody id="documents-patient-corps"></tbody>
-            </table>
-        </section>
+            <section class="carte pleine" id="section-documents-patient" hidden>
+                <div class="titre"><h2>Comptes rendus de <span id="nom-patient-selectionne"></span></h2>
+                    <span class="sous-titre">Le séjour en surbrillance est celui du contexte</span></div>
+                <form class="creation" id="creation">
+                    <input id="nom" placeholder="nom du nouveau compte rendu (a-z, 0-9, -, _)" pattern="[A-Za-z0-9_\-]{1,64}"
+                           aria-label="Nom du nouveau compte rendu" required>
+                    <button class="principal" id="creer-patient" disabled>Créer dans ce contexte</button>
+                </form>
+                <p class="aide-contexte" id="aide-creation"></p>
+                <table>
+                    <thead><tr><th>Document</th><th>Séjour</th><th>Unité fonctionnelle</th><th>Auteur</th><th>Statut</th>
+                        <th>Signataire</th><th>Validé le</th><th></th></tr></thead>
+                    <tbody id="documents-patient-corps"></tbody>
+                </table>
+            </section>
 
-        <section class="bloc">
-            <h2>Gabarits (documents sans patient)</h2>
-            <table>
-                <thead><tr><th>Document</th><th>Statut</th><th>Signataire</th><th>Validé le</th><th></th></tr></thead>
-                <tbody id="documents-sans-patient-corps"></tbody>
-            </table>
-        </section>
+            <section class="carte pleine">
+                <div class="titre"><h2>Gabarits</h2><span class="sous-titre">Documents sans patient, instanciés dans le contexte courant</span></div>
+                <form class="creation" id="creation-gabarit">
+                    <input id="nom-gabarit" placeholder="nom du nouveau gabarit (a-z, 0-9, -, _)" pattern="[A-Za-z0-9_\-]{1,64}"
+                           aria-label="Nom du nouveau gabarit" required>
+                    <button id="creer-gabarit">Créer un gabarit</button>
+                </form>
+                <table>
+                    <thead><tr><th>Document</th><th>Statut</th><th>Signataire</th><th>Validé le</th><th></th></tr></thead>
+                    <tbody id="documents-sans-patient-corps"></tbody>
+                </table>
+            </section>
+        </div>
     </div>
 
     <div id="vue-editeur">
         <div id="cible"></div>
     </div>
 </main>
+
+<div id="notification" role="status" aria-live="polite"></div>
 
 <dialog id="acteurs" aria-labelledby="acteurs-titre">
     <form method="dialog" id="acteurs-formulaire">
@@ -203,13 +308,139 @@
     // Lu par le plugin (même origine) pour savoir quel document valider.
     window.PocCr = { documentCourant: null, documentId: null };
 
-    // --- Patients : tableau paginé, filtrable colonne par colonne --------------------------
+    // --- Outils -----------------------------------------------------------------------------
+
+    function lire(cle) { try { return JSON.parse(localStorage.getItem(cle)); } catch (e) { return null; } }
+    function ecrire(cle, valeur) { try { localStorage.setItem(cle, JSON.stringify(valeur)); } catch (e) { /* stockage indisponible */ } }
+
+    let minuterieNotification = null;
+    /** Message bref en bas d'écran (pas d'alert : il bloquerait l'éditeur OnlyOffice). */
+    function notifier(texte, erreur) {
+        const zone = document.getElementById('notification');
+        zone.textContent = texte;
+        zone.className = 'visible' + (erreur ? ' erreur' : '');
+        clearTimeout(minuterieNotification);
+        minuterieNotification = setTimeout(() => { zone.className = ''; }, erreur ? 6000 : 3000);
+    }
+
+    async function erreurHttp(r, defaut) {
+        const corps = await r.json().catch(() => ({}));
+        notifier(corps.message || defaut + ' (HTTP ' + r.status + ')', true);
+    }
+
+    function option(valeur, texte) {
+        const o = document.createElement('option');
+        o.value = valeur;
+        o.textContent = texte;
+        return o;
+    }
+
+    const formatDate = iso => iso ? iso.split('-').reverse().join('/') : '—';
+
+    // --- Clé de contexte --------------------------------------------------------------------
+    // Organisation (établissement > service > UF), dossier (patient > séjour), professionnel connecté.
+    // La page la mémorise dans le navigateur ; un compte rendu créé la reçoit, et elle y reste figée.
+
+    const contexte = Object.assign({ etablissement: '', service: '', uf: '', professionnel: '' },
+        lire('poc.contexte') || {});
+    let organisation = [];
+    let patientSelectionne = null;
+    let sejours = [];
+    let sejourSelectionne = null;
+
+    function memoriserContexte() {
+        ecrire('poc.contexte', { etablissement: contexte.etablissement, service: contexte.service, uf: contexte.uf,
+            professionnel: contexte.professionnel });
+    }
+
+    const etablissementCourant = () => organisation.find(e => e.id === contexte.etablissement) || null;
+    const serviceCourant = () => (etablissementCourant() ? etablissementCourant().services : [])
+        .find(s => s.code === contexte.service) || null;
+    function ufCourante() {
+        for (const e of organisation) for (const s of e.services) for (const u of s.unites)
+            if (u.code === contexte.uf) return { etablissement: e, service: s, uf: u };
+        return null;
+    }
+
+    async function chargerOrganisation() {
+        organisation = await (await fetch('/api/contexte/organisation')).json();
+        if (contexte.etablissement && !etablissementCourant()) { contexte.etablissement = ''; contexte.service = ''; contexte.uf = ''; }
+        afficherOrganisation();
+    }
+
+    function afficherOrganisation() {
+        const selEtab = document.getElementById('ctx-etablissement');
+        selEtab.innerHTML = '';
+        selEtab.appendChild(option('', 'Tous les établissements'));
+        organisation.forEach(e => selEtab.appendChild(option(e.id, e.libelle)));
+        selEtab.value = contexte.etablissement;
+
+        const selService = document.getElementById('ctx-service');
+        selService.innerHTML = '';
+        selService.appendChild(option('', 'Tous les services'));
+        (etablissementCourant() ? etablissementCourant().services : []).forEach(s => selService.appendChild(option(s.code, s.libelle)));
+        selService.value = contexte.service;
+        selService.disabled = !contexte.etablissement;
+
+        const selUf = document.getElementById('ctx-uf');
+        selUf.innerHTML = '';
+        selUf.appendChild(option('', 'Toutes les UF'));
+        (serviceCourant() ? serviceCourant().unites : []).forEach(u => selUf.appendChild(option(u.code, u.code + ' · ' + u.libelle)));
+        selUf.value = contexte.uf;
+        selUf.disabled = !contexte.service;
+    }
+
+    document.getElementById('ctx-etablissement').onchange = e => {
+        contexte.etablissement = e.target.value; contexte.service = ''; contexte.uf = '';
+        changementOrganisation();
+    };
+    document.getElementById('ctx-service').onchange = e => { contexte.service = e.target.value; contexte.uf = ''; changementOrganisation(); };
+    document.getElementById('ctx-uf').onchange = e => { contexte.uf = e.target.value; changementOrganisation(); };
+    document.getElementById('ctx-reinitialiser').onclick = () => {
+        contexte.service = ''; contexte.uf = ''; contexte.etablissement = '';
+        patientSelectionne = null; sejours = []; sejourSelectionne = null;
+        changementOrganisation();
+        afficherSejours();
+        afficherPatientDuContexte();
+    };
+
+    function changementOrganisation() {
+        memoriserContexte();
+        afficherOrganisation();
+        pagePatients = 0;
+        chargerPatients();
+        afficherAideCreation();
+    }
+
+    /** Choisir un séjour aligne l'organisation sur son UF : le contexte reste cohérent. */
+    function aligner(sejour) {
+        if (!sejour || !sejour.uf) return;
+        for (const e of organisation) for (const s of e.services) if (s.unites.some(u => u.code === sejour.uf.code)) {
+            contexte.etablissement = e.id; contexte.service = s.code; contexte.uf = sejour.uf.code;
+        }
+        memoriserContexte();
+        afficherOrganisation();
+    }
+
+    // --- Professionnel connecté (simulé) ------------------------------------------------------
+
+    async function chargerProfessionnels() {
+        const liste = await (await fetch('/api/contexte/professionnels')).json();
+        const sel = document.getElementById('professionnel-connecte');
+        sel.innerHTML = '';
+        sel.appendChild(option('', '— choisir —'));
+        liste.forEach(p => sel.appendChild(option(p.id, p.libelle + (p.qualite ? ' (' + p.qualite + ')' : ''))));
+        if (!liste.some(p => p.id === contexte.professionnel)) contexte.professionnel = '';
+        sel.value = contexte.professionnel;
+        sel.onchange = () => { contexte.professionnel = sel.value; memoriserContexte(); afficherAideCreation(); };
+    }
+
+    // --- Patients : tableau paginé, filtré par le contexte organisationnel -----------------------
 
     const TAILLE_PAGE_PATIENTS = 10;
     let pagePatients = 0;
     let totalPatients = 0;
     let filtresPatients = { ipp: '', nom: '', prenom: '', sexe: '', dateNaissance: '' };
-    let patientSelectionne = null;
     let minuterieFiltre = null;
 
     const LIBELLES_SEXE = { FEMININ: 'Féminin', MASCULIN: 'Masculin', INDETERMINE: 'Indéterminé', INCONNU: 'Inconnu' };
@@ -222,21 +453,33 @@
         });
     });
 
+    function perimetrePatients() {
+        const c = ufCourante();
+        if (contexte.uf && c) return 'ayant un séjour en UF ' + c.uf.code + ' · ' + c.uf.libelle;
+        if (serviceCourant()) return 'ayant un séjour en ' + serviceCourant().libelle;
+        if (etablissementCourant()) return 'ayant un séjour à ' + etablissementCourant().libelle;
+        return 'tous les patients';
+    }
+
     async function chargerPatients() {
         const params = new URLSearchParams({ page: pagePatients, taille: TAILLE_PAGE_PATIENTS });
         Object.entries(filtresPatients).forEach(([cle, valeur]) => { if (valeur) params.set(cle, valeur); });
+        if (contexte.uf) params.set('uf', contexte.uf);
+        else if (contexte.service) params.set('service', contexte.service);
+        else if (contexte.etablissement) params.set('etablissement', contexte.etablissement);
         const { elements, total } = await (await fetch('/api/patients?' + params)).json();
         totalPatients = total;
+        document.getElementById('patients-perimetre').textContent = perimetrePatients();
 
         const corps = document.getElementById('patients-corps');
         corps.innerHTML = '';
         if (!elements.length) {
-            corps.innerHTML = '<tr><td colspan="5" class="vide">Aucun patient ne correspond à ces filtres.</td></tr>';
+            corps.innerHTML = '<tr><td colspan="5" class="vide">Aucun patient dans ce contexte.</td></tr>';
         } else {
             elements.forEach(p => {
                 const tr = document.createElement('tr');
                 if (patientSelectionne && patientSelectionne.id === p.id) tr.className = 'selectionne';
-                [p.ipp, p.nom, p.prenom || '—', p.dateNaissance, LIBELLES_SEXE[p.sexe] || p.sexe].forEach(valeur => {
+                [p.ipp, p.nom, p.prenom || '—', formatDate(p.dateNaissance), LIBELLES_SEXE[p.sexe] || p.sexe].forEach(valeur => {
                     const td = document.createElement('td');
                     td.textContent = valeur;
                     tr.appendChild(td);
@@ -267,20 +510,97 @@
         zone.appendChild(btnSuivant);
     }
 
-    function selectionnerPatient(p) {
+    const nomPatient = p => p.nom + (p.prenom ? ' ' + p.prenom : '');
+
+    async function selectionnerPatient(p) {
         patientSelectionne = p;
-        document.querySelectorAll('#patients-corps tr').forEach(tr => tr.classList.remove('selectionne'));
-        chargerPatients(); // réaffiche avec la ligne sélectionnée en surbrillance
+        sejours = await (await fetch('/api/contexte/patients/' + encodeURIComponent(p.id) + '/sejours')).json();
+        // séjour proposé : celui de l'UF du contexte s'il y en a un, sinon le séjour de référence
+        sejourSelectionne = (contexte.uf && sejours.find(s => s.uf && s.uf.code === contexte.uf && s.enCours))
+            || sejours.find(s => s.reference) || null;
+        if (sejourSelectionne) aligner(sejourSelectionne);
+        chargerPatients();
+        afficherPatientDuContexte();
+        afficherSejours();
         document.getElementById('section-documents-patient').hidden = false;
-        document.getElementById('nom-patient-selectionne').textContent =
-            p.nom + (p.prenom ? ' ' + p.prenom : '') + ' (' + p.ipp + ')';
-        const bouton = document.getElementById('creer-patient');
-        bouton.disabled = false;
-        bouton.textContent = 'Créer pour ' + p.nom + (p.prenom ? ' ' + p.prenom : '');
+        document.getElementById('nom-patient-selectionne').textContent = nomPatient(p) + ' (' + p.ipp + ')';
+        document.getElementById('creer-patient').disabled = false;
+        afficherAideCreation();
         rafraichirDocuments();
     }
 
-    // --- Documents : réutilisés pour « du patient sélectionné » et « sans patient » --------
+    function libelleSejour(s) {
+        return s.numero + ' · ' + formatDate(s.dateEntree) + (s.uf ? ' · ' + s.uf.libelle : ' · ' + s.service);
+    }
+
+    function afficherPatientDuContexte() {
+        const zone = document.getElementById('ctx-patient');
+        zone.textContent = patientSelectionne ? nomPatient(patientSelectionne) + ' — IPP ' + patientSelectionne.ipp : 'aucun';
+        zone.classList.toggle('vide', !patientSelectionne);
+        const sel = document.getElementById('ctx-sejour');
+        sel.innerHTML = '';
+        sel.appendChild(option('', patientSelectionne ? (sejours.length ? 'Sans séjour' : 'Aucun séjour') : '—'));
+        sejours.forEach(s => sel.appendChild(option(s.id, libelleSejour(s) + (s.enCours ? ' (en cours)' : ''))));
+        sel.value = sejourSelectionne ? sejourSelectionne.id : '';
+        sel.disabled = !patientSelectionne || !sejours.length;
+    }
+
+    document.getElementById('ctx-sejour').onchange = e => choisirSejour(sejours.find(s => s.id === e.target.value) || null);
+
+    function choisirSejour(s) {
+        sejourSelectionne = s;
+        if (s) aligner(s);
+        afficherPatientDuContexte();
+        afficherSejours();
+        afficherAideCreation();
+        chargerPatients();
+        rafraichirDocuments();
+    }
+
+    function afficherSejours() {
+        document.getElementById('sejours-patient').textContent = patientSelectionne ? 'de ' + nomPatient(patientSelectionne) : '';
+        const corps = document.getElementById('sejours-corps');
+        corps.innerHTML = '';
+        if (!patientSelectionne) { corps.innerHTML = '<tr><td colspan="5" class="vide">Choisissez un patient.</td></tr>'; return; }
+        if (!sejours.length) { corps.innerHTML = '<tr><td colspan="5" class="vide">Aucun séjour pour ce patient.</td></tr>'; return; }
+        sejours.forEach(s => {
+            const tr = document.createElement('tr');
+            if (sejourSelectionne && sejourSelectionne.id === s.id) tr.className = 'selectionne';
+            const cellules = [s.numero, formatDate(s.dateEntree), s.dateSortie ? formatDate(s.dateSortie) : '—',
+                s.uf ? s.uf.code + ' · ' + s.uf.libelle : s.service];
+            cellules.forEach(v => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+            const td = document.createElement('td');
+            if (s.enCours) td.insertAdjacentHTML('beforeend', '<span class="puce puce-encours">en cours</span> ');
+            if (s.reference) td.insertAdjacentHTML('beforeend', '<span class="puce puce-reference">référence</span>');
+            tr.appendChild(td);
+            tr.title = s.motif || '';
+            tr.onclick = () => choisirSejour(s);
+            corps.appendChild(tr);
+        });
+    }
+
+    function afficherAideCreation() {
+        const zone = document.getElementById('aide-creation');
+        if (!patientSelectionne) { zone.textContent = ''; return; }
+        const c = ufCourante();
+        const morceaux = [];
+        morceaux.push('séjour <strong>' + (sejourSelectionne ? sejourSelectionne.numero : 'aucun') + '</strong>');
+        morceaux.push('UF <strong>' + (c ? c.uf.code + ' · ' + c.uf.libelle : 'non précisée') + '</strong>');
+        const sel = document.getElementById('professionnel-connecte');
+        morceaux.push('auteur <strong>' + (contexte.professionnel ? sel.options[sel.selectedIndex].textContent : 'non choisi') + '</strong>');
+        zone.innerHTML = 'Un compte rendu créé ou instancié ici reçoit : ' + morceaux.join(', ') + '.';
+    }
+
+    /** Paramètres de clé de contexte envoyés à la création, à l'instanciation et au rattachement. */
+    function parametresContexte() {
+        const p = new URLSearchParams();
+        if (sejourSelectionne) p.set('sejourId', sejourSelectionne.id);
+        if (contexte.uf) p.set('ufCode', contexte.uf);
+        if (contexte.professionnel) p.set('auteurId', contexte.professionnel);
+        return p;
+    }
+
+    // --- Documents ----------------------------------------------------------------------------
 
     let documentsTous = [];
 
@@ -298,7 +618,8 @@
         renommer: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
         acteurs: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
         dupliquer: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
-        instancier: '<path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 18a3 3 0 1 0-6 0"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><circle cx="12" cy="13" r="2"/>'
+        instancier: '<path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 18a3 3 0 1 0-6 0"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><circle cx="12" cy="13" r="2"/>',
+        rattacher: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>'
     };
 
     /** Bouton icône : le libellé de l'action s'affiche au survol (title) et sert de nom accessible. */
@@ -314,8 +635,17 @@
         return bouton;
     }
 
-    function construireLigneDocument(d) {
+    function cellule(tr, texte, classe) {
+        const td = document.createElement('td');
+        td.textContent = texte;
+        if (classe) td.className = classe;
+        tr.appendChild(td);
+        return td;
+    }
+
+    function construireLigneDocument(d, avecContexte) {
         const tr = document.createElement('tr');
+        const c = d.contexte || {};
 
         const tdNom = document.createElement('td');
         const spanNom = document.createElement('span');
@@ -325,6 +655,14 @@
         tdNom.appendChild(boutonIcone('renommer', 'Renommer', () => activerRenommage(tdNom, d)));
         tr.appendChild(tdNom);
 
+        if (avecContexte) {
+            const tdSejour = cellule(tr, c.sejour || '—', c.sejour ? '' : 'discret');
+            if (c.sejour && sejourSelectionne && c.sejourId === sejourSelectionne.id) tr.className = 'selectionne';
+            if (c.sejourEntree) { const s = document.createElement('div'); s.className = 'discret'; s.textContent = 'entrée ' + formatDate(c.sejourEntree); tdSejour.appendChild(s); }
+            cellule(tr, c.uf ? c.ufCode + ' · ' + c.uf : '—', c.uf ? '' : 'discret');
+            cellule(tr, c.auteur || '—', c.auteur ? '' : 'discret');
+        }
+
         const tdStatut = document.createElement('td');
         const badge = document.createElement('span');
         badge.className = 'statut statut-' + d.statut;
@@ -332,13 +670,8 @@
         tdStatut.appendChild(badge);
         tr.appendChild(tdStatut);
 
-        const tdSignataire = document.createElement('td');
-        tdSignataire.textContent = d.signatairePrincipal || '—';
-        tr.appendChild(tdSignataire);
-
-        const tdValide = document.createElement('td');
-        tdValide.textContent = d.valideLe ? new Date(d.valideLe).toLocaleString('fr-FR') : '—';
-        tr.appendChild(tdValide);
+        cellule(tr, d.signatairePrincipal || '—');
+        cellule(tr, d.valideLe ? new Date(d.valideLe).toLocaleString('fr-FR') : '—');
 
         const tdActions = document.createElement('td');
         tdActions.className = 'actions';
@@ -346,35 +679,50 @@
         tdActions.appendChild(boutonIcone('acteurs', 'Acteurs', () => ouvrirActeurs(d.nom)));
         tdActions.appendChild(boutonIcone('dupliquer', 'Dupliquer comme brouillon',
             () => activerDuplication(tdActions, d, null)));
+        if (d.patientId && d.statut === 'brouillon' && sejourSelectionne && c.sejourId !== sejourSelectionne.id) {
+            tdActions.appendChild(boutonIcone('rattacher', 'Rattacher au séjour ' + sejourSelectionne.numero,
+                () => rattacher(d)));
+        }
         if (!d.patientId && patientSelectionne) {
             const patient = patientSelectionne;
-            tdActions.appendChild(boutonIcone('instancier',
-                'Instancier pour ' + patient.nom + (patient.prenom ? ' ' + patient.prenom : ''),
+            tdActions.appendChild(boutonIcone('instancier', 'Instancier pour ' + nomPatient(patient),
                 () => activerDuplication(tdActions, d, patient)));
         }
         tr.appendChild(tdActions);
-
         return tr;
     }
 
-    function remplirTableDocuments(corpsId, documents, messageVide) {
+    function remplirTableDocuments(corpsId, documents, messageVide, avecContexte) {
         const corps = document.getElementById(corpsId);
         corps.innerHTML = '';
         if (!documents.length) {
-            corps.innerHTML = '<tr><td colspan="5" class="vide">' + messageVide + '</td></tr>';
+            corps.innerHTML = '<tr><td colspan="8" class="vide">' + messageVide + '</td></tr>';
             return;
         }
-        documents.forEach(d => corps.appendChild(construireLigneDocument(d)));
+        documents.forEach(d => corps.appendChild(construireLigneDocument(d, avecContexte)));
     }
 
     async function rafraichirDocuments() {
         documentsTous = await (await fetch('/api/documents')).json();
         if (patientSelectionne) {
             const duPatient = documentsTous.filter(d => d.patientId === patientSelectionne.id);
-            remplirTableDocuments('documents-patient-corps', duPatient, 'Aucun document pour ce patient.');
+            // ceux du séjour du contexte d'abord
+            const rang = d => (sejourSelectionne && d.contexte && d.contexte.sejourId === sejourSelectionne.id) ? 0 : 1;
+            duPatient.sort((a, b) => rang(a) - rang(b) || a.nom.localeCompare(b.nom));
+            remplirTableDocuments('documents-patient-corps', duPatient, 'Aucun compte rendu pour ce patient.', true);
         }
         const sansPatient = documentsTous.filter(d => !d.patientId);
-        remplirTableDocuments('documents-sans-patient-corps', sansPatient, 'Aucun gabarit.');
+        remplirTableDocuments('documents-sans-patient-corps', sansPatient, 'Aucun gabarit.', false);
+    }
+
+    async function rattacher(d) {
+        const corps = { sejourId: sejourSelectionne.id, ufCode: contexte.uf || null, auteurId: null };
+        const r = await fetch('/api/documents/' + encodeURIComponent(d.nom) + '/contexte', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corps)
+        });
+        if (!r.ok) return erreurHttp(r, 'Rattachement impossible');
+        notifier(d.nom + ' rattaché au séjour ' + sejourSelectionne.numero);
+        rafraichirDocuments();
     }
 
     function activerRenommage(tdNom, d) {
@@ -400,11 +748,7 @@
             if (!nouveauNom || nouveauNom === nomActuel) { rafraichirDocuments(); return; }
             const r = await fetch('/api/documents/' + encodeURIComponent(nomActuel) +
                 '?nouveauNom=' + encodeURIComponent(nouveauNom), { method: 'PUT' });
-            if (!r.ok) {
-                const corps = await r.json().catch(() => ({}));
-                alert(corps.message || 'Renommage impossible');
-                return;
-            }
+            if (!r.ok) return erreurHttp(r, 'Renommage impossible');
             rafraichirDocuments();
         };
         input.onkeydown = e => {
@@ -420,11 +764,11 @@
         input.select();
     }
 
-    /** Copie un document ; avec un patient, instancie un gabarit pour ce patient. */
+    /** Copie un document ; avec un patient, instancie un gabarit pour lui, dans la clé de contexte courante. */
     function activerDuplication(tdActions, d, patient) {
         tdActions.innerHTML = '';
         const input = document.createElement('input');
-        input.style.width = '160px';
+        input.style.width = '170px';
         input.setAttribute('aria-label', 'Nom de la copie');
         input.value = d.nom + (patient ? '-' + patient.ipp : '-copie');
         input.pattern = '[A-Za-z0-9_\\-]{1,64}';
@@ -440,14 +784,11 @@
         const confirmer = async () => {
             const nouveauNom = input.value.trim();
             if (!nouveauNom) return;
-            const r = await fetch('/api/documents/' + encodeURIComponent(d.nom) +
-                '/dupliquer?nouveauNom=' + encodeURIComponent(nouveauNom) +
-                (patient ? '&patientId=' + encodeURIComponent(patient.id) : ''), { method: 'POST' });
-            if (!r.ok) {
-                const corps = await r.json().catch(() => ({}));
-                alert(corps.message || 'Duplication impossible');
-                return;
-            }
+            const params = patient ? parametresContexte() : new URLSearchParams();
+            params.set('nouveauNom', nouveauNom);
+            if (patient) params.set('patientId', patient.id);
+            const r = await fetch('/api/documents/' + encodeURIComponent(d.nom) + '/dupliquer?' + params, { method: 'POST' });
+            if (!r.ok) return erreurHttp(r, 'Duplication impossible');
             await rafraichirDocuments();
             ouvrir(nouveauNom);
         };
@@ -472,7 +813,7 @@
     async function ouvrirActeurs(nom) {
         const r = await fetch('/api/documents/' + encodeURIComponent(nom) + '/acteurs');
         const corps = await r.json().catch(() => ({}));
-        if (!r.ok) { alert(corps.message || 'Acteurs illisibles'); return; }
+        if (!r.ok) { notifier(corps.message || 'Acteurs illisibles', true); return; }
         saisieActeurs = {
             nom,
             modifiable: corps.modifiable,
@@ -688,6 +1029,7 @@
         afficherMessageActeurs('Enregistré.', true);
     };
 
+
     // --- Éditeur OnlyOffice ------------------------------------------------------------------
 
     async function chargerApi() {
@@ -702,6 +1044,38 @@
         });
     }
 
+    /** Dans l'éditeur, le fil d'Ariane montre le contexte figé du document, en lecture seule. */
+    function afficherContexteDocument(d) {
+        const c = (d && d.contexte) || {};
+        const remplir = (id, texte) => {
+            const sel = document.getElementById(id);
+            sel.innerHTML = '';
+            sel.appendChild(option('', texte || '—'));
+            sel.disabled = true;
+        };
+        remplir('ctx-etablissement', c.etablissement);
+        remplir('ctx-service', c.service);
+        remplir('ctx-uf', c.uf ? c.ufCode + ' · ' + c.uf : null);
+        remplir('ctx-sejour', c.sejour ? c.sejour + ' · entrée ' + formatDate(c.sejourEntree) : (d && d.patientId ? 'aucun séjour' : 'gabarit'));
+        const patient = document.getElementById('ctx-patient');
+        patient.textContent = d && d.patientNom ? d.patientNom + (d.patientPrenom ? ' ' + d.patientPrenom : '') + ' — IPP ' + d.patientIpp : 'gabarit (aucun patient)';
+        patient.classList.toggle('vide', !(d && d.patientNom));
+        document.getElementById('ctx-fige').hidden = false;
+        document.getElementById('ctx-fige-texte').textContent = 'Contexte figé sur le document' + (c.auteur ? ' — auteur ' + c.auteur : '');
+        document.getElementById('ctx-reinitialiser').hidden = true;
+        document.getElementById('contexte').classList.add('fige-document');
+    }
+
+    function retablirContexteNavigation() {
+        document.getElementById('ctx-etablissement').disabled = false;
+        document.getElementById('ctx-service').disabled = false;
+        afficherOrganisation();
+        afficherPatientDuContexte();
+        document.getElementById('ctx-fige').hidden = true;
+        document.getElementById('ctx-reinitialiser').hidden = false;
+        document.getElementById('contexte').classList.remove('fige-document');
+    }
+
     async function ouvrir(nom) {
         await chargerApi();
         const configuration = await (await fetch('/api/documents/' + encodeURIComponent(nom) + '/configuration')).json();
@@ -709,6 +1083,7 @@
         window.PocCr.documentCourant = nom;
         const fiche = documentsTous.find(d => d.nom === nom);
         window.PocCr.documentId = fiche ? fiche.id : null;
+        afficherContexteDocument(fiche);
         document.getElementById('cible').innerHTML = '';
         document.getElementById('vue-liste').classList.add('cache');
         document.getElementById('vue-editeur').classList.add('actif');
@@ -723,33 +1098,48 @@
         document.getElementById('vue-editeur').classList.remove('actif');
         document.getElementById('vue-liste').classList.remove('cache');
         document.getElementById('retour').hidden = true;
+        retablirContexteNavigation();
         chargerPatients();
         rafraichirDocuments();
     }
     document.getElementById('retour').onclick = fermerEditeur;
 
-    /** Un compte rendu est créé pour le patient sélectionné ; sans patient, c'est un gabarit. */
-    async function creerDocument(avecPatient) {
+    /** Un compte rendu est créé pour le patient sélectionné, dans la clé de contexte courante. */
+    async function creerCompteRendu() {
         const champNom = document.getElementById('nom');
-        if (!champNom.reportValidity()) return;
+        if (!champNom.reportValidity() || !patientSelectionne) return;
+        const params = parametresContexte();
+        params.set('nom', champNom.value);
+        params.set('patientId', patientSelectionne.id);
+        const r = await fetch('/api/documents?' + params, { method: 'POST' });
+        if (!r.ok) return erreurHttp(r, 'Création impossible');
         const nom = champNom.value;
-        const r = await fetch('/api/documents?nom=' + encodeURIComponent(nom) +
-            (avecPatient && patientSelectionne ? '&patientId=' + encodeURIComponent(patientSelectionne.id) : ''),
-            { method: 'POST' });
-        if (!r.ok) {
-            const corps = await r.json().catch(() => ({}));
-            alert(corps.message || 'Création impossible');
-            return;
-        }
-        document.getElementById('nom').value = '';
+        champNom.value = '';
         await rafraichirDocuments();
         ouvrir(nom);
     }
-    document.getElementById('creation').onsubmit = e => { e.preventDefault(); creerDocument(true); };
-    document.getElementById('creer-gabarit').onclick = () => creerDocument(false);
 
-    chargerPatients();
-    rafraichirDocuments();
+    async function creerGabarit() {
+        const champNom = document.getElementById('nom-gabarit');
+        if (!champNom.reportValidity()) return;
+        const params = new URLSearchParams({ nom: champNom.value });
+        if (contexte.professionnel) params.set('auteurId', contexte.professionnel);
+        const r = await fetch('/api/documents?' + params, { method: 'POST' });
+        if (!r.ok) return erreurHttp(r, 'Création impossible');
+        const nom = champNom.value;
+        champNom.value = '';
+        await rafraichirDocuments();
+        ouvrir(nom);
+    }
+    document.getElementById('creation').onsubmit = e => { e.preventDefault(); creerCompteRendu(); };
+    document.getElementById('creation-gabarit').onsubmit = e => { e.preventDefault(); creerGabarit(); };
+
+    (async () => {
+        await Promise.all([chargerOrganisation(), chargerProfessionnels()]);
+        afficherPatientDuContexte();
+        chargerPatients();
+        rafraichirDocuments();
+    })();
 </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package fr.ftoumhub.poccr.infrastructure.editeur;
 
 import fr.ftoumhub.poccr.application.ConsultationDocuments;
+import fr.ftoumhub.poccr.application.ConsultationOrganisation;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
 import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
@@ -8,10 +9,13 @@ import fr.ftoumhub.poccr.application.ValidationCompteRendu.CompteRenduDejaValide
 import fr.ftoumhub.poccr.application.ValidationCompteRendu.ValidationImpossible;
 import fr.ftoumhub.poccr.domaine.ResultatPage;
 import fr.ftoumhub.poccr.domaine.document.ActeursDocument;
+import fr.ftoumhub.poccr.domaine.document.ContexteDocument;
 import fr.ftoumhub.poccr.domaine.document.Document;
 import fr.ftoumhub.poccr.domaine.document.DocumentIntrouvable;
 import fr.ftoumhub.poccr.domaine.document.Signataire;
 import fr.ftoumhub.poccr.domaine.professionnel.ProfessionnelSante;
+import fr.ftoumhub.poccr.domaine.sejour.Sejour;
+import fr.ftoumhub.poccr.domaine.sejour.UniteFonctionnelle;
 import fr.ftoumhub.poccr.domaine.patient.FiltrePatients;
 import fr.ftoumhub.poccr.domaine.patient.Patient;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier.RequeteRejetee;
@@ -40,6 +44,7 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -69,17 +74,19 @@ public class ControleurDocuments {
     private final ValidationCompteRendu validation;
     private final ConsultationDossierPatient consultation;
     private final ConsultationDocuments consultationDocuments;
+    private final ConsultationOrganisation organisation;
     private final ProprietesEditeur proprietes;
     private final HttpClient http = HttpClient.newHttpClient();
 
     public ControleurDocuments(StockageDocuments stockage, GestionDocuments gestion, ValidationCompteRendu validation,
                                ConsultationDossierPatient consultation, ConsultationDocuments consultationDocuments,
-                               ProprietesEditeur proprietes) {
+                               ConsultationOrganisation organisation, ProprietesEditeur proprietes) {
         this.stockage = stockage;
         this.gestion = gestion;
         this.validation = validation;
         this.consultation = consultation;
         this.consultationDocuments = consultationDocuments;
+        this.organisation = organisation;
         this.proprietes = proprietes;
     }
 
@@ -104,15 +111,24 @@ public class ControleurDocuments {
                                                        @RequestParam(required = false) String nom,
                                                        @RequestParam(required = false) String prenom,
                                                        @RequestParam(required = false) String sexe,
-                                                       @RequestParam(required = false) String dateNaissance) {
-        ResultatPage<Patient> resultat = consultation.lister(new FiltrePatients(ipp, nom, prenom, sexe, dateNaissance), page, taille);
+                                                       @RequestParam(required = false) String dateNaissance,
+                                                       @RequestParam(required = false) String etablissement,
+                                                       @RequestParam(required = false) String service,
+                                                       @RequestParam(required = false) String uf) {
+        ResultatPage<Patient> resultat = consultation.lister(
+                new FiltrePatients(ipp, nom, prenom, sexe, dateNaissance, etablissement, service, uf), page, taille);
         return new ResultatPage<>(resultat.elements().stream().map(PatientResume::de).toList(), resultat.total());
     }
 
-    /** Un repère par document : identifiant, patient (si connu), signataire principal et statut de validation. */
+    /** Clé de contexte d'un document, en libellés : organisation, séjour, auteur. */
+    public record ContexteVue(String etablissement, String service, String ufCode, String uf, UUID sejourId,
+                              String sejour, String sejourEntree, String auteur) {
+    }
+
+    /** Un repère par document : identifiant, patient (si connu), signataire principal, statut, contexte. */
     public record ResumeDocument(UUID id, String nom, String statut, String valideLe,
                                  String patientNom, String patientPrenom, String patientIpp, UUID patientId,
-                                 String signatairePrincipal) {
+                                 String signatairePrincipal, ContexteVue contexte) {
     }
 
     @GetMapping("/documents")
@@ -124,17 +140,50 @@ public class ControleurDocuments {
         Set<UUID> principaux = acteurs.values().stream()
                 .flatMap(a -> a.signatairePrincipal().stream()).map(Signataire::professionnelId)
                 .collect(Collectors.toSet());
-        Map<UUID, ProfessionnelSante> ps = consultationDocuments.professionnelsDe(principaux);
+        Set<UUID> auteurs = fiches.values().stream().map(Document::auteurId).filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, ProfessionnelSante> ps = consultationDocuments.professionnelsDe(
+                java.util.stream.Stream.concat(principaux.stream(), auteurs.stream()).collect(Collectors.toSet()));
+        Contextes contextes = new Contextes(fiches.values(), ps);
         return stockage.lister().stream().map(nom -> {
             Document fiche = fiches.get(nom);
             String signataire = fiche == null ? null : acteurs.getOrDefault(fiche.id(), ActeursDocument.AUCUN)
                     .signatairePrincipal().map(s -> ps.get(s.professionnelId()))
                     .map(ProfessionnelSante::libelle).orElse(null);
-            return resume(nom, fiche, signataire);
+            return resume(nom, fiche, signataire, fiche == null ? null : contextes.de(fiche));
         }).toList();
     }
 
-    private ResumeDocument resume(String nom, Document fiche, String signataire) {
+    /** Libellés des contextes d'un lot de documents : organisation et séjours lus une fois. */
+    private final class Contextes {
+        private final Map<String, UniteFonctionnelle> unites = new HashMap<>();
+        private final Map<String, String> etablissementParService = new HashMap<>();
+        private final Map<UUID, Sejour> sejours = new HashMap<>();
+        private final Map<UUID, ProfessionnelSante> ps;
+
+        Contextes(java.util.Collection<Document> documents, Map<UUID, ProfessionnelSante> ps) {
+            this.ps = ps;
+            organisation.arbre().forEach(e -> e.services().forEach(s -> {
+                etablissementParService.put(s.service().code(), e.etablissement().libelle());
+                s.unites().forEach(u -> unites.put(u.code(), u));
+            }));
+            Set<UUID> patients = documents.stream().filter(d -> d.sejourId() != null).map(Document::patientId)
+                    .collect(Collectors.toSet());
+            consultation.sejoursDe(patients).values().forEach(l -> l.forEach(s -> sejours.put(s.id(), s)));
+        }
+
+        ContexteVue de(Document d) {
+            UniteFonctionnelle uf = d.ufCode() == null ? null : unites.get(d.ufCode());
+            Sejour sejour = d.sejourId() == null ? null : sejours.get(d.sejourId());
+            ProfessionnelSante auteur = d.auteurId() == null ? null : ps.get(d.auteurId());
+            String etablissement = uf != null ? etablissementParService.get(uf.serviceCode()) : null;
+            return new ContexteVue(etablissement, uf == null ? null : uf.serviceLibelle(), d.ufCode(),
+                    uf == null ? null : uf.libelle(), d.sejourId(), sejour == null ? null : sejour.numero(),
+                    sejour == null ? null : sejour.dateEntree().toString(), auteur == null ? null : auteur.libelle());
+        }
+    }
+
+    private ResumeDocument resume(String nom, Document fiche, String signataire, ContexteVue contexte) {
         UUID id = fiche == null ? null : fiche.id();
         Optional<Validation> v = validation.etat(new NomDocument(nom));
         if (v.isPresent()) {
@@ -144,7 +193,7 @@ public class ControleurDocuments {
                     patient.map(Patient::nom).orElse(null),
                     patient.map(Patient::prenom).orElse(null),
                     patient.map(p -> p.ipp().valeur()).orElse(null),
-                    val.patientId(), signataire);
+                    val.patientId(), signataire, contexte);
         }
         // Brouillon : patient de la fiche ; à défaut (plugin antérieur au rattachement), celui des
         // tags des content controls (lecture au mieux, voir StockageDocuments).
@@ -155,13 +204,27 @@ public class ControleurDocuments {
                 patient.map(Patient::nom).orElse(null),
                 patient.map(Patient::prenom).orElse(null),
                 patient.map(p -> p.ipp().valeur()).orElse(null),
-                patientId.orElse(null), signataire);
+                patientId.orElse(null), signataire, contexte);
     }
 
-    /** Sans patient : gabarit. Avec : compte rendu de ce patient, fixé dès la création. */
+    /**
+     * Sans patient : gabarit. Avec : compte rendu de ce patient, fixé dès la création, dans la clé de contexte
+     * de la page hôte (séjour, unité fonctionnelle, professionnel connecté comme auteur).
+     */
     @PostMapping("/documents")
-    public ResponseEntity<Void> creer(@RequestParam String nom, @RequestParam(required = false) UUID patientId) {
-        gestion.creer(new NomDocument(nom), null, patientConnu(patientId));
+    public ResponseEntity<Void> creer(@RequestParam String nom, @RequestParam(required = false) UUID patientId,
+                                      @RequestParam(required = false) UUID sejourId,
+                                      @RequestParam(required = false) String ufCode,
+                                      @RequestParam(required = false) UUID auteurId) {
+        gestion.creer(new NomDocument(nom), null, patientConnu(patientId), new ContexteDocument(sejourId, ufCode, auteurId));
+        return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
+    }
+
+    /** Importe un .docx (corps de la requête) comme gabarit : document sans patient. */
+    @PostMapping(path = "/documents/import", consumes = "application/octet-stream")
+    public ResponseEntity<Void> importer(@RequestParam String nom, @RequestParam(required = false) String titre,
+                                         @RequestBody byte[] contenu) {
+        gestion.importerGabarit(new NomDocument(nom), titre, contenu);
         return ResponseEntity.created(URI.create("/api/documents/" + nom)).build();
     }
 
@@ -171,10 +234,25 @@ public class ControleurDocuments {
      */
     @PostMapping("/documents/{nom}/dupliquer")
     public ResponseEntity<Void> dupliquer(@PathVariable String nom, @RequestParam String nouveauNom,
-                                          @RequestParam(required = false) UUID patientId) {
-        gestion.dupliquer(new NomDocument(nom), new NomDocument(nouveauNom), patientConnu(patientId));
+                                          @RequestParam(required = false) UUID patientId,
+                                          @RequestParam(required = false) UUID sejourId,
+                                          @RequestParam(required = false) String ufCode,
+                                          @RequestParam(required = false) UUID auteurId) {
+        gestion.dupliquer(new NomDocument(nom), new NomDocument(nouveauNom), patientConnu(patientId),
+                new ContexteDocument(sejourId, ufCode, auteurId));
         return ResponseEntity.created(URI.create("/api/documents/" + nouveauNom)).build();
     }
+
+    public record SaisieContexte(UUID sejourId, String ufCode, UUID auteurId) {
+    }
+
+    /** Rattache un brouillon à un séjour / une UF (documents antérieurs à la clé de contexte) ; 409 si validé. */
+    @PutMapping("/documents/{nom}/contexte")
+    public ResponseEntity<Void> definirContexte(@PathVariable String nom, @RequestBody SaisieContexte saisie) {
+        gestion.definirContexte(new NomDocument(nom), new ContexteDocument(saisie.sejourId(), saisie.ufCode(), saisie.auteurId()));
+        return ResponseEntity.noContent().build();
+    }
+
 
     private UUID patientConnu(UUID patientId) {
         if (patientId != null && consultation.patient(patientId).isEmpty()) {

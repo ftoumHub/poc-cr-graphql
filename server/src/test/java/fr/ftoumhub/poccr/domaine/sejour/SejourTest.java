@@ -55,6 +55,16 @@ class SejourTest {
     }
 
     @Test
+    void le_sejour_fige_sur_le_document_prime_et_ne_bascule_pas_sur_une_nouvelle_venue() {
+        Sejour fige = sejour("V1", AUJOURDHUI.minusDays(20), AUJOURDHUI.minusDays(15));
+        Sejour nouvelleVenue = sejour("V2", AUJOURDHUI.minusDays(1), null);
+        assertThat(Sejour.deReference(List.of(fige, nouvelleVenue), AUJOURDHUI, fige.id())).contains(fige);
+        // un séjour qui n'est pas celui du patient est ignoré : règle générale
+        assertThat(Sejour.deReference(List.of(fige, nouvelleVenue), AUJOURDHUI, java.util.UUID.randomUUID()))
+                .contains(nouvelleVenue);
+    }
+
+    @Test
     void une_sortie_anterieure_a_l_entree_est_refusee() {
         assertThatThrownBy(() -> sejour("V1", AUJOURDHUI, AUJOURDHUI.minusDays(1)))
                 .isInstanceOf(IllegalArgumentException.class);

@@ -31,7 +31,10 @@
 
 <section>
     <h4>Document</h4>
-    <button id="rafraichir">Rafraîchir les données</button>
+    <div class="boutons">
+        <button id="rafraichir">Rafraîchir les données</button>
+        <button id="reperes" title="Remet les repères «Libellé» du gabarit à la place des données ; « Rafraîchir les données » les remet">Afficher les repères</button>
+    </div>
     <label class="option"><input type="checkbox" id="auto"> Auto (30 s)</label>
     <div id="etat" class="etat" role="status"></div>
 </section>
@@ -46,6 +49,7 @@
 
 </div>
 <script src="scripts/liaisons.js"></script>
+<script src="scripts/composes.js"></script>
 <script src="scripts/graphql.js"></script>
 <script src="scripts/accords.js"></script>
 <script src="scripts/rendu.js"></script>

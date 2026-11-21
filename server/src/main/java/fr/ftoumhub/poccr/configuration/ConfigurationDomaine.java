@@ -1,11 +1,15 @@
 package fr.ftoumhub.poccr.configuration;
 
 import fr.ftoumhub.poccr.application.ConsultationDocuments;
+import fr.ftoumhub.poccr.application.ConsultationDossierClinique;
 import fr.ftoumhub.poccr.application.ConsultationDossierPatient;
+import fr.ftoumhub.poccr.application.ConsultationOrganisation;
 import fr.ftoumhub.poccr.application.GestionDocuments;
 import fr.ftoumhub.poccr.application.ValidationCompteRendu;
 import fr.ftoumhub.poccr.domaine.port.ArchiveValidations;
 import fr.ftoumhub.poccr.domaine.port.Documents;
+import fr.ftoumhub.poccr.domaine.port.DossierClinique;
+import fr.ftoumhub.poccr.domaine.port.Organisation;
 import fr.ftoumhub.poccr.domaine.port.Etablissements;
 import fr.ftoumhub.poccr.domaine.port.ExecuteurRequetesDossier;
 import fr.ftoumhub.poccr.domaine.port.FichiersDocuments;
@@ -38,6 +42,11 @@ public class ConfigurationDomaine {
     }
 
     @Bean
+    ConsultationDossierClinique consultationDossierClinique(DossierClinique dossier, Clock horloge) {
+        return new ConsultationDossierClinique(dossier, horloge);
+    }
+
+    @Bean
     ValidationCompteRendu validationCompteRendu(ExecuteurRequetesDossier executeur, ArchiveValidations archive,
                                                 Documents documents, ProfessionnelsSante professionnels,
                                                 Clock horloge) {
@@ -47,9 +56,14 @@ public class ConfigurationDomaine {
     @Bean
     GestionDocuments gestionDocuments(Documents documents, FichiersDocuments fichiers, ArchiveValidations archive,
                                       Etablissements etablissements, ProfessionnelsSante professionnels,
-                                      Clock horloge) {
-        return new GestionDocuments(documents, fichiers, archive, etablissements, professionnels, horloge,
-                UUID::randomUUID);
+                                      Sejours sejours, Organisation organisation, Clock horloge) {
+        return new GestionDocuments(documents, fichiers, archive, etablissements, professionnels, sejours,
+                organisation, horloge, UUID::randomUUID);
+    }
+
+    @Bean
+    ConsultationOrganisation consultationOrganisation(Organisation organisation) {
+        return new ConsultationOrganisation(organisation);
     }
 
     @Bean

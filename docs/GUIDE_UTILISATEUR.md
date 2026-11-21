@@ -170,6 +170,10 @@ Exemple de phrase construite avec des champs et des accords :
 - **Rafraîchir les données** relit tout le document en une seule requête et met à jour les champs
   dont la valeur a changé.
 - **Auto (30 s)** fait la même chose toutes les 30 secondes, jusqu'à la validation.
+- **Afficher les repères** remet à la place des données les repères du gabarit (`«Nom de naissance»`,
+  `«né/née»`, `«pour chaque…»`) : pratique pour relire la structure du document. Les liaisons ne changent pas ;
+  **Rafraîchir les données** remet toutes les valeurs. Le bouton arrête l'actualisation automatique, et il est
+  indisponible une fois le compte rendu validé.
 
 Le message en bas de l'onglet indique le nombre de champs mis à jour et l'heure.
 
@@ -207,6 +211,22 @@ principal.
 
 ---
 
+## 4 bis. Le contexte de travail
+
+En haut de la page, choisissez le **professionnel connecté** (simulation : il n'y a pas d'authentification) ;
+il devient l'auteur des comptes rendus que vous créez. Sous la barre, le **fil d'Ariane** fixe le contexte :
+
+- **Établissement › Service › Unité fonctionnelle** : la liste des patients se restreint à ceux qui ont un séjour
+  dans ce périmètre (« Tous les établissements » par défaut) ;
+- **Patient › Séjour** : cliquer un patient propose son séjour de référence (ou celui de l'UF choisie) ; la carte
+  « Séjours » permet d'en choisir un autre, ce qui aligne l'établissement, le service et l'UF.
+
+Un compte rendu **créé ou instancié** reçoit ce contexte : séjour, UF, auteur. Il y reste **figé** : les données
+« séjour de référence » du compte rendu restent celles de ce séjour, même si le patient revient pour une nouvelle
+venue avant la validation. Dans l'éditeur, le fil d'Ariane affiche le contexte du document, verrouillé. Un brouillon
+créé sans séjour se rattache au séjour sélectionné par l'icône calendrier de sa ligne. Le contexte est mémorisé
+dans le navigateur ; « Réinitialiser le contexte » l'efface.
+
 ## 5. Travailler avec des gabarits
 
 Un gabarit est un document type, par exemple « CR d'hospitalisation en endocrinologie », **sans
@@ -224,6 +244,19 @@ patient**.
    s'ouvre ; **Rafraîchir les données** remplace tous les repères par les données du patient.
 
 Un document qui a déjà un patient ne peut être dupliqué que pour ce même patient.
+
+### Gabarits repris de l'application d'origine
+
+Les 20 gabarits Velocity les plus utilisés ont été convertis (`docs/gabarits-convertis/`, détail dans
+`rapport.md`). Une fois le scénario de test joué (`outils/velocity/README.md`), la page hôte liste :
+
+- **GAB-01 … GAB-20** : les gabarits convertis, sans patient ;
+- **CR-NN-DUBOIS / ROUSSEL / BENALI** : chacun instancié pour son patient de scénario, avec signataires et
+  destinataires. Ouvrez-en un et cliquez sur **Rafraîchir les données**.
+
+Les fragments qui contenaient des boucles ou des conditions sont des contrôles « Composé : Pour chaque… /
+Si… ». Les champs que la conversion n'a pas pu reprendre restent surlignés en jaune :
+« [à reprendre : libellé] ».
 
 ---
 
@@ -343,8 +376,9 @@ docker compose up -d && (cd server && mvn spring-boot:run)
 ## 12. Limites connues du POC
 
 - Pas d'authentification ; le valideur est le signataire principal du document ; JWT OnlyOffice désactivé.
-- Le séjour de référence est recalculé à chaque rafraîchissement : si le patient revient pour une
-  nouvelle venue avant la validation, le compte rendu bascule sur ce nouveau séjour.
+- Un compte rendu créé **sans** séjour garde l'ancien comportement : son séjour de référence est recalculé à
+  chaque rafraîchissement. Rattachez-le à un séjour pour le figer.
 - Un seul niveau d'objets est proposé dans l'onglet (pas de sous-objet de sous-objet).
 - Pas de création de document depuis un gabarit dans l'interface.
-- Le projet n'a pas encore été testé de bout en bout sur un Document Server réel (voir `CLAUDE.md`).
+- Gabarits convertis : le choix des éléments du multicontexte d'origine (quelle instance de formulaire,
+  quelles observations) n'existe pas ; le POC prend la plus récente. Images (signatures, logos) non reprises.

@@ -18,6 +18,12 @@
  *   g : accord en genre   {"m","f","n"?}   (champ enum terminal, ex. sexe)
  *   q : accord en nombre  {"0"?,"1","*"}   (chemin terminé par une liste ; seul le nombre est demandé)
  *   f : CHAMP_ID du catalogue CDF, pour la traçabilité (ignoré à la compilation)
+ *   x : format d'affichage d'une valeur (v3) : "maj", "date-longue", "date-jour-longue"
+ *   e : texte affiché quand la valeur est absente (v3) ; défaut « — ». Les gabarits convertis portent "" :
+ *       comme dans Velocity, une donnée absente n'imprime rien
+ *   t : liaison composée (v3) — texte, valeurs, boucles et conditions dans un même contrôle ; voir composes.js
+ *
+ * Les tags v3 sont ceux qui utilisent x, e ou t ; une liaison sans ces clés reste en v2.
  *
  * Toutes les liaisons du document sont compilées en UNE requête, un alias par liaison (c0, c1…).
  * Chaque segment, argument et colonne est revalidé contre le modèle issu de l'introspection : un
@@ -27,6 +33,8 @@
     'use strict';
 
     var VERSION = 2;
+    var VERSION_ETENDUE = 3;
+    var FORMATS = ['maj', 'date-longue', 'date-jour-longue'];
     var NOM_GRAPHQL = /^[_A-Za-z][_0-9A-Za-z]*$/;
     var VARIABLES = { patient: 'id', document: 'doc' };
 
@@ -92,11 +100,21 @@
             var l = JSON.parse(tag);
             if (!l || typeof l.c !== 'string') return null;
             if (l.v === 1) return convertirV1(l);
-            if (l.v === VERSION && typeof l.r === 'string') return l;
+            if ((l.v === VERSION || l.v === VERSION_ETENDUE) && typeof l.r === 'string') return l;
             return null;
         } catch (e) {
             return null;
         }
+    }
+
+    function C() { return racine.PocCrComposes || require('./composes.js'); }
+
+    function estCompose(liaison) {
+        return Array.isArray(liaison.t);
+    }
+
+    function verifierFormat(format) {
+        if (FORMATS.indexOf(format) < 0) throw new Error('Format inconnu : ' + format);
     }
 
     function estEnLigne(liaison) {
@@ -157,6 +175,7 @@
      *            "tableau" (liste d'objets), "genre", "nombre"
      */
     function analyser(liaison, modele) {
+        if (estCompose(liaison)) return C().analyser(liaison, modele);
         var typeRacine = modele.racines[liaison.r];
         if (!typeRacine) throw new Error('Racine inconnue dans le document : ' + liaison.r);
         if (liaison.r !== 'patient' && liaison.p) throw new Error('Une liaison ' + liaison.r + ' ne porte pas de patient');
@@ -169,7 +188,10 @@
         if (liaison.g) {
             if (terminal.kind !== 'ENUM' || terminal.liste || traverseListe) throw new Error('Accord en genre impossible sur ' + liaison.c);
             verifierChaines(liaison.g, ['m', 'f', 'n'], 'Accord en genre');
-            if (!liaison.g.m || !liaison.g.f) throw new Error('Accord en genre : formes masculine et féminine requises');
+            // une forme peut être vide (« né » + « e ») mais doit être présente
+            if (typeof liaison.g.m !== 'string' || typeof liaison.g.f !== 'string' || (!liaison.g.m && !liaison.g.f)) {
+                throw new Error('Accord en genre : formes masculine et féminine requises');
+            }
             analyse.nature = 'genre';
         } else if (liaison.q) {
             if (!terminal.liste) throw new Error('Accord en nombre impossible sur ' + liaison.c);
@@ -196,6 +218,11 @@
         } else {
             analyse.nature = 'valeur';
         }
+        if (liaison.x !== undefined) {
+            if (analyse.nature !== 'valeur') throw new Error('Un format ne s\'applique qu\'à une valeur : ' + liaison.c);
+            verifierFormat(liaison.x);
+        }
+        if (liaison.e !== undefined && typeof liaison.e !== 'string') throw new Error('Texte de valeur absente invalide : ' + liaison.c);
         return analyse;
     }
 
@@ -228,62 +255,156 @@
         return morceaux.length ? '(' + morceaux.join(', ') + ')' : '';
     }
 
-    /** Arbre de sélection : clé « nom(args) » -> sous-arbre ; rendu en GraphQL. */
-    function ajouter(arbre, cles) {
-        var noeud = arbre;
-        cles.forEach(function (cle) { noeud = noeud[cle] = noeud[cle] || {}; });
+    /*
+     * Arbre de sélection : nœud = { enfants: { "nom(args)": nœud }, ordre: [clés], reponse: clé de réponse }.
+     * Toutes les liaisons d'une racine sont fusionnées dans un seul arbre : un chemin commun n'est demandé
+     * qu'une fois (700 rubriques d'un même formulaire = une sélection « formulaires(…) » et 700 sous-champs).
+     * Les champs de premier niveau reçoivent un alias c<k> ; plus bas, un alias a<k> n'est posé que si deux
+     * frères portent le même nom avec des arguments différents. La requête reste ainsi loin de la limite de
+     * jetons du serveur (protection anti-DoS de graphql-java).
+     */
+    function nouveauNoeud() {
+        return { enfants: {}, ordre: [] };
+    }
+
+    function ajouter(noeud, cles) {
+        cles.forEach(function (cle) {
+            if (!noeud.enfants[cle]) {
+                noeud.enfants[cle] = nouveauNoeud();
+                noeud.ordre.push(cle);
+            }
+            noeud = noeud.enfants[cle];
+        });
         return noeud;
     }
 
-    function rendre(arbre) {
-        return Object.keys(arbre).map(function (cle) {
-            var enfants = Object.keys(arbre[cle]);
-            return enfants.length ? cle + ' { ' + rendre(arbre[cle]) + ' }' : cle;
+    function fusionner(cible, source) {
+        source.ordre.forEach(function (cle) {
+            fusionner(ajouter(cible, [cle]), source.enfants[cle]);
+        });
+    }
+
+    function nomDe(cle) {
+        var i = cle.indexOf('(');
+        return i < 0 ? cle : cle.slice(0, i);
+    }
+
+    function nommer(noeud, premierNiveau) {
+        var parNom = {};
+        noeud.ordre.forEach(function (cle) { parNom[nomDe(cle)] = (parNom[nomDe(cle)] || 0) + 1; });
+        noeud.ordre.forEach(function (cle, k) {
+            var enfant = noeud.enfants[cle];
+            enfant.reponse = premierNiveau ? 'c' + k : (parNom[nomDe(cle)] > 1 ? 'a' + k : nomDe(cle));
+            nommer(enfant, false);
+        });
+    }
+
+    function rendreNoeud(noeud) {
+        return noeud.ordre.map(function (cle) {
+            var enfant = noeud.enfants[cle];
+            var tete = (enfant.reponse !== nomDe(cle) ? enfant.reponse + ': ' : '') + cle;
+            return enfant.ordre.length ? tete + ' { ' + rendreNoeud(enfant) + ' }' : tete;
         }).join(' ');
     }
 
-    function selection(liaison, modele) {
+    /** Arbre local d'une liaison simple : sa chaîne de champs, ses colonnes, __typename pour un nombre. */
+    function arbreSimple(liaison, modele) {
         var analyse = analyser(liaison, modele);
         var cles = analyse.champs.map(function (c, i) { return c.nom + argumentsDuSegment(liaison, i, c); });
-        var arbre = {};
+        var arbre = nouveauNoeud();
         var terminal = ajouter(arbre, cles);
-        if (analyse.nature === 'nombre' && analyse.terminal.kind === 'OBJECT') terminal.__typename = {};
+        if (analyse.nature === 'nombre' && analyse.terminal.kind === 'OBJECT') ajouter(terminal, ['__typename']);
         analyse.colonnes.forEach(function (col) { ajouter(terminal, col.chemin); });
-        return rendre(arbre);
+        var arbres = {};
+        arbres[liaison.r] = arbre;
+        return arbres;
+    }
+
+    /** Arbres locaux (par racine) de chaque liaison, et arbres fusionnés nommés. */
+    function planifier(liaisons, modele) {
+        var fusion = {};
+        var locaux = liaisons.map(function (l) {
+            var arbres = estCompose(l) ? C().analyser(l, modele).arbres : arbreSimple(l, modele);
+            Object.keys(arbres).forEach(function (r) {
+                if (!VARIABLES[r]) throw new Error('Racine inconnue dans le document : ' + r);
+                fusion[r] = fusion[r] || nouveauNoeud();
+                fusionner(fusion[r], arbres[r]);
+            });
+            return arbres;
+        });
+        Object.keys(fusion).forEach(function (r) {
+            // une racine sans champ (liaison composée de texte seul) reste une sélection valide
+            if (!fusion[r].ordre.length) ajouter(fusion[r], ['__typename']);
+            nommer(fusion[r], true);
+        });
+        return { fusion: fusion, locaux: locaux };
     }
 
     /**
-     * Une requête pour toutes les liaisons : un alias c<i> par liaison, rangé sous sa racine.
-     * Seules les variables des racines utilisées sont déclarées ($id : patient, $doc : document).
+     * Une requête pour toutes les liaisons, rangées sous leur racine. Seules les variables des racines
+     * utilisées sont déclarées ($id : patient, $doc : document).
      */
     function construireRequete(liaisons, modele) {
-        var parRacine = {};
-        var ordre = [];
-        liaisons.forEach(function (l, i) {
-            if (!VARIABLES[l.r]) throw new Error('Racine inconnue dans le document : ' + l.r);
-            if (!parRacine[l.r]) { parRacine[l.r] = []; ordre.push(l.r); }
-            parRacine[l.r].push('c' + i + ': ' + selection(l, modele));
-        });
-        ordre.sort(function (a, b) { return a === 'patient' ? -1 : b === 'patient' ? 1 : 0; });
+        var plan = planifier(liaisons, modele);
+        var ordre = Object.keys(plan.fusion).sort(function (a, b) { return a === 'patient' ? -1 : b === 'patient' ? 1 : 0; });
         var variables = ordre.map(function (r) { return '$' + VARIABLES[r] + ': ID!'; }).join(', ');
         var corps = ordre.map(function (r) {
-            return r + '(id: $' + VARIABLES[r] + ') { ' + parRacine[r].join(' ') + ' }';
+            return r + '(id: $' + VARIABLES[r] + ') { ' + rendreNoeud(plan.fusion[r]) + ' }';
         }).join(' ');
         return 'query DonneesDocument(' + variables + ') { ' + corps + ' }';
     }
 
-    /** Valeur brute de chaque liaison dans la réponse (bloc data) de construireRequete. */
-    function valeurs(liaisons, data) {
+    /**
+     * Relit la réponse selon l'arbre local d'une liaison ; les clés de sortie sont les noms de champs
+     * (liaison simple) ou les clés « nom(args) » (liaison composée).
+     */
+    function relire(source, global, local, cleSortie) {
+        if (source === null || source === undefined) return null;
+        if (Array.isArray(source)) return source.map(function (s) { return relire(s, global, local, cleSortie); });
+        if (!local.ordre.length || typeof source !== 'object') return source;
+        var objet = {};
+        local.ordre.forEach(function (cle) {
+            var g = global.enfants[cle];
+            objet[cleSortie(cle)] = relire(source[g.reponse], g, local.enfants[cle], cleSortie);
+        });
+        return objet;
+    }
+
+    /**
+     * Valeur brute de chaque liaison dans la réponse (bloc data) de construireRequete :
+     *  - liaison simple : valeur du premier champ de son chemin (objets réduits à sa chaîne et ses colonnes) ;
+     *  - liaison composée : { patient: {…}, document: {…} } selon les racines qu'elle utilise.
+     */
+    function valeurs(liaisons, data, modele) {
+        if (!modele) throw new Error('Modèle requis pour lire les valeurs');
+        var plan = planifier(liaisons, modele);
         return liaisons.map(function (l, i) {
-            var r = data && data[l.r];
-            return r ? r['c' + i] : null;
+            var locaux = plan.locaux[i];
+            if (estCompose(l)) {
+                var resultat = {};
+                Object.keys(locaux).forEach(function (r) {
+                    resultat[r] = data && data[r] ? relire(data[r], plan.fusion[r], locaux[r], function (c) { return c; }) : null;
+                });
+                return resultat;
+            }
+            var racineData = data && data[l.r];
+            var local = locaux[l.r];
+            var premiere = local.ordre[0];
+            var global = plan.fusion[l.r].enfants[premiere];
+            return racineData ? relire(racineData[global.reponse], global, local.enfants[premiere], nomDe) : null;
         });
     }
 
     var api = {
         VERSION: VERSION,
+        VERSION_ETENDUE: VERSION_ETENDUE,
+        FORMATS: FORMATS,
         creer: creer,
         estEnLigne: estEnLigne,
+        estCompose: estCompose,
+        verifierFormat: verifierFormat,
+        resoudreChemin: resoudreChemin,
+        argumentsDuSegment: argumentsDuSegment,
         versTag: versTag,
         depuisTag: depuisTag,
         avecPatient: avecPatient,

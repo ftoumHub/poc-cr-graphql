@@ -1,0 +1,222 @@
+[
+ {
+  "document": "CR-01-DUBOIS",
+  "gabarit": "01-19501-contenu-p-aspose-foss.docx",
+  "controles": 42,
+  "rendus": 42,
+  "erreurs": [],
+  "vides": 1,
+  "requete": 249,
+  "secondes": 0.5,
+  "pdf": 218147
+ },
+ {
+  "document": "CR-02-DUBOIS",
+  "gabarit": "02-2371079234-contenu-p-aspose-foss.docx",
+  "controles": 538,
+  "rendus": 538,
+  "erreurs": [],
+  "vides": 68,
+  "requete": 17441,
+  "secondes": 0.6,
+  "pdf": 184966
+ },
+ {
+  "document": "CR-03-DUBOIS",
+  "gabarit": "03-2371615284-contenu-p-aspose-foss.docx",
+  "controles": 318,
+  "rendus": 318,
+  "erreurs": [],
+  "vides": 68,
+  "requete": 10859,
+  "secondes": 0.9,
+  "pdf": 155833
+ },
+ {
+  "document": "CR-04-ROUSSEL",
+  "gabarit": "04-1382913-contenu-p-aspose-foss.docx",
+  "controles": 120,
+  "rendus": 120,
+  "erreurs": [],
+  "vides": 0,
+  "requete": 288,
+  "secondes": 0.3,
+  "pdf": 323431
+ },
+ {
+  "document": "CR-05-BENALI",
+  "gabarit": "05-2691-contenu-p-aspose-foss.docx",
+  "controles": 134,
+  "rendus": 134,
+  "erreurs": [],
+  "vides": 30,
+  "requete": 4876,
+  "secondes": 0.4,
+  "pdf": 192408
+ },
+ {
+  "document": "CR-06-BENALI",
+  "gabarit": "06-25981-contenu-p-aspose-foss.docx",
+  "controles": 21,
+  "rendus": 21,
+  "erreurs": [],
+  "vides": 2,
+  "requete": 357,
+  "secondes": 0.4,
+  "pdf": 450673
+ },
+ {
+  "document": "CR-07-DUBOIS",
+  "gabarit": "07-2371086220-contenu-p-aspose-foss.docx",
+  "controles": 780,
+  "rendus": 780,
+  "erreurs": [],
+  "vides": 67,
+  "requete": 28768,
+  "secondes": 0.6,
+  "pdf": 235358
+ },
+ {
+  "document": "CR-08-BENALI",
+  "gabarit": "08-1749225460-contenu-p-aspose-foss.docx",
+  "controles": 155,
+  "rendus": 155,
+  "erreurs": [],
+  "vides": 0,
+  "requete": 7913,
+  "secondes": 0.3,
+  "pdf": 133198
+ },
+ {
+  "document": "CR-09-BENALI",
+  "gabarit": "09-1749219460-contenu-a-aspose-foss.docx",
+  "controles": 155,
+  "rendus": 155,
+  "erreurs": [],
+  "vides": 0,
+  "requete": 7913,
+  "secondes": 0.4,
+  "pdf": 133990
+ },
+ {
+  "document": "CR-10-BENALI",
+  "gabarit": "10-46401-contenu-p-aspose-foss.docx",
+  "controles": 3,
+  "rendus": 3,
+  "erreurs": [],
+  "vides": 0,
+  "requete": 93,
+  "secondes": 0.3,
+  "pdf": 564504
+ },
+ {
+  "document": "CR-11-BENALI",
+  "gabarit": "11-46403-contenu-p-aspose-foss.docx",
+  "controles": 3,
+  "rendus": 3,
+  "erreurs": [],
+  "vides": 0,
+  "requete": 93,
+  "secondes": 0.4,
+  "pdf": 565497
+ },
+ {
+  "document": "CR-12-BENALI",
+  "gabarit": "12-1747936466-contenu-p-aspose-foss.docx",
+  "controles": 21,
+  "rendus": 21,
+  "erreurs": [],
+  "vides": 2,
+  "requete": 357,
+  "secondes": 0.4,
+  "pdf": 485612
+ },
+ {
+  "document": "CR-13-BENALI",
+  "gabarit": "13-1747562461-contenu-a-aspose-foss.docx",
+  "controles": 21,
+  "rendus": 21,
+  "erreurs": [],
+  "vides": 2,
+  "requete": 357,
+  "secondes": 0.4,
+  "pdf": 485612
+ },
+ {
+  "document": "CR-14-ROUSSEL",
+  "gabarit": "14-662090641-contenu-p-aspose-foss.docx",
+  "controles": 0,
+  "rendus": 0,
+  "erreurs": [],
+  "vides": 0,
+  "requete": 0,
+  "secondes": 0.3,
+  "pdf": 197379
+ },
+ {
+  "document": "CR-15-ROUSSEL",
+  "gabarit": "15-1168918-contenu-a-aspose-foss.docx",
+  "controles": 224,
+  "rendus": 224,
+  "erreurs": [],
+  "vides": 43,
+  "requete": 868,
+  "secondes": 0.3,
+  "pdf": 319037
+ },
+ {
+  "document": "CR-16-ROUSSEL",
+  "gabarit": "16-1189926-contenu-a-aspose-foss.docx",
+  "controles": 208,
+  "rendus": 208,
+  "erreurs": [],
+  "vides": 39,
+  "requete": 868,
+  "secondes": 0.5,
+  "pdf": 315904
+ },
+ {
+  "document": "CR-17-ROUSSEL",
+  "gabarit": "17-1748256464-contenu-a-aspose-foss.docx",
+  "controles": 54,
+  "rendus": 54,
+  "erreurs": [],
+  "vides": 2,
+  "requete": 778,
+  "secondes": 0.4,
+  "pdf": 293440
+ },
+ {
+  "document": "CR-18-ROUSSEL",
+  "gabarit": "18-1748243462-contenu-a-aspose-foss.docx",
+  "controles": 41,
+  "rendus": 41,
+  "erreurs": [],
+  "vides": 2,
+  "requete": 821,
+  "secondes": 0.4,
+  "pdf": 268692
+ },
+ {
+  "document": "CR-19-DUBOIS",
+  "gabarit": "19-48407-contenu-p-aspose-foss.docx",
+  "controles": 12,
+  "rendus": 12,
+  "erreurs": [],
+  "vides": 3,
+  "requete": 231,
+  "secondes": 0.3,
+  "pdf": 150778
+ },
+ {
+  "document": "CR-20-ROUSSEL",
+  "gabarit": "20-1289917-contenu-a-aspose-foss.docx",
+  "controles": 140,
+  "rendus": 140,
+  "erreurs": [],
+  "vides": 22,
+  "requete": 669,
+  "secondes": 0.3,
+  "pdf": 321761
+ }
+]

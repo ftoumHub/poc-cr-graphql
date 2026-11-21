@@ -1,0 +1,516 @@
+{
+ "total": {
+  "valeurs": 2785,
+  "valeurs_composees": 827,
+  "composes_en_ligne": 123,
+  "composes_bloc": 80,
+  "conditions": 172,
+  "echecs": 82
+ },
+ "documents": [
+  {
+   "document": "01-19501-contenu-p-aspose-foss.docx",
+   "valeurs": 42,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {},
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 310
+  },
+  {
+   "document": "02-2371079234-contenu-p-aspose-foss.docx",
+   "valeurs": 523,
+   "valeurs_composees": 92,
+   "composes_en_ligne": 3,
+   "composes_bloc": 12,
+   "conditions": 3,
+   "boucles": {
+    "repetition": 17,
+    "liaison": 198
+   },
+   "echecs": [
+    {
+     "raison": "Formulaire : chemin non repris .getPrescriptionLigne().getLibelleLignePres()",
+     "libelle": "libellé de la ligne de prescription",
+     "nombre": 2
+    },
+    {
+     "raison": "Formulaire : chemin non repris .getPrescriptionLigne().getPrpl_txt_poso_Formatte()",
+     "libelle": "libellé long de la posologie de la ligne de prescription",
+     "nombre": 2
+    },
+    {
+     "raison": "Méta-données du multicontexte (nombre d'éléments) : non reprises",
+     "libelle": "Nb éléments",
+     "nombre": 6
+    }
+   ],
+   "avertissements": {
+    "contexte d'observations sans chapitre identifiable : les 5 plus récentes, tous chapitres": 4
+   },
+   "tag_max": 1994
+  },
+  {
+   "document": "03-2371615284-contenu-p-aspose-foss.docx",
+   "valeurs": 303,
+   "valeurs_composees": 92,
+   "composes_en_ligne": 3,
+   "composes_bloc": 12,
+   "conditions": 3,
+   "boucles": {
+    "repetition": 18,
+    "liaison": 185
+   },
+   "echecs": [],
+   "avertissements": {
+    "contexte d'observations sans chapitre identifiable : les 5 plus récentes, tous chapitres": 4,
+    "structure sur plusieurs paragraphes non contigus : dissoute (valeurs jointes)": 1
+   },
+   "tag_max": 1969
+  },
+  {
+   "document": "04-1382913-contenu-p-aspose-foss.docx",
+   "valeurs": 100,
+   "valeurs_composees": 70,
+   "composes_en_ligne": 20,
+   "composes_bloc": 0,
+   "conditions": 20,
+   "boucles": {
+    "liaison": 20
+   },
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 926
+  },
+  {
+   "document": "05-2691-contenu-p-aspose-foss.docx",
+   "valeurs": 65,
+   "valeurs_composees": 1,
+   "composes_en_ligne": 68,
+   "composes_bloc": 1,
+   "conditions": 93,
+   "boucles": {
+    "liaison": 9
+   },
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 1068
+  },
+  {
+   "document": "06-25981-contenu-p-aspose-foss.docx",
+   "valeurs": 21,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {
+    "liaison": 2
+   },
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 253
+  },
+  {
+   "document": "07-2371086220-contenu-p-aspose-foss.docx",
+   "valeurs": 748,
+   "valeurs_composees": 166,
+   "composes_en_ligne": 7,
+   "composes_bloc": 23,
+   "conditions": 2,
+   "boucles": {
+    "liaison": 42,
+    "repetition": 32
+   },
+   "echecs": [
+    {
+     "raison": "Formulaire : chemin non repris .getDateValidation()",
+     "libelle": "Date validation",
+     "nombre": 1
+    },
+    {
+     "raison": "Méta-données du multicontexte (nombre d'éléments) : non reprises",
+     "libelle": "Nb éléments",
+     "nombre": 6
+    },
+    {
+     "raison": "Formulaire : chemin non repris .getUtilisateurValidant()",
+     "libelle": "Utilisateur validant",
+     "nombre": 1
+    },
+    {
+     "raison": "Formulaire : chemin non repris .getPrescriptionLigne().getLibelleLignePres()",
+     "libelle": "libellé de la ligne de prescription",
+     "nombre": 1
+    },
+    {
+     "raison": "Formulaire : chemin non repris .getPrescriptionLigne().getPrpl_txt_poso_Formatte()",
+     "libelle": "libellé long de la posologie de la ligne de prescription",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 691,
+   "tableaux": 2
+  },
+  {
+   "document": "08-1749225460-contenu-p-aspose-foss.docx",
+   "valeurs": 155,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {
+    "liaison": 2
+   },
+   "echecs": [
+    {
+     "raison": "Séjour : chemin non repris *.ide_pecs*.ide_organisme.orga_nom",
+     "libelle": "Nom de l'organisme",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 345
+  },
+  {
+   "document": "09-1749219460-contenu-a-aspose-foss.docx",
+   "valeurs": 155,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {
+    "liaison": 2
+   },
+   "echecs": [
+    {
+     "raison": "Séjour : chemin non repris *.ide_pecs*.ide_organisme.orga_nom",
+     "libelle": "Nom de l'organisme",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 345
+  },
+  {
+   "document": "10-46401-contenu-p-aspose-foss.docx",
+   "valeurs": 3,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {},
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 175
+  },
+  {
+   "document": "11-46403-contenu-p-aspose-foss.docx",
+   "valeurs": 3,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {},
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 175
+  },
+  {
+   "document": "12-1747936466-contenu-p-aspose-foss.docx",
+   "valeurs": 21,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {
+    "liaison": 2
+   },
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 253
+  },
+  {
+   "document": "13-1747562461-contenu-a-aspose-foss.docx",
+   "valeurs": 21,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {
+    "liaison": 2
+   },
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 253
+  },
+  {
+   "document": "14-662090641-contenu-p-aspose-foss.docx",
+   "valeurs": 0,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {},
+   "echecs": [
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Prénom médecin",
+     "nombre": 2
+    },
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Nom usuel médecin",
+     "nombre": 2
+    },
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Identifiant national",
+     "nombre": 2
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Image PS",
+     "nombre": 2
+    },
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Date dossier",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 0
+  },
+  {
+   "document": "15-1168918-contenu-a-aspose-foss.docx",
+   "valeurs": 205,
+   "valeurs_composees": 129,
+   "composes_en_ligne": 9,
+   "composes_bloc": 10,
+   "conditions": 19,
+   "boucles": {
+    "liaison": 3,
+    "repetition": 10
+   },
+   "echecs": [
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Date du rendez-vous",
+     "nombre": 3
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Logo reduit",
+     "nombre": 5
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Datamatrix INS réduit",
+     "nombre": 5
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 1579
+  },
+  {
+   "document": "16-1189926-contenu-a-aspose-foss.docx",
+   "valeurs": 190,
+   "valeurs_composees": 128,
+   "composes_en_ligne": 8,
+   "composes_bloc": 10,
+   "conditions": 18,
+   "boucles": {
+    "liaison": 3,
+    "repetition": 10
+   },
+   "echecs": [
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Date du rendez-vous",
+     "nombre": 2
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Logo reduit",
+     "nombre": 5
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Datamatrix INS réduit",
+     "nombre": 5
+    },
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Heure du rendez-vous",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 1579
+  },
+  {
+   "document": "17-1748256464-contenu-a-aspose-foss.docx",
+   "valeurs": 53,
+   "valeurs_composees": 4,
+   "composes_en_ligne": 0,
+   "composes_bloc": 1,
+   "conditions": 0,
+   "boucles": {
+    "liaison": 4,
+    "repetition": 1,
+    "echec": 1
+   },
+   "echecs": [
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Datamatrix INS",
+     "nombre": 1
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Image PS",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CRECTX5",
+     "libelle": "Prénom médecin",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CRECTX5",
+     "libelle": "Nom usuel médecin majuscule",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CRECTX5",
+     "libelle": "Adr Prof:Adresse ligne 1",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CRECTX5",
+     "libelle": "Adr Prof:Adresse code postal",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CRECTX5",
+     "libelle": "Adr Prof:Adresse ville",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CREC2",
+     "libelle": "Prénom médecin",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CREC2",
+     "libelle": "Nom usuel médecin",
+     "nombre": 1
+    },
+    {
+     "raison": "Contexte recueils actes et diag : domaine RDV / RADIO hors périmètre",
+     "libelle": "RDV : date",
+     "nombre": 1
+    },
+    {
+     "raison": "Contexte recueils actes et diag : domaine RDV / RADIO hors périmètre",
+     "libelle": "Commentaires du rendez-vous",
+     "nombre": 1
+    },
+    {
+     "raison": "Contexte recueils actes et diag : domaine RDV / RADIO hors périmètre",
+     "libelle": "Libellé à imprimer de l'acte",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 534
+  },
+  {
+   "document": "18-1748243462-contenu-a-aspose-foss.docx",
+   "valeurs": 39,
+   "valeurs_composees": 11,
+   "composes_en_ligne": 1,
+   "composes_bloc": 1,
+   "conditions": 0,
+   "boucles": {
+    "repetition": 2,
+    "liaison": 3,
+    "echec": 1
+   },
+   "echecs": [
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Datamatrix INS",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $D1REC1",
+     "libelle": "Code Monsieur - Madame",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $D1REC1",
+     "libelle": "Code(Monsieur - Madame)",
+     "nombre": 1
+    },
+    {
+     "raison": "variable de boucle utilisée hors de sa boucle (anomalie du gabarit d'origine) : $CREC31",
+     "libelle": "Nom usuel médecin majuscule",
+     "nombre": 1
+    },
+    {
+     "raison": "Contexte dossier ris : domaine RDV / RADIO hors périmètre",
+     "libelle": "Date du rendez-vous",
+     "nombre": 1
+    }
+   ],
+   "avertissements": {
+    "directive écrite « #$foreach » (anomalie du gabarit d'origine) : traitée comme #foreach": 1,
+    "directive écrite « #$end » (anomalie du gabarit d'origine) : traitée comme #end": 1
+   },
+   "tag_max": 581
+  },
+  {
+   "document": "19-48407-contenu-p-aspose-foss.docx",
+   "valeurs": 12,
+   "valeurs_composees": 0,
+   "composes_en_ligne": 0,
+   "composes_bloc": 0,
+   "conditions": 0,
+   "boucles": {},
+   "echecs": [],
+   "avertissements": {},
+   "tag_max": 309
+  },
+  {
+   "document": "20-1289917-contenu-a-aspose-foss.docx",
+   "valeurs": 126,
+   "valeurs_composees": 134,
+   "composes_en_ligne": 4,
+   "composes_bloc": 10,
+   "conditions": 14,
+   "boucles": {
+    "liaison": 3,
+    "repetition": 10
+   },
+   "echecs": [
+    {
+     "raison": "Dossier technique RADIO : hors périmètre du contrat CDF",
+     "libelle": "Date du rendez-vous",
+     "nombre": 3
+    },
+    {
+     "raison": "image (signature, logo, datamatrix) : non reprise",
+     "libelle": "Datamatrix INS réduit",
+     "nombre": 5
+    }
+   ],
+   "avertissements": {},
+   "tag_max": 2100
+  }
+ ]
+}

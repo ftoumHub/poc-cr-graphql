@@ -1,5 +1,7 @@
 package fr.ftoumhub.poccr.domaine.professionnel;
 
+import fr.ftoumhub.poccr.domaine.patient.Sexe;
+
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -12,6 +14,7 @@ import java.util.stream.Stream;
  * @param code   code interne, unique
  * @param rpps   numéro RPPS (11 chiffres) ; facultatif
  * @param titre  libellé d'édition (« Dr », « Pr »)
+ * @param sexe   pour les accords des courriers (« Cher confrère / Chère consœur ») ; INCONNU par défaut
  */
 public record ProfessionnelSante(UUID id,
                                  String code,
@@ -24,7 +27,8 @@ public record ProfessionnelSante(UUID id,
                                  String specialites,
                                  String email,
                                  String qualite,
-                                 TypeMedecin type) {
+                                 TypeMedecin type,
+                                 Sexe sexe) {
 
     /** Préfixe de l'identifiant national d'un professionnel enregistré au RPPS. */
     private static final String PREFIXE_RPPS = "8";
@@ -34,6 +38,9 @@ public record ProfessionnelSante(UUID id,
         Objects.requireNonNull(code, "code");
         Objects.requireNonNull(nom, "nom");
         Objects.requireNonNull(type, "type");
+        if (sexe == null) {
+            sexe = Sexe.INCONNU;
+        }
         if (rpps != null && !rpps.matches("\\d{11}")) {
             throw new IllegalArgumentException("RPPS invalide pour " + code + " : 11 chiffres attendus");
         }
@@ -68,6 +75,7 @@ public record ProfessionnelSante(UUID id,
         private String email;
         private String qualite;
         private TypeMedecin type;
+        private Sexe sexe = Sexe.INCONNU;
 
         private Builder() {
         }
@@ -84,10 +92,11 @@ public record ProfessionnelSante(UUID id,
         public Builder email(String email) { this.email = email; return this; }
         public Builder qualite(String qualite) { this.qualite = qualite; return this; }
         public Builder type(TypeMedecin type) { this.type = type; return this; }
+        public Builder sexe(Sexe sexe) { this.sexe = sexe; return this; }
 
         public ProfessionnelSante construire() {
             return new ProfessionnelSante(id, code, rpps, adeli, civilite, titre, nom, prenom, specialites, email,
-                    qualite, type);
+                    qualite, type, sexe);
         }
     }
 }
